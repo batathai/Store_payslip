@@ -736,18 +736,83 @@ document.getElementById('depositDate').addEventListener('change', () => clearErr
 document.getElementById('salesDate').addEventListener('change', () => clearError('salesDate'));
 document.getElementById('amount').addEventListener('input', () => clearError('amount'));
 
+/* ==================== IMAGE COMPRESSION ====================
+   บีบอัดรูปฝั่ง browser ก่อน upload เพื่อประหยัด Supabase Storage
+   (free plan มี 1GB; ถ้าไม่บีบอัด 199 สาขา x ~1MB/รูป จะเต็มใน ~5 วัน)
+   resize ให้กว้างไม่เกิน MAX_WIDTH แล้ว export เป็น JPEG คุณภาพ JPEG_QUALITY
+*/
+const MAX_WIDTH = 1280;
+const JPEG_QUALITY = 0.75;
+
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = (e) => { img.src = e.target.result; };
+    reader.onerror = reject;
+
+    img.onload = () => {
+      let { width, height } = img;
+      if(width > MAX_WIDTH){
+        height = Math.round(height * (MAX_WIDTH / width));
+        width = MAX_WIDTH;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob((blob) => {
+        if(!blob){ reject(new Error('Compress failed')); return; }
+        const compressedFile = new File(
+          [blob],
+          file.name.replace(/\.[^.]+$/, '') + '.jpg',
+          { type: 'image/jpeg' }
+        );
+        resolve(compressedFile);
+      }, 'image/jpeg', JPEG_QUALITY);
+    };
+
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 uploadBox.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', (e) => {
+fileInput.addEventListener('change', async (e) => {
   const file = e.target.files[0];
   if(!file) return;
-  selectedFile = file;
+
   uploadBox.classList.add('has-file');
-  previewWrap.style.display = 'flex';
-  fileNameEl.textContent = file.name;
-  const reader = new FileReader();
-  reader.onload = (ev) => { previewImg.src = ev.target.result; };
-  reader.readAsDataURL(file);
-  clearError('file');
+  uploadBox.querySelector('.upload-text').textContent = 'กำลังประมวลผลรูป...';
+
+  try{
+    const compressed = await compressImage(file);
+    selectedFile = compressed;
+
+    previewWrap.style.display = 'flex';
+    const sizeKB = Math.round(compressed.size / 1024);
+    fileNameEl.textContent = `${compressed.name} (${sizeKB} KB)`;
+    const reader = new FileReader();
+    reader.onload = (ev) => { previewImg.src = ev.target.result; };
+    reader.readAsDataURL(compressed);
+    clearError('file');
+  }catch(err){
+    console.error('Compress error:', err);
+    // ถ้าบีบอัดไม่สำเร็จ ใช้ไฟล์ต้นฉบับแทน ดีกว่าทำให้ผู้ใช้ส่งไม่ได้เลย
+    selectedFile = file;
+    previewWrap.style.display = 'flex';
+    fileNameEl.textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => { previewImg.src = ev.target.result; };
+    reader.readAsDataURL(file);
+    clearError('file');
+  }finally{
+    uploadBox.querySelector('.upload-text').textContent = 'แตะเพื่อถ่าย / เลือกรูป';
+  }
 });
 removeFileBtn.addEventListener('click', (e) => {
   e.stopPropagation();
