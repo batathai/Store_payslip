@@ -417,7 +417,7 @@ button#submitBtn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
       <div class="status-icon" id="statusIcon"></div>
       <div class="status-title" id="statusTitle"></div>
       <div class="status-msg" id="statusMsg"></div>
-      <button class="btn-secondary" id="sendAnotherBtn" type="button">ส่งรายการใหม่</button>
+      <button class="btn-secondary" id="sendAnotherBtn" type="button">ส่งรายการใถม่</button>
     </div>
   </div>
 </div>
@@ -429,8 +429,6 @@ const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const N8N_WEBHOOK_URL = ''; // TODO: ใส่ URL ของ n8n webhook ที่นี่หลังตั้งค่าเสร็จ (ขั้นต่อไป)
-
 const CHANNELS = [
   { id:'krungsri',      name:'ธ.กรุงศรีอยุธยา (Saving)', detail:'เลขบัญชี: ระบุภายหลัง' },
   { id:'scb',           name:'ธ.ไทยพาณิชย์ (Saving)',     detail:'เลขบัญชี: ระบุภายหลัง' },
@@ -438,7 +436,7 @@ const CHANNELS = [
   { id:'seven_eleven',  name:'7-Eleven',                   detail:'ฝากผ่านเคาน์เตอร์เซเว่น' },
   { id:'lotus',         name:'Lotus',                      detail:'ฝากผ่านเคาน์เตอร์โลตัส' },
   { id:'bigc',          name:'Big C',                       detail:'ฝากผ่านเคาน์เตอร์บิ๊กซี' },
-  { id:'other',         name:'หมายเหตุ',                       detail:'ระบุรายละเอียดเพิ่มเติม' },
+  { id:'other',         name:'อื่นๆ',                       detail:'ระบุรายละเอียดเพิ่มเติม' },
 ];
 
 /* ==================== ZONE / STORE DATA ==================== */
@@ -807,8 +805,29 @@ submitBtn.addEventListener('click', async () => {
   const channelDetail = (selectedChannel === 'other') ? channelDetailInput.value.trim() : null;
 
   try{
-    // 1) Insert record เข้า Supabase ก่อน (ยังไม่มีรูป)
-    const { data, error } = await sb
+    // 1) อัปโหลดรูปสลิปเข้า Supabase Storage ก่อน
+    const fileExt = (selectedFile.name.split('.').pop() || 'jpg').toLowerCase();
+    const safeExt = ['jpg','jpeg','png','webp'].includes(fileExt) ? fileExt : 'jpg';
+    const timestamp = Date.now();
+    const slipPath = `${storeCode}/${depositDate}_${timestamp}.${safeExt}`;
+
+    const { error: uploadError } = await sb
+      .storage
+      .from('payin-slips')
+      .upload(slipPath, selectedFile, {
+        contentType: selectedFile.type || 'image/jpeg',
+        upsert: false
+      });
+
+    if(uploadError) throw uploadError;
+
+    const { data: urlData } = sb
+      .storage
+      .from('payin-slips')
+      .getPublicUrl(slipPath);
+
+    // 2) Insert record เข้า Supabase พร้อม path/url ของรูปในจังหวะเดียวกัน
+    const { error: insertError } = await sb
       .from('payin_records')
       .insert({
         zone_code: zoneCode,
@@ -818,29 +837,13 @@ submitBtn.addEventListener('click', async () => {
         amount: amount,
         channel: selectedChannel,
         channel_detail: channelDetail,
-        slip_uploaded: false
-      })
-      .select()
-      .single();
+        slip_path: slipPath,
+        slip_url: urlData.publicUrl
+      });
 
-    if(error) throw error;
+    if(insertError) throw insertError;
 
-    // 2) ส่งรูปไปที่ n8n webhook แยก (ถ้าตั้งค่า URL ไว้แล้ว)
-    if(N8N_WEBHOOK_URL){
-      const base64 = await fileToBase64(selectedFile);
-      fetch(N8N_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          record_id: data.id,
-          store_code: storeCode,
-          image: base64,
-          filename: selectedFile.name
-        })
-      }).catch(err => console.error('n8n webhook error (ไม่กระทบการส่งข้อมูลหลัก):', err));
-    }
-
-    showStatus('ok', 'ส่งข้อมูลสำเร็จ', `สาขา ${storeCode} ส่งข้อมูลเรียบร้อยแล้ว ระบบกำลังประมวลผลรูปสลิปต่อเบื้องหลัง`);
+    showStatus('ok', 'ส่งข้อมูลสำเร็จ', `สาขา ${storeCode} ส่งข้อมูลและรูปสลิปเรียบร้อยแล้ว`);
   }catch(err){
     console.error(err);
     showStatus('err', 'ส่งข้อมูลไม่สำเร็จ', 'เกิดข้อผิดพลาดระหว่างส่งข้อมูล กรุณาลองใหม่อีกครั้ง หรือแจ้งฝ่าย IT หากยังไม่สำเร็จ');
@@ -849,15 +852,6 @@ submitBtn.addEventListener('click', async () => {
     submitBtn.textContent = 'ส่งข้อมูล';
   }
 });
-
-function fileToBase64(file){
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
 
 function showStatus(type, title, msg){
   formScreen.classList.add('hide');
