@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BATA Store — ส่ง Payslip</title>
+<style>
+:root{
+  --bata-red:#E11D2E;
+  --bata-red-deep:#8F0E1F;
+  --ink:#15171C;
+  --ink-soft:#6B7280;
+  --ink-faint:#9CA3AF;
+  --paper:#F2F3F7;
+  --card:#FFFFFF;
+  --line:#ECEDF1;
+  --success:#0FA968;
+  --success-soft:#E7F8EF;
+  --danger:#E0263F;
+  --danger-soft:#FDEBED;
+  --radius-lg:28px;
+  --radius-md:18px;
+  --radius-sm:14px;
+  --shadow-card:0 12px 32px -8px rgba(21,23,28,.08), 0 2px 8px rgba(21,23,28,.04);
+  --shadow-float:0 20px 45px -12px rgba(225,29,46,.28);
+  --font-display:'Inter','Noto Sans Thai',sans-serif;
+  --font-body:'Inter','Noto Sans Thai',sans-serif;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  font-family:var(--font-body);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+.topband{
+  position:relative;
+  background:linear-gradient(160deg, var(--bata-red) 0%, var(--bata-red-deep) 100%);
+  padding:40px 20px 56px;
+  text-align:center;
+  color:#fff;
+  overflow:hidden;
+}
+.topband::before{
+  content:'';
+  position:absolute;
+  top:-90px; right:-70px;
+  width:240px; height:240px;
+  border-radius:50%;
+  background:rgba(255,255,255,.07);
+}
+.topband::after{
+  content:'';
+  position:absolute;
+  bottom:-110px; left:-60px;
+  width:200px; height:200px;
+  border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.brandRow{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+}
+.logoMark{
+  width:30px; height:30px;
+  border-radius:9px;
+  background:rgba(255,255,255,.16);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:14px; letter-spacing:.02em;
+}
+.logoWord{
+  font-weight:800;
+  font-size:19px;
+  letter-spacing:.04em;
+}
+.portal-name{
+  position:relative;
+  font-size:13px;
+  font-weight:500;
+  opacity:.78;
+  margin-top:6px;
+}
+.eyebrow{
+  position:relative;
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  opacity:.55;
+  margin:3px 0 0;
+  font-weight:600;
+}
+
+.storeBadgeWrap{
+  position:relative;
+  margin-top:30px;
+  display:flex;
+  justify-content:center;
+}
+.storeBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:#fff;
+  color:var(--bata-red);
+  border-radius:999px;
+  padding:13px 28px 13px 14px;
+  font-size:17px;
+  font-weight:800;
+  box-shadow:0 16px 36px -10px rgba(0,0,0,.30);
+}
+.storeBadge .pin{
+  width:28px; height:28px;
+  border-radius:50%;
+  background:var(--danger-soft);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+  flex-shrink:0;
+}
+
+.wrap{
+  max-width:480px;
+  margin:0 auto;
+  padding:0 16px 48px;
+  margin-top:-26px;
+  position:relative;
+}
+
+.card{
+  background:var(--card);
+  border:none;
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-card);
+  padding:22px 20px;
+  margin-bottom:14px;
+}
+.field{margin-bottom:18px;}
+.field:last-child{margin-bottom:0;}
+.qlabel{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:10px;
+  font-weight:700;
+  font-size:14px;
+  color:var(--ink);
+}
+.req{color:var(--bata-red);}
+
+input[type=text],
+input[type=date],
+select{
+  width:100%;
+  height:56px;
+  padding:0 16px;
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-sm);
+  font-size:17px;
+  font-weight:600;
+  transition:border-color .15s ease, box-shadow .15s ease;
+  font-family:var(--font-body);
+  background:#FAFAFB;
+  color:var(--ink);
+}
+select{
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1L7 7L13 1' stroke='%239CA3AF' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 18px center;
+  padding-right:42px;
+  font-weight:700;
+}
+select:disabled{background-color:#F4F4F6; color:var(--ink-faint); cursor:not-allowed;}
+input[type=text]::placeholder{color:var(--ink-faint); font-weight:500;}
+input:focus,
+select:focus{
+  outline:none;
+  border-color:var(--bata-red);
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(225,29,46,.10);
+}
+
+.upload-box{
+  border:1.5px dashed #D7D9E0;
+  border-radius:var(--radius-md);
+  background:#FAFAFB;
+  padding:38px 18px;
+  text-align:center;
+  cursor:pointer;
+  transition:border-color .15s ease, background .15s ease;
+}
+.upload-box:hover{border-color:var(--bata-red);}
+
+.channel-list{display:flex; flex-direction:column; gap:10px;}
+.channel{
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-sm);
+  padding:13px 14px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  cursor:pointer;
+  transition:border-color .15s ease, background .15s ease;
+  background:#FAFAFB;
+}
+.channel:active{transform:scale(.99);}
+.channel.selected{
+  border-color:var(--bata-red);
+  background:var(--danger-soft);
+}
+.channel input[type=radio]{
+  margin-top:3px;
+  width:19px; height:19px;
+  accent-color:var(--bata-red);
+  flex:0 0 auto;
+}
+.channel-text{display:flex; flex-direction:column; gap:2px;}
+.channel-name{font-size:14.5px; font-weight:700; color:var(--ink);}
+.channel-detail{font-size:12.5px; color:var(--ink-soft); font-family:'SF Mono','Roboto Mono',monospace;}
+.channel-tag{
+  display:inline-block;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:#fff;
+  background:var(--ink-faint);
+  border-radius:6px;
+  padding:2px 7px;
+  margin-top:3px;
+  width:fit-content;
+}
+.channel.selected .channel-tag{background:var(--bata-red);}
+
+#otherDetailWrap{margin:10px 0 0; display:none;}
+#otherDetailWrap.show{display:block;}
+.upload-box.has-file{background:var(--success-soft); border-color:var(--success); border-style:solid;}
+.upload-box.invalid{border-color:var(--danger);}
+.upload-icon{
+  width:52px; height:52px;
+  margin:0 auto 12px;
+  border-radius:50%;
+  background:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px;
+  box-shadow:0 6px 16px -4px rgba(21,23,28,.10);
+}
+.upload-text{font-size:15.5px; font-weight:700;}
+.upload-sub{margin-top:5px; font-size:12.5px; color:var(--ink-soft);}
+
+#fileInput{display:none;}
+#previewWrap{
+  margin-top:14px;
+  background:#FAFAFB;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  padding:12px;
+  display:none;
+  gap:12px;
+  align-items:center;
+}
+#previewWrap.show{display:flex;}
+#previewImg{
+  width:64px; height:64px;
+  object-fit:cover;
+  border-radius:12px;
+  box-shadow:0 4px 12px -2px rgba(21,23,28,.15);
+}
+#previewMeta{font-size:12.5px; color:var(--ink-soft); flex:1;}
+#previewMeta b{color:var(--ink); display:block; font-size:13px;}
+.remove-file{
+  font-size:12px; color:var(--bata-red); font-weight:700;
+  background:#fff; border:1px solid var(--line); border-radius:10px;
+  cursor:pointer; padding:8px 12px;
+}
+
+button#submitBtn{
+  width:100%;
+  height:60px;
+  border:none;
+  border-radius:var(--radius-md);
+  background:linear-gradient(135deg, var(--bata-red) 0%, var(--bata-red-deep) 100%);
+  color:#fff;
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:.01em;
+  box-shadow:var(--shadow-float);
+  transition:transform .12s ease, box-shadow .12s ease;
+  cursor:pointer;
+  margin-top:6px;
+}
+button#submitBtn:hover{transform:translateY(-2px);}
+button#submitBtn:active{transform:translateY(0) scale(.99);}
+button#submitBtn:disabled{
+  background:#D7D9E0; box-shadow:none; cursor:not-allowed; transform:none;
+}
+
+.footnote{
+  text-align:center;
+  color:var(--ink-faint);
+  font-size:12px;
+  margin-top:16px;
+  line-height:1.5;
+}
+
+#statusScreen{display:none; text-align:center; padding:60px 24px;}
+#statusScreen.show{display:block;}
+.status-icon{
+  width:80px; height:80px;
+  margin:0 auto 18px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px;
+}
+.status-icon.ok{background:var(--success-soft);}
+.status-icon.warn{background:#FFF4E0;}
+.status-icon.err{background:var(--danger-soft);}
+.status-title{font-size:21px; font-weight:800; margin-bottom:8px;}
+.status-msg{color:var(--ink-soft); line-height:1.7; font-size:14px;}
+.btn-secondary{
+  display:inline-block;
+  margin-top:22px;
+  background:#fff;
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  padding:13px 26px;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  color:var(--ink);
+  box-shadow:var(--shadow-card);
+}
+
+.err-msg{
+  color:var(--danger);
+  margin-top:7px;
+  font-size:12.5px;
+  font-weight:600;
+  display:none;
+}
+.err-msg.show{display:block;}
+.invalid{border-color:var(--danger) !important;}
+
+#formScreen.hide{display:none;}
+
+.spinner{
+  display:inline-block; width:16px; height:16px;
+  border:2px solid rgba(255,255,255,0.5); border-top-color:#fff;
+  border-radius:50%; animation:spin .7s linear infinite;
+  vertical-align:middle; margin-right:8px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div id="mainApp" style="display:block;">
+
+  <div class="topband">
+    <div class="brandRow">
+      <div class="logoMark">B</div>
+      <div class="logoWord">BATA</div>
+    </div>
+    <div class="portal-name">Store Operations</div>
+    <p class="eyebrow">Daily Deposit Submission Portal</p>
+
+    <div class="storeBadgeWrap">
+      <div class="storeBadge" id="storeBadge"><span class="pin">🏬</span>เลือกสาขา</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <form id="formScreen">
+      <div class="card">
+        <div class="field">
+          <label class="qlabel">เขต <span class="req">*</span></label>
+          <select id="zoneCode">
+            <option value="" disabled selected>— เลือกรหัสเขต —</option>
+          </select>
+          <div class="err-msg" id="err-zoneCode">กรุณาเลือกรหัสเขต</div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label class="qlabel">รหัสสาขา <span class="req">*</span></label>
+          <select id="storeCode" disabled>
+            <option value="" disabled selected>— เลือกเขตก่อน —</option>
+          </select>
+          <div class="err-msg" id="err-storeCode">กรุณาเลือกรหัสสาขา</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <label class="qlabel">วันที่นำฝาก <span class="req">*</span></label>
+          <input type="date" id="depositDate">
+          <div class="err-msg" id="err-depositDate">กรุณาเลือกวันที่นำฝาก</div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label class="qlabel">ยอดขายวันที่ <span class="req">*</span></label>
+          <input type="date" id="salesDate">
+          <div class="err-msg" id="err-salesDate">กรุณาเลือกวันที่ของยอดขาย</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <label class="qlabel">ยอดฝากธนาคาร (บาท) <span class="req">*</span></label>
+          <input type="text" id="amount" inputmode="decimal" placeholder="0.00">
+          <div class="err-msg" id="err-amount">กรุณากรอกยอดฝากเป็นตัวเลข</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field" style="margin-bottom:0;">
+          <label class="qlabel">ช่องทางที่ทำการฝากเงิน <span class="req">*</span></label>
+          <div class="channel-list" id="channelList"></div>
+
+          <div id="otherDetailWrap">
+            <input type="text" id="otherDetail" placeholder="ระบุช่องทาง/รายละเอียดอื่น ๆ">
+          </div>
+
+          <div class="err-msg" id="err-channel">กรุณาเลือกช่องทางที่ฝากเงิน</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field" style="margin-bottom:0;">
+          <label class="qlabel">ถ่ายรูป Payslip <span class="req">*</span></label>
+          <div class="upload-box" id="uploadBox">
+            <span class="upload-icon">📷</span>
+            <div class="upload-text">แตะเพื่อถ่ายรูปสลิป</div>
+            <div class="upload-sub">หรือเลือกรูปจากคลังภาพ</div>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" capture="environment">
+          <div id="previewWrap">
+            <img id="previewImg" src="" alt="preview">
+            <div id="previewMeta"></div>
+            <button type="button" class="remove-file" id="removeFile">ลบ</button>
+          </div>
+          <div class="err-msg" id="err-file">กรุณาถ่ายรูปสลิป</div>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn">ส่งข้อมูล</button>
+      <p class="footnote">ข้อมูลจะถูกบันทึกเป็นหลักฐานการนำฝากของสาขาทันที</p>
+    </form>
+
+    <div id="statusScreen"></div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.39.7/dist/umd/supabase.min.js"></script>
+<script>
+/* ============== CONFIG ============== */
+// แทนค่าด้วย Supabase Project URL และ anon public key ของคุณ
+// (ดูได้จาก Supabase Dashboard > Project Settings > API)
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+
+// เวลา cutoff ที่ถือว่า "ส่งหลังเวลา" (ใช้เวลาไทย 24 ชม. รูปแบบ HH:MM)
+const LATE_CUTOFF_TIME = "11:00";
+
+// แผนที่ "รหัสเขต -> รายชื่อรหัสสาขาในเขตนั้น" ใช้กรองตัวเลือกสาขาตามเขตที่เลือก
+const ZONE_BRANCHES = {
+  '511': ['51002', '51426', '51428', '51436', '51438', '51450', '51508', '51510', '51511', '51514', '51518', '51521', '51524', '51530', '51534', '51542', '51546', '51549', '51550', '51905', '51906', '51944', '51960', '51968'],
+  '512': ['51403', '51404', '51407', '51409', '51415', '51416', '51418', '51419', '51425', '51430', '51446', '51498', '51520', '51533', '51535', '51540', '51903', '51938', '51939', '51946', '51948', '51965'],
+  '513': ['51201', '51410', '51427', '51431', '51435', '51439', '51512', '51545', '51548', '53947', '54004', '54005', '54007', '54016', '54021', '54023', '54026', '54029', '54030', '54046', '54048', '71205'],
+  '520': ['52002', '52005', '52007', '52008', '52010', '52017', '52018', '52019', '52023', '52025', '52026', '52031', '52032', '52033', '52036', '52037', '52040', '52042', '52048', '52098', '52901', '52902', '52942', '52943', '72007', '72011'],
+  '530': ['52043', '53002', '53006', '53011', '53012', '53021', '53022', '53023', '53026', '53029', '53030', '53032', '53035', '53036', '53037', '53038', '53046', '53048', '53049', '53905', '53955', '53958', '73005'],
+  '540': ['51091', '51434', '51506', '53003', '53008', '53009', '53010', '53018', '53020', '53024', '53031', '53040', '53041', '53043', '53045', '53047', '53948', '53953', '54013', '54019', '54038', '54039', '54044', '54045', '73015'],
+  '550': ['51132', '51433', '51517', '51532', '52003', '54001', '54011', '54012', '54014', '54017', '54018', '54022', '54024', '54027', '54032', '54035', '54040', '54042', '54094', '54095', '54945', '54947', '54960', '55001', '55044', '74014', '74023'],
+  '560': ['55005', '55008', '55009', '55010', '55012', '55018', '55019', '55023', '55024', '55030', '55031', '55033', '55035', '55036', '55038', '55040', '55041', '55042', '55043', '55046', '55049', '55901', '55902', '55906', '55949', '55950', '55951', '75011', '75012', '75014'],
+};
+
+// ชื่อสาขา (ถ้ารหัสไม่มีในรายการนี้ จะแสดงแค่รหัสสาขาเปล่าๆ)
+const STORE_NAMES = {
+  '51002': 'เซ็นทรัลวิจเลจ',
+  '51091': 'เทอร์มินอล 21 โคราชแฟร์',
+  '51132': 'บิ๊กซี ลพบุรี',
+  '51403': 'ฟิวเจอร์พาร์ค',
+  '51404': 'แฟชั่นไอส์แลนด์',
+  '51407': 'มอลล์ 6',
+  '51409': 'ไอทีสแควร์ หลักสี่',
+  '51410': 'เซนทรัลบางนา',
+  '51415': 'เซ็นทรัล รามอินทรา',
+  '51416': 'มอลล์ 8',
+  '51418': 'โลตัส รังสิต คลอง 7',
+  '51419': 'โลตัส นวนคร',
+  '51425': 'เซ็นทรัล แจ้งวัฒนะ',
+  '51426': 'บิ๊กซี ราชดำริ',
+  '51427': 'พาราไดซ์พาร์ค',
+  '51428': 'มาบุญครอง 2',
+  '51430': 'เซ็นทรัล พระราม 9',
+  '51431': 'เมกาบางนา',
+  '51433': 'เซ็นทรัล ศาลายา',
+  '51434': 'สุขุมวิท 15',
+  '51435': 'โฮมโปร สุวรรณภูมิ',
+  '51436': 'เซ็นทรัล เวสท์เกต',
+  '51438': 'เซ็นทรัลปิ่นเกล้า',
+  '51439': 'โรบินสัน ลาดกระบัง',
+  '51446': 'โลตัส รังสิตคลอง 4',
+  '51450': 'เซ็นทรัลเวสต์วิลล์',
+  '51498': 'มีนบุรีเอาท์เล็ท',
+  '51506': 'อิมพีเรียลเวิลด์ สำโรง',
+  '51508': 'ท่าพระจันทร์',
+  '51510': 'เยาวราช',
+  '51511': 'มอลล์ 7',
+  '51512': 'ซีคอนสแควร์',
+  '51514': 'บิ๊กซี พระราม 4',
+  '51517': 'โลตัส ศาลายา',
+  '51518': 'เซ็นทรัล พระราม 3',
+  '51520': 'โรบินสัน ศรีสมาน',
+  '51521': 'โลตัส บางประกอก',
+  '51524': 'โลตัส จรัญสนิทวงศ์',
+  '51530': 'บิ๊กซี เพชรเกษม 2',
+  '51532': 'บิ๊กซี อ้อมใหญ่',
+  '51533': 'โลตัส ลำลูกกา',
+  '51534': 'บิ๊กซี บางปะกอก',
+  '51535': 'บิ๊กซี สุวินทวงศ์',
+  '51540': 'บิ๊กซี รามอินทรา',
+  '51542': 'สุพรีม สามเสน',
+  '51545': 'โรบินสัน สมุทรปราการ',
+  '51546': 'โลตัส บางใหญ่',
+  '51548': 'บิ๊กซีบางพลี',
+  '51549': 'บิ๊กซี บางใหญ่',
+  '51550': 'บิ๊กซี สุขสวัสดิ์',
+  '51903': 'อิมพีเรียล ลาดพร้าว',
+  '51905': 'เซ็นทรัล พระราม 2',
+  '51906': 'ซีคอน บางแค',
+  '51938': 'โลตัส ลาดพร้าว',
+  '51939': 'โลตัส แจ้งวัฒนะ',
+  '51944': 'มาบุญครอง',
+  '51946': 'บิ๊กซี รังสิต',
+  '51948': 'โลตัส หลักสี่',
+  '51960': 'บิ๊กซี พระราม 2',
+  '51965': 'โลตัส บางกะปิ',
+  '51968': 'โลตัส พระราม 4',
+  '52002': 'เซ็นทรัล เชียงราย',
+  '52003': 'อยุธยาพาร์ค',
+  '52005': 'บิ๊กซี เชียงใหม่',
+  '52007': 'โลตัส เชียงใหม่คำเที่ยง',
+  '52008': 'เซ็นทรัล แอร์พอร์ต',
+  '52010': 'เซ็นทรัล พิษณุโลก',
+  '52017': 'โลตัส แม่สอด',
+  '52018': 'โรบินสัน กำแพงเพชร',
+  '52019': 'โลตัสพะเยา',
+  '52023': 'แพร่',
+  '52025': 'เมญ่า  เชียงใหม่',
+  '52026': 'เซ็นทรัล นครสวรรค์',
+  '52031': 'เซ็นทรัล ลำปาง',
+  '52032': 'โลตัส พิษณุโลก 2',
+  '52033': 'แฮปปี้พลาซ่า',
+  '52036': 'โลตัส รวมโชค',
+  '52037': 'เซ็นทรัล เชียงใหม่',
+  '52040': 'บิ๊กซี พิษณุโลก',
+  '52042': 'อุตรดิตถ์',
+  '52043': 'บิ๊กซี เพชรบูรณ์',
+  '52048': 'โลตัส น่าน',
+  '52098': 'เชียงใหม่ เอาท์เล็ท',
+  '52901': 'บิ๊กซี กำแพงเพชร',
+  '52902': 'บิ๊กซี เชียงใหม่ 2',
+  '52942': 'บิ๊กซี เชียงราย',
+  '52943': 'บิ๊กซี ลำปาง',
+  '53002': 'บิ๊กซี อุดร',
+  '53003': 'ทวีกิจ บุรีรัมย์ 2',
+  '53006': 'โลตัส ท่าบ่อ หนองคาย',
+  '53008': 'โลตัส เดชอุดม',
+  '53009': 'มอลล์ โคราช',
+  '53010': 'สุรินทร์พลาซ่า',
+  '53011': 'กาฬสินธุ์พลาซ่า',
+  '53012': 'เซ็นทรัล อุดร',
+  '53018': 'บิ๊กซี วารินชำราบ',
+  '53020': 'บิ๊กซี ศรีสะเกษ',
+  '53021': 'โลตัส อุดร',
+  '53022': 'เซ็นทรัล ขอนแก่น',
+  '53023': 'ท็อปส์ พลาซ่า พล',
+  '53024': 'บิ๊กซี ปากช่อง',
+  '53026': 'แฟรี่ขอนแก่น',
+  '53029': 'เสริมไทย คอมเพล็กซ์',
+  '53030': 'บิ๊กซี ร้อยเอ็ด',
+  '53031': 'เซ็นทรัล อุบล',
+  '53032': 'โรบินสัน สกลนคร',
+  '53035': 'โรบินสัน ร้อยเอ็ด',
+  '53036': 'โรบินสัน มุกดาหาร',
+  '53037': 'อัศวรรณ 2 หนองคาย',
+  '53038': 'โลตัส ขอนแก่น',
+  '53040': 'บิ๊กชี โคราช 2',
+  '53041': 'เซ็นทรัล โคราช',
+  '53043': 'บิ๊กชี อำนาจเจริญ',
+  '53045': 'โลตัส นางรอง',
+  '53046': 'โลตัส ขอนแก่น 2',
+  '53047': 'โลตัส อุบล',
+  '53048': 'โลตัส ชุมแพ',
+  '53049': 'โรบินสัน ชัยภูมิ',
+  '53905': 'บิ๊กซี เลย',
+  '53947': 'บิ๊กซี ระยอง',
+  '53948': 'บิ๊กซี โคราช',
+  '53953': 'บิ๊กซี อุบล',
+  '53955': 'โลตัส หนองคาย',
+  '53958': 'บิ๊กซี ขอนแก่น',
+  '54001': 'เพชรบุรี',
+  '54004': 'บิ๊กซี พัทยา',
+  '54005': 'เซ็นทรัลศรีราชา',
+  '54007': 'โลตัส พัทยาเหนือ',
+  '54011': 'เซ็นทรัล อยุธยา',
+  '54012': 'บิ๊กซี เพชรบุรี',
+  '54013': 'บิ๊กซี ฉะเชิงเทรา 2',
+  '54014': 'โลตัส บ้านโป่ง',
+  '54016': 'บิ๊กซี ชลบุรี 2',
+  '54017': 'โรบินสัน กาญจนบุรี',
+  '54018': 'บิ๊กซี อยุธยา',
+  '54019': 'บิ๊กซี สระแก้ว',
+  '54021': 'เซ็นทรัล พัทยาบีช',
+  '54022': 'เซ็นทรัล มหาชัย',
+  '54023': 'เซ็นทรัล ชลบุรี',
+  '54026': 'บิ๊กซี พัทยา 2',
+  '54027': 'บิ๊กซี มหาชัย',
+  '54029': 'ฮาเบอร์มอลล์',
+  '54030': 'บิ๊กซี ชลบุรี',
+  '54032': 'สุขอนันต์ปาร์ค',
+  '54035': 'โรบินสัน สระบุรี',
+  '54038': 'บิ๊กซี ศรีมหาโพธิ์',
+  '54039': 'โลตัส นครนายก',
+  '54040': 'โรบินสัน สุพรรณบุรี',
+  '54042': 'นครปฐม',
+  '54044': 'โรบินสัน ฉะเชิงเทรา',
+  '54045': 'โรบินสัน ปราจีนบุรี',
+  '54046': 'เซ็นทรัล ระยอง',
+  '54048': 'เซ็นทรัล มารีนา พัทยา',
+  '54094': 'เซ็นทรัลนครปฐม',
+  '54095': 'โลตัสสระบุรี',
+  '54945': 'โลตัส สุพรรณบุรี',
+  '54960': 'โลตัส ราชบุรี',
+  '55001': 'หัวหินมาร์เก็ต',
+  '55005': 'โลตัส สุราษฎร์',
+  '55008': 'จังซีลอน',
+  '55009': 'บิ๊กซี หาดใหญ 2',
+  '55010': 'โลตัส กระบี่',
+  '55012': 'เซ็นทรัล ภูเก็ต',
+  '55018': 'โลตัส พัทลุง',
+  '55019': 'โลตัส สมุย ละไม',
+  '55023': 'ปัตตานี',
+  '55024': 'โลตัส หาดใหญ่ 2',
+  '55030': 'เซ็นทรัล สุราษฎร์',
+  '55031': 'บิ๊กซี ภูเก็ต',
+  '55033': 'โลตัสเวียงสระ',
+  '55035': 'เซ็นทรัล หาดใหญ่',
+  '55036': 'บิ๊กซี ตรัง',
+  '55038': 'เซ็นทรัล สมุย',
+  '55040': 'โลตัส จะนะ',
+  '55041': 'โลตัส หาดใหญ่ 1',
+  '55042': 'โลตัสสงขลา',
+  '55043': 'เซ็นทรัล นครศรีธรรมราช',
+  '55044': 'บูลพอร์ต',
+  '55046': 'บิ๊กซี พังงา',
+  '55049': 'Lotus Yala',
+  '55901': 'โรบินสัน ตรัง',
+  '55902': 'บิ๊กซี นครศรี',
+  '55906': 'บิ๊กซี สตูล',
+  '55949': 'บิ๊กซี สุราษฎร์',
+  '55950': 'โลตัส ภูเก็ต',
+  '55951': 'บิ๊กซี หาดใหญ่',
+  '71205': 'อินฟินิท ปากน้ำ',
+  '72007': 'ชัยพงษ์ พิจิตร',
+  '72011': 'เจริญภัณฑ์ พะเยา',
+  '73005': 'ร้อยเอ็ดพลาซ่า',
+  '73015': 'ซุ่นเฮง ศรีสะเกษ',
+  '74023': 'กนกกาญจน์',
+  '75011': 'สิริบรรณ ตรัง',
+  '75012': 'โวค กระบี่',
+  '75014': 'โอเชียน ชุมพร',
+};
+
+// ช่องทางที่ทำการฝากเงิน 7 แบบ
+const CHANNELS = [
+  { id:'krungsri', name:'ธ.กรุงศรี (Saving)',   detail:'A/C: 333-171627-7', tag:'ธนาคาร' },
+  { id:'scb',      name:'ธ.ไทยพาณิชย์ (Saving)', detail:'A/C: 347-301394-9', tag:'ธนาคาร' },
+  { id:'bbl',      name:'ธ.กรุงเทพ (Current)',   detail:'A/C: 106-315632-5', tag:'ธนาคาร' },
+  { id:'7-11',     name:'7-Eleven',               detail:'จุดรับฝากเงินสะดวกซื้อ', tag:'ร้านสะดวกซื้อ' },
+  { id:'lotus',    name:'Lotus',                  detail:'จุดรับฝากเงินไฮเปอร์มาร์เก็ต', tag:'ห้างค้าปลีก' },
+  { id:'bigc',     name:'Big C',                  detail:'จุดรับฝากเงินไฮเปอร์มาร์เก็ต', tag:'ห้างค้าปลีก' },
+  { id:'other',    name:'อื่น ๆ',                  detail:'ระบุช่องทางเพิ่มเติม',          tag:'อื่น ๆ' },
+];
+
+/* ============== INIT ============== */
+let supabase = null;
+if (SUPABASE_URL.indexOf('PASTE_YOUR') !== 0 && window.supabase) {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+/* ============== ZONE / STORE SELECT ============== */
+const zoneSelect = document.getElementById('zoneCode');
+const storeSelect = document.getElementById('storeCode');
+const storeBadge = document.getElementById('storeBadge');
+
+Object.keys(ZONE_BRANCHES).forEach(zone => {
+  const opt = document.createElement('option');
+  opt.value = zone;
+  opt.textContent = `เขต ${zone} (${ZONE_BRANCHES[zone].length} สาขา)`;
+  zoneSelect.appendChild(opt);
+});
+
+zoneSelect.addEventListener('change', () => {
+  const zone = zoneSelect.value;
+  clearError('zoneCode');
+
+  storeSelect.innerHTML = '';
+  clearError('storeCode');
+  storeBadge.innerHTML = '<span class="pin">🏬</span>เลือกสาขา';
+
+  if (!zone || !ZONE_BRANCHES[zone]) {
+    storeSelect.disabled = true;
+    const placeholder = document.createElement('option');
+    placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
+    placeholder.textContent = '— เลือกเขตก่อน —';
+    storeSelect.appendChild(placeholder);
+    return;
+  }
+
+  const placeholder = document.createElement('option');
+  placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
+  placeholder.textContent = '— เลือกรหัสสาขา —';
+  storeSelect.appendChild(placeholder);
+
+  ZONE_BRANCHES[zone].forEach(store => {
+    const opt = document.createElement('option');
+    opt.value = store;
+    opt.textContent = STORE_NAMES[store] ? `${store} - ${STORE_NAMES[store]}` : store;
+    storeSelect.appendChild(opt);
+  });
+
+  storeSelect.disabled = false;
+});
+
+storeSelect.addEventListener('change', () => {
+  clearError('storeCode');
+  storeBadge.innerHTML = storeSelect.value ? ('<span class="pin">🏬</span>สาขา ' + storeSelect.value) : '<span class="pin">🏬</span>เลือกสาขา';
+});
+
+/* ============== CHANNEL SELECT ============== */
+const channelListEl = document.getElementById('channelList');
+CHANNELS.forEach(ch => {
+  const wrap = document.createElement('label');
+  wrap.className = 'channel';
+  wrap.id = 'channel-' + ch.id;
+  wrap.innerHTML = `
+    <input type="radio" name="channel" value="${ch.id}" data-name="${ch.name}" data-detail="${ch.detail}">
+    <div class="channel-text">
+      <span class="channel-name">${ch.name}</span>
+      <span class="channel-detail">${ch.detail}</span>
+      <span class="channel-tag">${ch.tag}</span>
+    </div>
+  `;
+  channelListEl.appendChild(wrap);
+});
+
+const channelRadios = document.querySelectorAll('input[name=channel]');
+const otherDetailWrap = document.getElementById('otherDetailWrap');
+const otherDetailInput = document.getElementById('otherDetail');
+
+channelRadios.forEach(r => {
+  r.addEventListener('change', () => {
+    document.querySelectorAll('.channel').forEach(c => c.classList.remove('selected'));
+    r.closest('.channel').classList.add('selected');
+    clearError('channel');
+
+    if (r.value === 'other') {
+      otherDetailWrap.classList.add('show');
+    } else {
+      otherDetailWrap.classList.remove('show');
+    }
+  });
+});
+
+/* ============== FILE UPLOAD ============== */
+const uploadBox = document.getElementById('uploadBox');
+const fileInput = document.getElementById('fileInput');
+const previewWrap = document.getElementById('previewWrap');
+const previewImg = document.getElementById('previewImg');
+const previewMeta = document.getElementById('previewMeta');
+const removeFileBtn = document.getElementById('removeFile');
+
+let selectedFile = null;
+
+uploadBox.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (file.size > 10 * 1024 * 1024) {
+    showError('file', 'ไฟล์มีขนาดเกิน 10MB กรุณาเลือกไฟล์ใหม่');
+    return;
+  }
+
+  selectedFile = file;
+  clearError('file');
+
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    previewImg.src = evt.target.result;
+    previewMeta.innerHTML = `<b>${file.name}</b>${(file.size/1024).toFixed(0)} KB`;
+    previewWrap.classList.add('show');
+    uploadBox.classList.add('has-file');
+    uploadBox.classList.remove('invalid');
+    uploadBox.querySelector('.upload-text').textContent = 'เลือกรูปแล้ว — แตะเพื่อเปลี่ยนรูป';
+  };
+  reader.readAsDataURL(file);
+});
+
+removeFileBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  selectedFile = null;
+  fileInput.value = '';
+  previewWrap.classList.remove('show');
+  uploadBox.classList.remove('has-file');
+  uploadBox.querySelector('.upload-text').textContent = 'แตะเพื่อถ่ายรูปสลิป';
+});
+
+/* ============== VALIDATION ============== */
+function showError(field, msg){
+  const el = document.getElementById('err-' + field);
+  if (msg) el.textContent = msg;
+  el.classList.add('show');
+  if (field === 'file') uploadBox.classList.add('invalid');
+  else document.getElementById(field)?.classList.add('invalid');
+}
+function clearError(field){
+  document.getElementById('err-' + field)?.classList.remove('show');
+  if (field === 'file') uploadBox.classList.remove('invalid');
+  else document.getElementById(field)?.classList.remove('invalid');
+}
+
+document.getElementById('amount').addEventListener('input', () => clearError('amount'));
+document.getElementById('depositDate').addEventListener('change', () => clearError('depositDate'));
+document.getElementById('salesDate').addEventListener('change', () => clearError('salesDate'));
+
+/* ============== SUBMIT ============== */
+const form = document.getElementById('formScreen');
+const submitBtn = document.getElementById('submitBtn');
+const statusScreen = document.getElementById('statusScreen');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  let valid = true;
+
+  const zoneCode = zoneSelect.value;
+  const storeCode = storeSelect.value;
+  const depositDate = document.getElementById('depositDate').value;
+  const salesDate = document.getElementById('salesDate').value;
+  const amount = document.getElementById('amount').value.trim().replace(/,/g, '');
+  const selectedChannelRadio = document.querySelector('input[name=channel]:checked');
+
+  if (!zoneCode) { showError('zoneCode'); valid = false; } else clearError('zoneCode');
+  if (!storeCode) { showError('storeCode'); valid = false; } else clearError('storeCode');
+  if (!depositDate) { showError('depositDate'); valid = false; } else clearError('depositDate');
+  if (!salesDate) { showError('salesDate'); valid = false; } else clearError('salesDate');
+  if (!amount || isNaN(amount) || Number(amount) <= 0) { showError('amount'); valid = false; } else clearError('amount');
+  if (!selectedChannelRadio) { showError('channel'); valid = false; } else clearError('channel');
+  if (!selectedFile) { showError('file'); valid = false; } else clearError('file');
+
+  if (!valid) {
+    document.querySelector('.invalid, .err-msg.show')?.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  let channelName = selectedChannelRadio.dataset.name;
+  let channelDetail = selectedChannelRadio.dataset.detail;
+  if (selectedChannelRadio.value === 'other') {
+    channelDetail = otherDetailInput.value.trim() || '(ไม่ระบุรายละเอียด)';
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner"></span>กำลังส่งข้อมูล...';
+
+  try {
+    if (!supabase) throw new Error('NO_BACKEND');
+
+    const today = new Date();
+    const todayStr = today.toISOString().slice(0,10); // YYYY-MM-DD
+
+    // เช็คว่าส่งหลังเวลาที่กำหนดหรือไม่
+    const [cutH, cutM] = LATE_CUTOFF_TIME.split(':').map(Number);
+    const cutoff = new Date(today);
+    cutoff.setHours(cutH, cutM, 0, 0);
+    const isLate = today > cutoff;
+
+    // 1) อัปโหลดรูปเข้า Supabase Storage
+    const fileExt = selectedFile.name.split('.').pop();
+    const fileName = `${storeCode}_${todayStr}_${Date.now()}.${fileExt}`;
+    const filePath = `${storeCode}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('payin-slips')
+      .upload(filePath, selectedFile, { contentType: selectedFile.type });
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = supabase.storage
+      .from('payin-slips')
+      .getPublicUrl(filePath);
+
+    // 2) insert แถวข้อมูลลงตาราง payin_records
+    const { error: insertError } = await supabase
+      .from('payin_records')
+      .insert({
+        store_code: storeCode,
+        zone_code: zoneCode,
+        deposit_date: depositDate,
+        sales_date: salesDate,
+        amount: Number(amount),
+        channel: channelName,
+        channel_detail: channelDetail,
+        slip_image_path: filePath,
+        slip_image_url: urlData.publicUrl,
+        submitted_late: isLate,
+      });
+
+    if (insertError) throw insertError;
+
+    showStatus('success', storeCode);
+
+  } catch (err) {
+    if (err.message === 'NO_BACKEND') {
+      showStatus('noBackend');
+    } else {
+      showStatus('error', err.message || 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ');
+    }
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'ส่งข้อมูล';
+  }
+});
+
+function showStatus(type, detail){
+  form.classList.add('hide');
+  statusScreen.classList.add('show');
+
+  if (type === 'success') {
+    statusScreen.innerHTML = `
+      <div class="status-icon ok">✅</div>
+      <h2 class="status-title">ส่งข้อมูลสำเร็จ</h2>
+      <p class="status-msg">บันทึกหลักฐานการนำฝากของสาขา ${detail} เรียบร้อยแล้ว</p>
+      <button class="btn-secondary" onclick="location.reload()">ส่งรายการใหม่</button>
+    `;
+  } else if (type === 'noBackend') {
+    statusScreen.innerHTML = `
+      <div class="status-icon warn">⚙️</div>
+      <h2 class="status-title">ยังไม่ได้เชื่อมต่อระบบหลังบ้าน</h2>
+      <p class="status-msg">กรุณาตั้งค่า Supabase URL และ anon key ในไฟล์นี้ก่อนใช้งานจริง</p>
+      <button class="btn-secondary" onclick="location.reload()">กลับไปหน้าฟอร์ม</button>
+    `;
+  } else {
+    statusScreen.innerHTML = `
+      <div class="status-icon err">⚠️</div>
+      <h2 class="status-title">ส่งข้อมูลไม่สำเร็จ</h2>
+      <p class="status-msg">เกิดข้อผิดพลาด: ${detail}<br>กรุณาลองใหม่ หรือติดต่อสำนักงาน</p>
+      <button class="btn-secondary" onclick="location.reload()">ลองอีกครั้ง</button>
+    `;
+  }
+}
+</script>
+
+</body>
+</html>

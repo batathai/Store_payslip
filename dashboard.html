@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BATA Store Dashboard</title>
+<style>
+  :root{
+    --bata-red:#E11D2E;
+    --bata-red-dark:#8F0E1F;
+    --ink:#15171C;
+    --ink-soft:#6B7280;
+    --ink-faint:#9CA3AF;
+    --paper:#F2F3F7;
+    --card:#FFFFFF;
+    --line:#ECEDF1;
+    --sidebar-bg:#15171C;
+    --ok:#0FA968;
+    --ok-bg:#E7F8EF;
+    --warn:#D97706;
+    --warn-bg:#FEF3DD;
+    --err:#E0263F;
+    --err-bg:#FDEBED;
+    --purple:#7C5CFC;
+    --purple-bg:#EFEAFE;
+    --blue:#2F7DE1;
+    --blue-bg:#E8F1FD;
+    --radius-lg:24px;
+    --radius-md:16px;
+    --shadow-card:0 12px 32px -8px rgba(21,23,28,.08), 0 2px 8px rgba(21,23,28,.04);
+    --font-display:'Inter','Noto Sans Thai',sans-serif;
+    --font-body:'Inter','Noto Sans Thai','Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--font-body); -webkit-font-smoothing:antialiased;
+  }
+
+  .layout{display:flex; min-height:100vh;}
+
+  .sidebar{
+    width:230px; flex:0 0 230px;
+    background:var(--sidebar-bg); color:#fff;
+    display:flex; flex-direction:column;
+    position:sticky; top:0; height:100vh;
+  }
+  .sidebar-brand{
+    display:flex; align-items:center; gap:10px;
+    padding:22px 20px; border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .sidebar-logo{
+    width:30px; height:30px; border-radius:9px;
+    background:var(--bata-red); display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:14px;
+  }
+  .sidebar-word{font-weight:800; font-size:18px; letter-spacing:.03em;}
+
+  .sidebar-nav{flex:1; padding:14px 12px; overflow-y:auto;}
+  .nav-item{
+    display:flex; align-items:center; gap:11px;
+    padding:11px 14px; border-radius:10px;
+    color:rgba(255,255,255,.65); font-size:13.5px; font-weight:600;
+    cursor:pointer; margin-bottom:2px; transition:background .12s ease, color .12s ease;
+    border:none; background:none; width:100%; text-align:left; font-family:var(--font-body);
+  }
+  .nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .nav-item.active{background:var(--bata-red); color:#fff;}
+  .nav-item .nav-icon{width:17px; text-align:center; flex:0 0 auto; font-size:14px;}
+  .nav-item .nav-count{
+    margin-left:auto; font-size:11px; font-weight:700;
+    background:rgba(255,255,255,.12); border-radius:6px; padding:1px 7px;
+  }
+  .nav-item.active .nav-count{background:rgba(255,255,255,.22);}
+
+  .sidebar-foot{
+    padding:16px 20px; border-top:1px solid rgba(255,255,255,.08);
+    display:flex; align-items:center; gap:10px;
+  }
+  .sidebar-avatar{
+    width:32px; height:32px; border-radius:50%;
+    background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; flex:0 0 auto;
+  }
+  .sidebar-foot-text p{margin:0; line-height:1.3;}
+  .sidebar-foot-name{font-size:12.5px; font-weight:700;}
+  .sidebar-foot-sub{font-size:11px; color:rgba(255,255,255,.5);}
+
+  .main{flex:1; min-width:0; padding:24px 28px 60px;}
+
+  .page-head{
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:14px; margin-bottom:22px;
+  }
+  .page-title{font-size:21px; font-weight:800; margin:0;}
+  .page-sub{font-size:12.5px; color:var(--ink-soft); margin:3px 0 0;}
+
+  .head-controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  select, input[type=date]{
+    padding:9px 12px; font-size:13px; border:1.5px solid var(--line);
+    border-radius:10px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600;
+  }
+  select:focus, input:focus{outline:none; border-color:var(--bata-red);}
+
+  .metrics{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));
+    gap:14px; margin-bottom:24px;
+  }
+  .metric{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card);
+    padding:16px 16px; cursor:pointer; transition:border-color .15s ease, transform .05s ease;
+  }
+  .metric:hover{border-color:var(--ink-faint);}
+  .metric:active{transform:scale(0.98);}
+  .metric.active{border-color:var(--bata-red);}
+  .metric-top{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+  .metric-icon{
+    width:30px; height:30px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center; font-size:14px; flex:0 0 auto;
+  }
+  .metric-icon.blue{background:var(--blue-bg); color:var(--blue);}
+  .metric-icon.ok{background:var(--ok-bg); color:var(--ok);}
+  .metric-icon.warn{background:var(--warn-bg); color:var(--warn);}
+  .metric-icon.purple{background:var(--purple-bg); color:var(--purple);}
+  .metric-icon.err{background:var(--err-bg); color:var(--err);}
+  .metric-label{font-size:11px; color:var(--ink-soft); font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
+  .metric-value{font-size:26px; font-weight:800; line-height:1;}
+  .metric-pct{font-size:11.5px; font-weight:700; margin-top:4px;}
+  .metric-pct.blue{color:var(--blue);}
+  .metric-pct.ok{color:var(--ok);}
+  .metric-pct.warn{color:var(--warn);}
+  .metric-pct.purple{color:var(--purple);}
+  .metric-pct.err{color:var(--err);}
+
+  .section-title{font-size:14.5px; font-weight:800; margin:0 0 14px;}
+  .section-head{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
+  .section-head .section-title{margin:0;}
+  .section-link{font-size:12.5px; font-weight:700; color:var(--bata-red); text-decoration:none; cursor:pointer; border:none; background:none; font-family:var(--font-body);}
+
+  .range-toggle{display:flex; gap:4px; background:#F4F5F7; border:1px solid var(--line); border-radius:9px; padding:3px;}
+  .range-toggle button{
+    border:none; background:none; padding:6px 14px; font-size:12.5px; font-weight:700;
+    color:var(--ink-soft); border-radius:7px; cursor:pointer; font-family:var(--font-body);
+  }
+  .range-toggle button.active{background:var(--bata-red); color:#fff;}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card);
+    padding:18px 18px;
+  }
+
+  .grid-2{display:grid; grid-template-columns:1.5fr 1fr; gap:16px; margin-bottom:24px; align-items:start;}
+  .grid-2b{display:grid; grid-template-columns:1.7fr 1fr; gap:16px; margin-bottom:24px; align-items:start;}
+  @media (max-width:880px){ .grid-2, .grid-2b{grid-template-columns:1fr;} }
+
+  .chart-legend{display:flex; gap:16px; margin-bottom:10px; font-size:12px; color:var(--ink-soft); flex-wrap:wrap;}
+  .chart-legend span{display:flex; align-items:center; gap:6px;}
+  .chart-legend .dot{width:9px; height:9px; border-radius:2px;}
+
+  .mini-table{width:100%; border-collapse:collapse; font-size:12.5px;}
+  .mini-table th{
+    text-align:left; padding:6px 8px; color:var(--ink-faint); font-weight:700;
+    font-size:10.5px; text-transform:uppercase; letter-spacing:.03em;
+    border-bottom:1px solid var(--line);
+  }
+  .mini-table td{padding:9px 8px; border-bottom:1px solid var(--line);}
+  .mini-table tr:last-child td{border-bottom:none;}
+  .mini-table-wrap{max-height:230px; overflow-y:auto;}
+
+  .table-wrap{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card); overflow:hidden; margin-bottom:24px;
+  }
+  .table-scroll{overflow-x:auto;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th{
+    text-align:left; padding:11px 14px; background:#FAFAFB;
+    font-weight:700; color:var(--ink-soft); font-size:11px;
+    text-transform:uppercase; letter-spacing:.03em;
+    border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  td{padding:11px 14px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:#FAFAFB;}
+
+  .badge{
+    display:inline-block; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:7px;
+  }
+  .badge.ok{background:var(--ok-bg); color:var(--ok);}
+  .badge.warn{background:var(--warn-bg); color:var(--warn);}
+  .badge.err{background:var(--err-bg); color:var(--err);}
+  .badge.purple{background:var(--purple-bg); color:var(--purple);}
+
+  .pager{display:flex; justify-content:center; align-items:center; gap:6px; padding:14px;}
+  .pager button{
+    border:1.5px solid var(--line); background:#fff; color:var(--ink-soft);
+    width:30px; height:30px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer;
+  }
+  .pager button.active{background:var(--bata-red); border-color:var(--bata-red); color:#fff;}
+  .pager button:disabled{opacity:.4; cursor:not-allowed;}
+
+  a.imglink{color:var(--bata-red); font-weight:700; text-decoration:none; font-size:12.5px;}
+
+  .zone-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px;}
+  .zone-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:13px 15px; cursor:pointer; transition:border-color .15s ease;
+  }
+  .zone-card:hover{border-color:var(--bata-red);}
+  .zone-card.active{border-color:var(--bata-red); background:#FFF6F6;}
+  .zone-name{font-weight:800; font-size:13.5px; margin-bottom:8px;}
+  .zone-stats{display:flex; gap:12px; font-size:12px; color:var(--ink-soft);}
+  .zone-stats b{color:var(--ink); font-size:13.5px; display:block;}
+
+  .miss-count{font-weight:700;}
+  .miss-count.zero{color:var(--ok);}
+  .miss-count.some{color:var(--warn);}
+  .miss-count.many{color:var(--err);}
+
+  .empty-state{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:13px;}
+  .loading{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:13px;}
+
+  .toggle-row{display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);}
+  .toggle-row p{margin:0; font-size:12.5px; font-weight:700;}
+  .toggle-row span{font-size:11.5px; color:var(--ink-soft);}
+  .switch{position:relative; width:38px; height:22px; background:var(--ok); border-radius:99px; flex:0 0 auto; cursor:pointer;}
+  .switch::after{content:''; position:absolute; top:2px; right:2px; width:18px; height:18px; background:#fff; border-radius:50%;}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">B</div>
+      <div class="sidebar-word">BATA</div>
+    </div>
+
+    <div class="sidebar-nav" id="sidebarNav">
+      <button class="nav-item active" data-view="dashboard"><span class="nav-icon">&#9632;</span>Dashboard</button>
+      <button class="nav-item" data-view="all"><span class="nav-icon">&#9776;</span>All Submissions</button>
+      <button class="nav-item" data-view="missing"><span class="nav-icon">&#9888;</span>Not Submitted<span class="nav-count" id="navCountMissing">—</span></button>
+      <button class="nav-item" data-view="duplicate"><span class="nav-icon">&#10063;</span>Duplicate<span class="nav-count" id="navCountDuplicate">—</span></button>
+      <button class="nav-item" data-view="late"><span class="nav-icon">&#9201;</span>Late Submission<span class="nav-count" id="navCountLate">—</span></button>
+      <button class="nav-item" data-view="district"><span class="nav-icon">&#9776;</span>By District</button>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="sidebar-avatar">AC</div>
+      <div class="sidebar-foot-text">
+        <p class="sidebar-foot-name">Accounting Team</p>
+        <p class="sidebar-foot-sub">admin@bata.co.th</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Daily Payslip Dashboard</h1>
+        <p class="page-sub" id="updatedAt">กำลังโหลด...</p>
+      </div>
+      <div class="head-controls">
+        <input type="date" id="filterDate">
+        <select id="filterZone">
+          <option value="">ทุกเขต</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="metrics" id="metricsRow">
+      <div class="metric"><div class="metric-label">สาขาทั้งหมด</div><div class="metric-value">—</div></div>
+    </div>
+
+    <div id="districtSection">
+      <div class="section-head">
+        <div class="section-title" id="districtTitle">Submission status by district</div>
+      </div>
+      <div class="card">
+        <div class="chart-legend">
+          <span><span class="dot" style="background:#0FA968;"></span>Submitted</span>
+          <span><span class="dot" style="background:#D97706;"></span>Not submitted</span>
+          <span><span class="dot" style="background:#E0263F;"></span>Late</span>
+        </div>
+        <div style="position:relative; width:100%; height:260px;">
+          <canvas id="districtChart" role="img" aria-label="กราฟแท่งเปรียบเทียบจำนวนสาขาที่ส่งแล้ว ยังไม่ส่ง และส่งหลังเวลา แยกตามเขต สำหรับวันที่เลือก">กราฟเปรียบเทียบสถานะการส่งข้อมูลแยกตามเขต</canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="section-head">
+          <div class="section-title" id="trendTitle">แนวโน้มการส่งข้อมูล</div>
+          <div class="range-toggle" id="rangeToggle">
+            <button data-range="7" class="active">7 วัน</button>
+            <button data-range="30">30 วัน</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="chart-legend">
+            <span><span class="dot" style="background:#E11D2E;"></span>ส่งภายในวัน</span>
+            <span><span class="dot" style="background:#E7E4DF;"></span>สาขาทั้งหมด</span>
+          </div>
+          <div style="position:relative; width:100%; height:230px;">
+            <canvas id="trendChart" role="img" aria-label="กราฟแสดงจำนวนสาขาที่ส่งข้อมูลภายในวัน เทียบกับจำนวนสาขาทั้งหมด รายวัน">กราฟแนวโน้มจำนวนสาขาที่ส่งข้อมูลตรงเวลาในแต่ละวัน</canvas>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-head">
+          <div class="section-title" id="missingCardTitle">Not submitted stores</div>
+        </div>
+        <div class="card">
+          <div class="mini-table-wrap">
+            <table class="mini-table">
+              <thead><tr><th>Code</th><th>Store</th><th>Zone</th></tr></thead>
+              <tbody id="missingMiniTable"><tr><td colspan="3" class="empty-state">กำลังโหลด...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">ภาพรวมรายเขต</div>
+    <div class="zone-grid" id="zoneGrid" style="margin-bottom:24px;">
+      <div class="loading">กำลังโหลดข้อมูล...</div>
+    </div>
+
+    <div class="grid-2b">
+      <div>
+        <div class="section-title" id="tableTitle">All submissions</div>
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Store code</th><th>District</th><th>Status</th><th>Time</th><th>Deposit amount</th><th>Slip</th><th id="missColHeader">Missed (7d)</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                <tr><td colspan="7" class="empty-state">กำลังโหลดข้อมูล...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pager" id="pager"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Quick summary</div>
+        <div class="card">
+          <div style="position:relative; width:100%; height:190px;">
+            <canvas id="donutChart" role="img" aria-label="กราฟวงแหวนแสดงสัดส่วนสาขาที่ส่งแล้ว ยังไม่ส่ง ส่งหลังเวลา และส่งซ้ำ จากจำนวนสาขาทั้งหมด">สัดส่วนสถานะการส่งข้อมูลของสาขาทั้งหมด</canvas>
+          </div>
+          <div id="donutLegend" style="margin-top:14px; font-size:12.5px;"></div>
+
+          <div class="toggle-row">
+            <div>
+              <p>Auto refresh</p>
+              <span>Every 5 minutes</span>
+            </div>
+            <div class="switch" id="autoRefreshToggle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.39.7/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+const LATE_CUTOFF_TIME = "11:00";
+const PAGE_SIZE = 6;
+
+let supabase = null;
+if (SUPABASE_URL.indexOf('PASTE_YOUR') !== 0 && window.supabase) {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+let allStores = [];
+let allRecords = [];
+let activeZoneFilter = '';
+let activeMetricFilter = '';
+let activeRange = 7;
+let currentPage = 1;
+let autoRefreshOn = true;
+let autoRefreshTimer = null;
+let trendChartInstance = null;
+let districtChartInstance = null;
+let donutChartInstance = null;
+
+const filterDateEl = document.getElementById('filterDate');
+const filterZoneEl = document.getElementById('filterZone');
+const rangeToggleEl = document.getElementById('rangeToggle');
+const autoRefreshToggleEl = document.getElementById('autoRefreshToggle');
+
+const today = new Date().toISOString().slice(0,10);
+filterDateEl.value = today;
+
+function dateNDaysAgo(n){
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString().slice(0,10);
+}
+
+filterDateEl.min = dateNDaysAgo(30);
+filterDateEl.max = today;
+
+filterDateEl.addEventListener('change', () => { currentPage = 1; render(); });
+filterZoneEl.addEventListener('change', () => { activeZoneFilter = filterZoneEl.value; currentPage = 1; render(); });
+
+rangeToggleEl.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeRange = Number(btn.dataset.range);
+    rangeToggleEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('missColHeader').textContent = `Missed (${activeRange}d)`;
+    currentPage = 1;
+    render();
+  });
+});
+
+autoRefreshToggleEl.addEventListener('click', () => {
+  autoRefreshOn = !autoRefreshOn;
+  autoRefreshToggleEl.style.background = autoRefreshOn ? 'var(--ok)' : '#D7D9E0';
+  setupAutoRefresh();
+});
+
+function setupAutoRefresh(){
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  if (autoRefreshOn) {
+    autoRefreshTimer = setInterval(loadData, 5 * 60 * 1000);
+  }
+}
+
+// sidebar nav -> ผูกกับ metric filter เดิม (ไม่สร้างหน้าใหม่ แค่เปลี่ยนตัวกรอง)
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const view = btn.dataset.view;
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (view === 'dashboard') { activeMetricFilter = ''; window.scrollTo({top:0, behavior:'smooth'}); }
+    else if (view === 'all') { activeMetricFilter = ''; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
+    else if (view === 'missing') { activeMetricFilter = 'missing'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
+    else if (view === 'duplicate') { activeMetricFilter = 'duplicate'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
+    else if (view === 'late') { activeMetricFilter = 'late'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
+    else if (view === 'district') { document.getElementById('districtSection').scrollIntoView({behavior:'smooth', block:'start'}); }
+
+    currentPage = 1;
+    render();
+  });
+});
+
+
+async function loadData(){
+  if (!supabase) {
+    document.getElementById('zoneGrid').innerHTML = '<div class="empty-state">ยังไม่ได้เชื่อมต่อ Supabase — กรุณาตั้งค่า SUPABASE_URL และ SUPABASE_ANON_KEY ในไฟล์นี้</div>';
+    document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">ยังไม่ได้เชื่อมต่อระบบหลังบ้าน</td></tr>';
+    return;
+  }
+
+  const sinceDate = dateNDaysAgo(30);
+
+  const { data: stores, error: storesErr } = await supabase.from('stores').select('*').eq('active', true);
+  const { data: records, error: recordsErr } = await supabase
+    .from('payin_records')
+    .select('*')
+    .gte('deposit_date', sinceDate)
+    .order('created_at', {ascending:false});
+
+  if (storesErr || recordsErr) {
+    document.getElementById('zoneGrid').innerHTML = '<div class="empty-state">โหลดข้อมูลไม่สำเร็จ: ' + (storesErr?.message || recordsErr?.message) + '</div>';
+    return;
+  }
+
+  allStores = stores || [];
+  allRecords = records || [];
+
+  const zones = [...new Set(allStores.map(s => s.zone_code))].sort();
+  filterZoneEl.innerHTML = '<option value="">ทุกเขต</option>' + zones.map(z => `<option value="${z}">เขต ${z}</option>`).join('');
+
+  document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('th-TH');
+
+  render();
+}
+
+function getStoreStatus(storeCode, dateStr){
+  const recs = allRecords.filter(r => r.store_code === storeCode && r.deposit_date === dateStr);
+  if (recs.length === 0) return { status:'missing', records: [] };
+  if (recs.length > 1) return { status:'duplicate', records: recs };
+  if (recs[0].submitted_late) return { status:'late', records: recs };
+  return { status:'sent', records: recs };
+}
+
+function buildTrendData(stores, days){
+  const labels = [];
+  const sentCounts = [];
+  const totalCount = stores.length;
+
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dStr = d.toISOString().slice(0,10);
+
+    const sentToday = stores.filter(s => {
+      const recs = allRecords.filter(r => r.store_code === s.store_code && r.deposit_date === dStr);
+      return recs.length > 0 && recs.some(r => !r.submitted_late);
+    }).length;
+
+    labels.push(d.toLocaleDateString('th-TH', { day:'numeric', month:'short' }));
+    sentCounts.push(sentToday);
+  }
+
+  return { labels, sentCounts, totalCount };
+}
+
+function countMissedDays(storeCode, days){
+  let missed = 0;
+  for (let i = 0; i < days; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dStr = d.toISOString().slice(0,10);
+    const recs = allRecords.filter(r => r.store_code === storeCode && r.deposit_date === dStr);
+    if (recs.length === 0) missed++;
+  }
+  return missed;
+}
+
+function renderTrendChart(stores){
+  const { labels, sentCounts, totalCount } = buildTrendData(stores, activeRange);
+  const totalLine = labels.map(() => totalCount);
+
+  document.getElementById('trendTitle').textContent =
+    activeZoneFilter ? `แนวโน้มการส่งข้อมูล — เขต ${activeZoneFilter}` : 'แนวโน้มการส่งข้อมูล — ทุกเขต';
+
+  if (trendChartInstance) trendChartInstance.destroy();
+
+  const ctx = document.getElementById('trendChart');
+  trendChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'สาขาทั้งหมด',
+          data: totalLine,
+          type: 'line',
+          borderColor: '#E7E4DF',
+          backgroundColor: '#E7E4DF',
+          borderWidth: 2,
+          pointRadius: 0,
+          borderDash: [4,4],
+          fill: false,
+          order: 1,
+        },
+        {
+          label: 'ส่งภายในวัน',
+          data: sentCounts,
+          backgroundColor: '#E11D2E',
+          borderRadius: 4,
+          order: 2,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 } },
+        x: { ticks: { autoSkip: activeRange > 14, maxRotation: 45 } },
+      },
+    },
+  });
+}
+
+function renderDistrictChart(dateStr){
+  const zones = [...new Set(allStores.map(s => s.zone_code))].sort();
+
+  const submittedData = [];
+  const notSubmittedData = [];
+  const lateData = [];
+
+  zones.forEach(z => {
+    const zoneStores = allStores.filter(s => s.zone_code === z);
+    let submitted = 0, notSubmitted = 0, late = 0;
+    zoneStores.forEach(s => {
+      const result = getStoreStatus(s.store_code, dateStr);
+      if (result.status === 'sent' || result.status === 'duplicate') submitted++;
+      else if (result.status === 'late') late++;
+      else notSubmitted++;
+    });
+    submittedData.push(submitted);
+    notSubmittedData.push(notSubmitted);
+    lateData.push(late);
+  });
+
+  document.getElementById('districtTitle').textContent = `Submission status by district — ${new Date(dateStr).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'})}`;
+
+  if (districtChartInstance) districtChartInstance.destroy();
+
+  const ctx = document.getElementById('districtChart');
+  districtChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: zones.map(z => `เขต ${z}`),
+      datasets: [
+        { label: 'Submitted', data: submittedData, backgroundColor: '#0FA968', borderRadius: 4 },
+        { label: 'Not submitted', data: notSubmittedData, backgroundColor: '#D97706', borderRadius: 4 },
+        { label: 'Late', data: lateData, backgroundColor: '#E0263F', borderRadius: 4 },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 } },
+        x: { ticks: { autoSkip: false, maxRotation: 0 } },
+      },
+    },
+  });
+}
+
+function renderDonutChart(total, sent, missing, duplicate, late){
+  if (donutChartInstance) donutChartInstance.destroy();
+
+  const ctx = document.getElementById('donutChart');
+  donutChartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Submitted', 'Not submitted', 'Late', 'Duplicate'],
+      datasets: [{
+        data: [sent, missing, late, duplicate],
+        backgroundColor: ['#0FA968', '#D97706', '#E0263F', '#7C5CFC'],
+        borderWidth: 0,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: { legend: { display: false } },
+    },
+  });
+
+  const pct = (n) => total > 0 ? ((n/total)*100).toFixed(1) : '0.0';
+  document.getElementById('donutLegend').innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#0FA968;"></span>Submitted</span>
+      <b>${sent} (${pct(sent)}%)</b>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#D97706;"></span>Not submitted</span>
+      <b>${missing} (${pct(missing)}%)</b>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#E0263F;"></span>Late</span>
+      <b>${late} (${pct(late)}%)</b>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#7C5CFC;"></span>Duplicate</span>
+      <b>${duplicate} (${pct(duplicate)}%)</b>
+    </div>
+  `;
+}
+
+function render(){
+  const dateStr = filterDateEl.value || today;
+  let stores = allStores;
+  if (activeZoneFilter) stores = stores.filter(s => s.zone_code === activeZoneFilter);
+
+  const rows = stores.map(s => {
+    const result = getStoreStatus(s.store_code, dateStr);
+    return { store: s, ...result };
+  });
+
+  renderTrendChart(stores);
+  renderDistrictChart(dateStr);
+
+  const total = rows.length;
+  const sent = rows.filter(r => r.status === 'sent').length;
+  const missing = rows.filter(r => r.status === 'missing').length;
+  const duplicate = rows.filter(r => r.status === 'duplicate').length;
+  const late = rows.filter(r => r.status === 'late').length;
+
+  renderDonutChart(total, sent, missing, duplicate, late);
+
+  document.getElementById('navCountMissing').textContent = missing;
+  document.getElementById('navCountDuplicate').textContent = duplicate;
+  document.getElementById('navCountLate').textContent = late;
+
+  const pct = (n) => total > 0 ? ((n/total)*100).toFixed(2) + '%' : '—';
+
+  document.getElementById('metricsRow').innerHTML = `
+    <div class="metric" data-filter="">
+      <div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total stores</div></div>
+      <div class="metric-value">${total}</div>
+      <div class="metric-pct blue">100%</div>
+    </div>
+    <div class="metric ok" data-filter="sent">
+      <div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div>
+      <div class="metric-value">${sent}</div>
+      <div class="metric-pct ok">${pct(sent)}</div>
+    </div>
+    <div class="metric warn" data-filter="missing">
+      <div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not submitted</div></div>
+      <div class="metric-value">${missing}</div>
+      <div class="metric-pct warn">${pct(missing)}</div>
+    </div>
+    <div class="metric purple" data-filter="duplicate">
+      <div class="metric-top"><div class="metric-icon purple">&#10063;</div><div class="metric-label">Duplicate</div></div>
+      <div class="metric-value">${duplicate}</div>
+      <div class="metric-pct purple">${pct(duplicate)}</div>
+    </div>
+    <div class="metric err" data-filter="late">
+      <div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late submission</div></div>
+      <div class="metric-value">${late}</div>
+      <div class="metric-pct err">${pct(late)}</div>
+    </div>
+  `;
+
+  document.querySelectorAll('.metric').forEach(el => {
+    const f = el.dataset.filter;
+    if (f === activeMetricFilter) el.classList.add('active');
+    el.addEventListener('click', () => {
+      activeMetricFilter = (activeMetricFilter === f) ? '' : f;
+      currentPage = 1;
+      render();
+    });
+  });
+
+  const zones = [...new Set(allStores.map(s => s.zone_code))].sort();
+  document.getElementById('zoneGrid').innerHTML = zones.map(z => {
+    const zoneStores = allStores.filter(s => s.zone_code === z);
+    const zoneRows = zoneStores.map(s => getStoreStatus(s.store_code, dateStr));
+    const zSent = zoneRows.filter(r => r.status === 'sent' || r.status === 'late' || r.status === 'duplicate').length;
+    const zMissing = zoneRows.filter(r => r.status === 'missing').length;
+    return `
+      <div class="zone-card ${activeZoneFilter===z?'active':''}" data-zone="${z}">
+        <div class="zone-name">เขต ${z}</div>
+        <div class="zone-stats">
+          <div><b>${zoneStores.length}</b>ทั้งหมด</div>
+          <div><b style="color:var(--ok)">${zSent}</b>ส่งแล้ว</div>
+          <div><b style="color:var(--err)">${zMissing}</b>ยังไม่ส่ง</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.querySelectorAll('.zone-card').forEach(el => {
+    el.addEventListener('click', () => {
+      const z = el.dataset.zone;
+      activeZoneFilter = (activeZoneFilter === z) ? '' : z;
+      filterZoneEl.value = activeZoneFilter;
+      currentPage = 1;
+      render();
+    });
+  });
+
+  const missingRows = rows.filter(r => r.status === 'missing');
+  document.getElementById('missingCardTitle').textContent = `Not submitted stores (${missingRows.length})`;
+  if (missingRows.length === 0) {
+    document.getElementById('missingMiniTable').innerHTML = '<tr><td colspan="3" class="empty-state">ทุกสาขาส่งข้อมูลแล้ว</td></tr>';
+  } else {
+    document.getElementById('missingMiniTable').innerHTML = missingRows.slice(0, 30).map(r => `
+      <tr><td><b>${r.store.store_code}</b></td><td>${r.store.store_name || '—'}</td><td>เขต ${r.store.zone_code}</td></tr>
+    `).join('');
+  }
+
+
+  let filteredRows = rows;
+  if (activeMetricFilter) filteredRows = filteredRows.filter(r => r.status === activeMetricFilter);
+
+  filteredRows = filteredRows.map(r => ({
+    ...r,
+    missedDays: countMissedDays(r.store.store_code, activeRange),
+  })).sort((a, b) => b.missedDays - a.missedDays);
+
+  document.getElementById('tableTitle').textContent = `All submissions (${filteredRows.length})`;
+
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pageRows = filteredRows.slice(pageStart, pageStart + PAGE_SIZE);
+
+  if (filteredRows.length === 0) {
+    document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">ไม่พบข้อมูลตามตัวกรองที่เลือก</td></tr>';
+    document.getElementById('pager').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('tableBody').innerHTML = pageRows.map(r => {
+    const badgeMap = {
+      sent: '<span class="badge ok">Submitted</span>',
+      missing: '<span class="badge warn">Not submitted</span>',
+      duplicate: '<span class="badge purple">Duplicate (' + r.records.length + ')</span>',
+      late: '<span class="badge err">Late</span>',
+    };
+    const rec = r.records[0];
+    const timeStr = rec ? new Date(rec.created_at).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) : '—';
+    const amountStr = rec ? Number(rec.amount).toLocaleString('th-TH', {minimumFractionDigits:2}) : '—';
+    const slipLink = rec && rec.slip_image_url ? `<a class="imglink" href="${rec.slip_image_url}" target="_blank">View</a>` : '—';
+
+    let missClass = 'zero';
+    if (r.missedDays > 0 && r.missedDays <= Math.ceil(activeRange * 0.3)) missClass = 'some';
+    else if (r.missedDays > Math.ceil(activeRange * 0.3)) missClass = 'many';
+
+    return `
+      <tr>
+        <td><b>${r.store.store_code}</b></td>
+        <td>${r.store.zone_code}</td>
+        <td>${badgeMap[r.status]}</td>
+        <td>${timeStr}</td>
+        <td>${amountStr}</td>
+        <td>${slipLink}</td>
+        <td><span class="miss-count ${missClass}">${r.missedDays}d</span></td>
+      </tr>
+    `;
+  }).join('');
+
+  const pagerEl = document.getElementById('pager');
+  let pagerHtml = `<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
+  for (let p = 1; p <= totalPages; p++) {
+    if (totalPages > 7 && p > 2 && p < totalPages - 1 && Math.abs(p - currentPage) > 1) {
+      if (p === 3 || p === totalPages - 2) pagerHtml += `<span style="padding:0 4px; color:var(--ink-faint);">…</span>`;
+      continue;
+    }
+    pagerHtml += `<button class="${p===currentPage?'active':''}" data-page="${p}">${p}</button>`;
+  }
+  pagerHtml += `<button ${currentPage===totalPages?'disabled':''} data-page="${currentPage+1}">&#8250;</button>`;
+  pagerEl.innerHTML = pagerHtml;
+
+  pagerEl.querySelectorAll('button[data-page]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentPage = Number(btn.dataset.page);
+      render();
+    });
+  });
+}
+
+setupAutoRefresh();
+loadData();
+</script>
+
+</body>
+</html>
