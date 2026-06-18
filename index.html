@@ -3,401 +3,345 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Store Payin Slip — BATA Thailand</title>
+<title>BATA Store — ส่ง Payslip</title>
 <style>
-  :root{
-    --bata-red:#C8102E;
-    --bata-red-dark:#9B0C23;
-    --ink:#1B1B1F;
-    --ink-soft:#5B5B63;
-    --paper:#FAF9F7;
-    --card:#FFFFFF;
-    --line:#E7E4DF;
-    --ok:#1F8A4C;
-    --err:#C8102E;
-    --radius:14px;
-    --font-display:'Bata Display', 'Archivo Black', 'Helvetica Neue', sans-serif;
-    --font-body:'Inter','Noto Sans Thai','Helvetica Neue',Arial,sans-serif;
-  }
-
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--paper);
-    font-family:var(--font-body);
-    color:var(--ink);
-    -webkit-font-smoothing:antialiased;
-    padding-bottom:48px;
-  }
-
-  /* ===== Header band ===== */
-  .topband{
-    background:var(--bata-red);
-    color:#fff;
-    padding:28px 20px 22px;
-    position:relative;
-    overflow:hidden;
-  }
-  .topband::after{
-    content:"";
-    position:absolute;
-    right:-40px; top:-60px;
-    width:180px; height:180px;
-    border-radius:50%;
-    background:rgba(255,255,255,0.08);
-  }
-  .eyebrow{
-    font-size:11px;
-    letter-spacing:0.16em;
-    text-transform:uppercase;
-    opacity:0.85;
-    font-weight:600;
-    margin:0 0 6px;
-  }
-  .title{
-    font-family:var(--font-display);
-    font-size:26px;
-    line-height:1.15;
-    margin:0;
-    font-weight:800;
-    letter-spacing:0.01em;
-  }
-  .subtitle{
-    font-size:13px;
-    margin:8px 0 0;
-    opacity:0.92;
-    max-width:520px;
-  }
-
-  /* ===== Layout ===== */
-  .wrap{
-    max-width:560px;
-    margin:0 auto;
-    padding:0 16px;
-  }
-
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:20px 18px;
-    margin-top:16px;
-    box-shadow:0 1px 2px rgba(0,0,0,0.02);
-  }
-
-  .field{margin-bottom:18px;}
-  .field:last-child{margin-bottom:0;}
-
-  label.qlabel{
-    display:flex;
-    gap:8px;
-    align-items:baseline;
-    font-size:14.5px;
-    font-weight:700;
-    color:var(--ink);
-    margin-bottom:6px;
-  }
-  .qnum{
-    flex:0 0 auto;
-    color:var(--bata-red);
-    font-family:var(--font-display);
-  }
-  .req{color:var(--bata-red); font-weight:700;}
-  .hint{
-    font-size:12.5px;
-    color:var(--ink-soft);
-    margin:2px 0 8px;
-    line-height:1.4;
-  }
-
-  input[type=text], input[type=number], input[type=date], select{
-    width:100%;
-    padding:13px 14px;
-    font-size:16px;
-    border:1.5px solid var(--line);
-    border-radius:10px;
-    background:#fff;
-    color:var(--ink);
-    font-family:var(--font-body);
-    transition:border-color .15s ease;
-  }
-  select{
-    appearance:none;
-    -webkit-appearance:none;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1L7 7L13 1' stroke='%235B5B63' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-    background-repeat:no-repeat;
-    background-position:right 14px center;
-    padding-right:36px;
-  }
-  select:disabled{
-    background-color:#F4F2EF;
-    color:#B7B3AC;
-    cursor:not-allowed;
-  }
-  input::placeholder{color:#B7B3AC;}
-  input:focus, select:focus{
-    outline:none;
-    border-color:var(--bata-red);
-  }
-  input.invalid, select.invalid{border-color:var(--err); background-color:#FFF6F6;}
-
-  /* ===== Radio channel cards ===== */
-  .channel-list{display:flex; flex-direction:column; gap:10px;}
-  .channel{
-    border:1.5px solid var(--line);
-    border-radius:12px;
-    padding:12px 14px;
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
-    cursor:pointer;
-    transition:border-color .15s ease, background .15s ease;
-    background:#fff;
-  }
-  .channel:active{background:#FBF4F4;}
-  .channel.selected{
-    border-color:var(--bata-red);
-    background:#FFF5F6;
-  }
-  .channel input[type=radio]{
-    margin-top:3px;
-    width:18px; height:18px;
-    accent-color:var(--bata-red);
-    flex:0 0 auto;
-  }
-  .channel-text{display:flex; flex-direction:column; gap:2px;}
-  .channel-name{font-size:14.5px; font-weight:700; color:var(--ink);}
-  .channel-detail{font-size:12.5px; color:var(--ink-soft); font-family:'SF Mono','Roboto Mono',monospace; letter-spacing:0.01em;}
-  .channel-tag{
-    display:inline-block;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-    color:#fff;
-    background:var(--ink-soft);
-    border-radius:5px;
-    padding:2px 6px;
-    margin-top:3px;
-    width:fit-content;
-  }
-  .channel.selected .channel-tag{background:var(--bata-red);}
-
-  /* other channel free text */
-  #otherDetailWrap{
-    margin:8px 0 0 30px;
-    display:none;
-  }
-  #otherDetailWrap.show{display:block;}
-
-  /* ===== Upload ===== */
-  .upload-box{
-    border:1.5px dashed var(--line);
-    border-radius:12px;
-    padding:22px 16px;
-    text-align:center;
-    cursor:pointer;
-    background:#FCFBFA;
-    transition:border-color .15s ease, background .15s ease;
-  }
-  .upload-box.has-file{
-    border-color:var(--ok);
-    background:#F3FAF6;
-  }
-  .upload-box.invalid{border-color:var(--err);}
-  .upload-icon{font-size:26px; margin-bottom:6px; display:block;}
-  .upload-text{font-size:14px; font-weight:600; color:var(--ink);}
-  .upload-sub{font-size:12px; color:var(--ink-soft); margin-top:3px;}
-  #fileInput{display:none;}
-  #previewWrap{margin-top:12px; display:none;}
-  #previewWrap.show{display:flex; gap:10px; align-items:center;}
-  #previewImg{
-    width:56px; height:56px; object-fit:cover;
-    border-radius:8px; border:1px solid var(--line);
-  }
-  #previewMeta{font-size:12.5px; color:var(--ink-soft); flex:1;}
-  #previewMeta b{color:var(--ink); display:block; font-size:13px; margin-bottom:2px;}
-  .remove-file{
-    font-size:12px; color:var(--bata-red); font-weight:700;
-    background:none; border:none; cursor:pointer; padding:6px 8px;
-  }
-
-  /* ===== Error text ===== */
-  .err-msg{
-    font-size:12.5px; color:var(--err); margin-top:6px; font-weight:600;
-    display:none;
-  }
-  .err-msg.show{display:block;}
-
-  /* ===== Submit ===== */
-  .submit-wrap{margin-top:20px;}
-  button#submitBtn{
-    width:100%;
-    background:var(--bata-red);
-    color:#fff;
-    border:none;
-    border-radius:12px;
-    padding:16px;
-    font-size:16px;
-    font-weight:700;
-    font-family:var(--font-body);
-    cursor:pointer;
-    transition:background .15s ease, transform .05s ease;
-    letter-spacing:0.01em;
-  }
-  button#submitBtn:active{transform:scale(0.99);}
-  button#submitBtn:disabled{background:#D9A3AC; cursor:not-allowed;}
-
-  .footnote{
-    text-align:center;
-    font-size:11.5px;
-    color:var(--ink-soft);
-    margin-top:14px;
-    line-height:1.5;
-  }
-
-  /* ===== Status screen ===== */
-  #statusScreen{
-    display:none;
-    text-align:center;
-    padding:60px 24px;
-  }
-  #statusScreen.show{display:block;}
-  .status-icon{font-size:52px; margin-bottom:14px;}
-  .status-title{font-family:var(--font-display); font-size:21px; margin:0 0 8px;}
-  .status-msg{font-size:14px; color:var(--ink-soft); line-height:1.5; max-width:380px; margin:0 auto;}
-  .status-actions{margin-top:24px;}
-  .btn-secondary{
-    display:inline-block;
-    background:#fff;
-    border:1.5px solid var(--line);
-    color:var(--ink);
-    padding:12px 22px;
-    border-radius:10px;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
-  }
-
-  #formScreen.hide{display:none;}
-
-  /* spinner */
-  .spinner{
-    display:inline-block;
-    width:16px; height:16px;
-    border:2px solid rgba(255,255,255,0.5);
-    border-top-color:#fff;
-    border-radius:50%;
-    animation:spin 0.7s linear infinite;
-    vertical-align:middle;
-    margin-right:8px;
-  }
-  @keyframes spin{to{transform:rotate(360deg);}}
+:root{
+  --bata-red:#C8102E;
+  --bata-dark:#111827;
+  --paper:#F5F6F8;
+  --card:#FFFFFF;
+  --line:#E5E7EB;
+  --success:#16A34A;
+  --radius:20px;
+  --shadow:
+    0 8px 30px rgba(0,0,0,.06);
+  --font-body:
+    'Inter',
+    'Noto Sans Thai',
+    sans-serif;
+}
+*{
+  box-sizing:border-box;
+}
+body{
+  margin:0;
+  background:var(--paper);
+  font-family:var(--font-body);
+  color:var(--bata-dark);
+}
+.topband{
+  background:#fff;
+  border-bottom:4px solid var(--bata-red);
+  padding:24px 20px;
+  text-align:center;
+}
+.eyebrow{
+  color:#888;
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin:0;
+}
+.storeBadge{
+  margin-top:10px;
+  display:inline-block;
+  padding:12px 24px;
+  background:#fff;
+  border-radius:16px;
+  font-size:24px;
+  font-weight:800;
+  color:var(--bata-red);
+  box-shadow:var(--shadow);
+}
+.dateNow{
+  margin-top:10px;
+  color:#777;
+  font-size:13px;
+}
+.wrap{
+  max-width:520px;
+  margin:auto;
+  padding:20px;
+}
+.card{
+  background:#fff;
+  border:none;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  padding:22px;
+  margin-bottom:18px;
+}
+.field{margin-bottom:20px;}
+.field:last-child{margin-bottom:0;}
+.qlabel{
+  display:block;
+  margin-bottom:10px;
+  font-weight:700;
+}
+.req{
+  color:var(--bata-red);
+}
+input[type=text],
+select{
+  width:100%;
+  height:58px;
+  padding:0 16px;
+  border:2px solid #ECECEC;
+  border-radius:14px;
+  font-size:18px;
+  transition:.2s;
+  font-family:var(--font-body);
+  background:#fff;
+  color:var(--bata-dark);
+}
+select{
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1L7 7L13 1' stroke='%23888' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 16px center;
+  padding-right:40px;
+}
+select:disabled{background-color:#FAFAFA; color:#B0B0B0; cursor:not-allowed;}
+input[type=text]::placeholder{color:#B0B0B0;}
+input:focus,
+select:focus{
+  outline:none;
+  border-color:var(--bata-red);
+  box-shadow:
+    0 0 0 4px
+    rgba(200,16,46,.10);
+}
+.upload-box{
+  border:2px dashed #D9D9D9;
+  border-radius:20px;
+  background:#FAFAFA;
+  padding:40px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+.upload-box:hover{
+  border-color:var(--bata-red);
+}
+.upload-box.has-file{
+  background:#F0FDF4;
+  border-color:var(--success);
+}
+.upload-box.invalid{
+  border-color:#DC2626;
+}
+.upload-icon{
+  font-size:40px;
+  margin-bottom:10px;
+  display:block;
+}
+.upload-text{
+  font-size:16px;
+  font-weight:700;
+}
+.upload-sub{
+  margin-top:6px;
+  font-size:13px;
+  color:#888;
+}
+#fileInput{display:none;}
+#previewWrap{
+  margin-top:14px;
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:14px;
+  padding:12px;
+  display:none;
+  gap:10px;
+  align-items:center;
+}
+#previewWrap.show{display:flex;}
+#previewImg{
+  width:70px;
+  height:70px;
+  object-fit:cover;
+  border-radius:12px;
+}
+#previewMeta{font-size:12.5px; color:#888; flex:1;}
+#previewMeta b{color:var(--bata-dark); display:block; font-size:13px;}
+.remove-file{
+  font-size:12px; color:var(--bata-red); font-weight:700;
+  background:none; border:none; cursor:pointer; padding:6px;
+}
+button#submitBtn{
+  width:100%;
+  height:60px;
+  border:none;
+  border-radius:16px;
+  background:var(--bata-red);
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+  box-shadow:
+    0 10px 25px
+    rgba(200,16,46,.25);
+  transition:.2s;
+  cursor:pointer;
+  margin-top:20px;
+}
+button#submitBtn:hover{
+  transform:translateY(-1px);
+}
+button#submitBtn:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+}
+.footnote{
+  text-align:center;
+  color:#888;
+  font-size:12px;
+  margin-top:14px;
+  line-height:1.5;
+}
+#statusScreen{display:none; text-align:center; padding:70px 24px;}
+#statusScreen.show{display:block;}
+.status-icon{font-size:56px; margin-bottom:16px;}
+.status-title{
+  font-size:24px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+.status-msg{
+  color:#666;
+  line-height:1.7;
+  font-size:14px;
+}
+.btn-secondary{
+  display:inline-block;
+  margin-top:22px;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:12px 24px;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  color:var(--bata-dark);
+}
+.err-msg{
+  color:#DC2626;
+  margin-top:6px;
+  font-size:12px;
+  display:none;
+}
+.err-msg.show{display:block;}
+.invalid{
+  border-color:#DC2626 !important;
+}
+#formScreen.hide{display:none;}
+.spinner{
+  display:inline-block; width:16px; height:16px;
+  border:2px solid rgba(255,255,255,0.5); border-top-color:#fff;
+  border-radius:50%; animation:spin 0.7s linear infinite;
+  vertical-align:middle; margin-right:8px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
 
-<div class="topband">
-  <div class="wrap" style="padding:0;">
-    <p class="eyebrow">BATA Thailand · Store Operations</p>
-    <h1 class="title">Store Payin Slip</h1>
-    <p class="subtitle">บันทึกหลักฐานการนำเงินฝาก เพื่อยืนยันยอดเงินเข้าออฟฟิศ กรุณากรอกข้อมูลให้ครบถ้วนและแนบรูปสลิปทุกครั้ง</p>
+<div id="mainApp" style="display:block;">
+
+  <div class="topband">
+
+  <p class="eyebrow">
+    BATA THAILAND
+  </p>
+
+  <h2 style="
+      margin:10px 0;
+      color:#C8102E;
+      font-size:30px;
+      font-weight:800;">
+      Store Deposit
+  </h2>
+
+  <div
+      class="storeBadge"
+      id="storeBadge">
+      เลือกสาขา
   </div>
+
+  <div
+      class="dateNow"
+      id="dateNow">
+      —
+  </div>
+
 </div>
 
-<div class="wrap">
+  <div class="wrap">
 
-  <form id="formScreen">
-    <div class="card">
-
-      <div class="field">
-        <label class="qlabel"><span class="qnum">01</span> เขต <span class="req">*</span></label>
-        <p class="hint">เลือกรหัสเขตก่อน เพื่อกรองรายชื่อสาขาให้เลือกในขั้นถัดไป</p>
-        <select id="zoneCode">
-          <option value="" disabled selected>— เลือกรหัสเขต —</option>
-        </select>
-        <div class="err-msg" id="err-zoneCode">กรุณาเลือกรหัสเขต</div>
-      </div>
-
-      <div class="field">
-        <label class="qlabel"><span class="qnum">02</span> รหัสสาขา <span class="req">*</span></label>
-        <p class="hint" id="branchHint">กรุณาเลือกเขตก่อนเพื่อแสดงรายชื่อสาขา</p>
-        <select id="branchCode" disabled>
-          <option value="" disabled selected>— เลือกเขตก่อน —</option>
-        </select>
-        <div class="err-msg" id="err-branchCode">กรุณาเลือกรหัสสาขา</div>
-      </div>
-
-      <div class="field">
-        <label class="qlabel"><span class="qnum">03</span> วันที่นำฝาก <span class="req">*</span></label>
-        <input type="date" id="depositDate">
-        <div class="err-msg" id="err-depositDate">กรุณาเลือกวันที่นำฝาก</div>
-      </div>
-
-      <div class="field">
-        <label class="qlabel"><span class="qnum">04</span> ยอดขายวันที่ <span class="req">*</span></label>
-        <input type="date" id="salesDate">
-        <div class="err-msg" id="err-salesDate">กรุณาเลือกวันที่ของยอดขาย</div>
-      </div>
-
-      <div class="field">
-        <label class="qlabel"><span class="qnum">05</span> มูลค่าที่ทำการฝากเงิน <span class="req">*</span></label>
-        <p class="hint">กรอกเป็น "ตัวเลข" เท่านั้น และไม่ต้องลงท้ายด้วย "บาท"</p>
-        <input type="text" id="amount" inputmode="decimal" placeholder="เช่น 15500">
-        <div class="err-msg" id="err-amount">กรุณากรอกมูลค่าเป็นตัวเลข</div>
-      </div>
-
-    </div>
-
-    <div class="card">
-      <div class="field" style="margin-bottom:0;">
-        <label class="qlabel"><span class="qnum">06</span> ช่องทางที่ทำการฝากเงิน <span class="req">*</span></label>
-        <div class="channel-list" id="channelList">
-          <!-- channels injected by JS -->
+    <form id="formScreen">
+      <div class="card">
+        <div class="field">
+          <label class="qlabel">เขต <span class="req">*</span></label>
+          <select id="zoneCode">
+            <option value="" disabled selected>— เลือกรหัสเขต —</option>
+          </select>
+          <div class="err-msg" id="err-zoneCode">กรุณาเลือกรหัสเขต</div>
         </div>
 
-        <div id="otherDetailWrap">
-          <input type="text" id="otherDetail" placeholder="ระบุช่องทาง/รายละเอียดอื่น ๆ">
+        <div class="field" style="margin-bottom:0;">
+          <label class="qlabel">รหัสสาขา <span class="req">*</span></label>
+          <select id="storeCode" disabled>
+            <option value="" disabled selected>— เลือกเขตก่อน —</option>
+          </select>
+          <div class="err-msg" id="err-storeCode">กรุณาเลือกรหัสสาขา</div>
         </div>
-
-        <div class="err-msg" id="err-channel">กรุณาเลือกช่องทางที่ฝากเงิน</div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="field" style="margin-bottom:0;">
-        <label class="qlabel"><span class="qnum">07</span> ใบนำฝาก (กรุณาอัพโหลดรูปภาพ) <span class="req">*</span></label>
-        <div class="upload-box" id="uploadBox">
-          <span class="upload-icon">📎</span>
-          <div class="upload-text">แตะเพื่อเลือกรูปสลิป หรือถ่ายรูปใหม่</div>
-          <div class="upload-sub">รองรับไฟล์ภาพ ขนาดไม่เกิน 10MB</div>
+      <div class="card">
+        <div class="field">
+          <label class="qlabel">ยอดฝากธนาคาร (บาท) <span class="req">*</span></label>
+          <input type="text" id="amount" inputmode="decimal" placeholder="0.00">
+          <div class="err-msg" id="err-amount">กรุณากรอกยอดฝากเป็นตัวเลข</div>
         </div>
-        <input type="file" id="fileInput" accept="image/*" capture="environment">
-        <div id="previewWrap">
-          <img id="previewImg" src="" alt="preview">
-          <div id="previewMeta"></div>
-          <button type="button" class="remove-file" id="removeFile">ลบ</button>
-        </div>
-        <div class="err-msg" id="err-file">กรุณาอัปโหลดรูปสลิป</div>
       </div>
-    </div>
 
-    <div class="submit-wrap">
+      <div class="card">
+        <div class="field" style="margin-bottom:0;">
+          <label class="qlabel">ถ่ายรูป Payslip <span class="req">*</span></label>
+          <div class="upload-box" id="uploadBox">
+            <span class="upload-icon">📷</span>
+            <div class="upload-text">แตะเพื่อถ่ายรูปสลิป</div>
+            <div class="upload-sub">หรือเลือกรูปจากคลังภาพ</div>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" capture="environment">
+          <div id="previewWrap">
+            <img id="previewImg" src="" alt="preview">
+            <div id="previewMeta"></div>
+            <button type="button" class="remove-file" id="removeFile">ลบ</button>
+          </div>
+          <div class="err-msg" id="err-file">กรุณาถ่ายรูปสลิป</div>
+        </div>
+      </div>
+
       <button type="submit" id="submitBtn">ส่งข้อมูล</button>
-      <p class="footnote">ข้อมูลและรูปภาพจะถูกบันทึกเป็นหลักฐานการนำฝากของสาขา<br>กรุณาตรวจสอบความถูกต้องก่อนกดส่ง</p>
-    </div>
-  </form>
+      <p class="footnote">ข้อมูลจะถูกบันทึกเป็นหลักฐานการนำฝากของสาขาทันที</p>
+    </form>
 
-  <div id="statusScreen">
-    <!-- filled by JS -->
+    <div id="statusScreen"></div>
+
   </div>
-
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.39.7/dist/umd/supabase.min.js"></script>
 <script>
 /* ============== CONFIG ============== */
-// แทนค่านี้ด้วย Web app URL ที่ได้จากการ Deploy Google Apps Script (ดูคำแนะนำในไฟล์ code.gs)
-const SCRIPT_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+// แทนค่าด้วย Supabase Project URL และ anon public key ของคุณ
+// (ดูได้จาก Supabase Dashboard > Project Settings > API)
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+
+// เวลา cutoff ที่ถือว่า "ส่งหลังเวลา" (ใช้เวลาไทย 24 ชม. รูปแบบ HH:MM)
+const LATE_CUTOFF_TIME = "11:00";
 
 // แผนที่ "รหัสเขต -> รายชื่อรหัสสาขาในเขตนั้น" ใช้กรองตัวเลือกสาขาตามเขตที่เลือก
 const ZONE_BRANCHES = {
@@ -411,22 +355,21 @@ const ZONE_BRANCHES = {
   '560': ['55005', '55008', '55009', '55010', '55012', '55018', '55019', '55023', '55024', '55030', '55031', '55033', '55035', '55036', '55038', '55040', '55041', '55042', '55043', '55046', '55049', '55901', '55902', '55906', '55949', '55950', '55951', '75011', '75012', '75014'],
 };
 
-const CHANNELS = [
-  { id:'krungsri',  name:'ธนาคารกรุงศรีอยุธยา (Saving)', detail:'A/C: 333-171627-7', tag:'ธนาคาร' },
-  { id:'scb',       name:'ธนาคารไทยพาณิชย์ (Saving)',     detail:'A/C: 347-301394-9', tag:'ธนาคาร' },
-  { id:'bbl',       name:'ธนาคารกรุงเทพ (Current)',       detail:'A/C: 106-315632-5', tag:'ธนาคาร' },
-  { id:'7-11',      name:'7-Eleven',                       detail:'จุดรับฝากเงินสะดวกซื้อ', tag:'ร้านสะดวกซื้อ' },
-  { id:'lotus',     name:'Lotus',                          detail:'จุดรับฝากเงินไฮเปอร์มาร์เก็ต', tag:'ห้างค้าปลีก' },
-  { id:'bigc',      name:'Big C',                          detail:'จุดรับฝากเงินไฮเปอร์มาร์เก็ต', tag:'ห้างค้าปลีก' },
-  { id:'other',     name:'อื่น ๆ',                          detail:'ระบุช่องทางเพิ่มเติม',    tag:'อื่น ๆ' },
-];
+/* ============== INIT ============== */
+const now = new Date();
+const dateStr = now.toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' });
+document.getElementById('dateNow').textContent = dateStr;
 
-/* ============== ZONE / BRANCH SELECT ============== */
+let supabase = null;
+if (SUPABASE_URL.indexOf('PASTE_YOUR') !== 0 && window.supabase) {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+/* ============== ZONE / STORE SELECT ============== */
 const zoneSelect = document.getElementById('zoneCode');
-const branchSelect = document.getElementById('branchCode');
-const branchHint = document.getElementById('branchHint');
+const storeSelect = document.getElementById('storeCode');
+const storeBadge = document.getElementById('storeBadge');
 
-// เติมตัวเลือกเขตทั้งหมดลงใน dropdown แรก
 Object.keys(ZONE_BRANCHES).forEach(zone => {
   const opt = document.createElement('option');
   opt.value = zone;
@@ -438,75 +381,37 @@ zoneSelect.addEventListener('change', () => {
   const zone = zoneSelect.value;
   clearError('zoneCode');
 
-  // reset branch dropdown ก่อนเติมใหม่
-  branchSelect.innerHTML = '';
-  clearError('branchCode');
+  storeSelect.innerHTML = '';
+  clearError('storeCode');
+  storeBadge.textContent = 'เลือกสาขา';
 
   if (!zone || !ZONE_BRANCHES[zone]) {
-    branchSelect.disabled = true;
+    storeSelect.disabled = true;
     const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.disabled = true;
-    placeholder.selected = true;
+    placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
     placeholder.textContent = '— เลือกเขตก่อน —';
-    branchSelect.appendChild(placeholder);
-    branchHint.textContent = 'กรุณาเลือกเขตก่อนเพื่อแสดงรายชื่อสาขา';
+    storeSelect.appendChild(placeholder);
     return;
   }
 
   const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.disabled = true;
-  placeholder.selected = true;
+  placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
   placeholder.textContent = '— เลือกรหัสสาขา —';
-  branchSelect.appendChild(placeholder);
+  storeSelect.appendChild(placeholder);
 
-  ZONE_BRANCHES[zone].forEach(branch => {
+  ZONE_BRANCHES[zone].forEach(store => {
     const opt = document.createElement('option');
-    opt.value = branch;
-    opt.textContent = branch;
-    branchSelect.appendChild(opt);
+    opt.value = store;
+    opt.textContent = store;
+    storeSelect.appendChild(opt);
   });
 
-  branchSelect.disabled = false;
-  branchHint.textContent = `แสดงรายชื่อสาขาทั้งหมดในเขต ${zone}`;
+  storeSelect.disabled = false;
 });
 
-branchSelect.addEventListener('change', () => clearError('branchCode'));
-
-
-const channelListEl = document.getElementById('channelList');
-CHANNELS.forEach((ch, idx) => {
-  const wrap = document.createElement('label');
-  wrap.className = 'channel';
-  wrap.id = 'channel-' + ch.id;
-  wrap.innerHTML = `
-    <input type="radio" name="channel" value="${ch.id}" data-name="${ch.name}" data-detail="${ch.detail}">
-    <div class="channel-text">
-      <span class="channel-name">${ch.name}</span>
-      <span class="channel-detail">${ch.detail}</span>
-      <span class="channel-tag">${ch.tag}</span>
-    </div>
-  `;
-  channelListEl.appendChild(wrap);
-});
-
-const radios = document.querySelectorAll('input[name=channel]');
-const otherWrap = document.getElementById('otherDetailWrap');
-const otherInput = document.getElementById('otherDetail');
-
-radios.forEach(r => {
-  r.addEventListener('change', () => {
-    document.querySelectorAll('.channel').forEach(c => c.classList.remove('selected'));
-    r.closest('.channel').classList.add('selected');
-    clearError('channel');
-
-    if (r.value === 'other') {
-      otherWrap.classList.add('show');
-    } else {
-      otherWrap.classList.remove('show');
-    }
-  });
+storeSelect.addEventListener('change', () => {
+  clearError('storeCode');
+  storeBadge.textContent = storeSelect.value ? ('สาขา ' + storeSelect.value) : 'เลือกสาขา';
 });
 
 /* ============== FILE UPLOAD ============== */
@@ -518,7 +423,6 @@ const previewMeta = document.getElementById('previewMeta');
 const removeFileBtn = document.getElementById('removeFile');
 
 let selectedFile = null;
-let selectedFileBase64 = null;
 
 uploadBox.addEventListener('click', () => fileInput.click());
 
@@ -536,10 +440,7 @@ fileInput.addEventListener('change', (e) => {
 
   const reader = new FileReader();
   reader.onload = (evt) => {
-    const result = evt.target.result; // data:image/...;base64,XXXX
-    selectedFileBase64 = result.split(',')[1];
-
-    previewImg.src = result;
+    previewImg.src = evt.target.result;
     previewMeta.innerHTML = `<b>${file.name}</b>${(file.size/1024).toFixed(0)} KB`;
     previewWrap.classList.add('show');
     uploadBox.classList.add('has-file');
@@ -552,41 +453,27 @@ fileInput.addEventListener('change', (e) => {
 removeFileBtn.addEventListener('click', (e) => {
   e.stopPropagation();
   selectedFile = null;
-  selectedFileBase64 = null;
   fileInput.value = '';
   previewWrap.classList.remove('show');
   uploadBox.classList.remove('has-file');
-  uploadBox.querySelector('.upload-text').textContent = 'แตะเพื่อเลือกรูปสลิป หรือถ่ายรูปใหม่';
+  uploadBox.querySelector('.upload-text').textContent = 'แตะเพื่อถ่ายรูปสลิป';
 });
 
-/* ============== VALIDATION HELPERS ============== */
-function showError(field, customMsg){
+/* ============== VALIDATION ============== */
+function showError(field, msg){
   const el = document.getElementById('err-' + field);
-  if (customMsg) el.textContent = customMsg;
+  if (msg) el.textContent = msg;
   el.classList.add('show');
-
-  if (field === 'file') {
-    uploadBox.classList.add('invalid');
-  } else {
-    const input = document.getElementById(field);
-    if (input) input.classList.add('invalid');
-  }
+  if (field === 'file') uploadBox.classList.add('invalid');
+  else document.getElementById(field)?.classList.add('invalid');
 }
 function clearError(field){
-  const el = document.getElementById('err-' + field);
-  if (el) el.classList.remove('show');
-
-  if (field === 'file') {
-    uploadBox.classList.remove('invalid');
-  } else {
-    const input = document.getElementById(field);
-    if (input) input.classList.remove('invalid');
-  }
+  document.getElementById('err-' + field)?.classList.remove('show');
+  if (field === 'file') uploadBox.classList.remove('invalid');
+  else document.getElementById(field)?.classList.remove('invalid');
 }
 
-['depositDate','salesDate','amount'].forEach(id => {
-  document.getElementById(id).addEventListener('input', () => clearError(id));
-});
+document.getElementById('amount').addEventListener('input', () => clearError('amount'));
 
 /* ============== SUBMIT ============== */
 const form = document.getElementById('formScreen');
@@ -597,19 +484,13 @@ form.addEventListener('submit', async (e) => {
   e.preventDefault();
   let valid = true;
 
-  const zoneCode = document.getElementById('zoneCode').value;
-  const branchCode = document.getElementById('branchCode').value;
-  const depositDate = document.getElementById('depositDate').value;
-  const salesDate = document.getElementById('salesDate').value;
-  const amount = document.getElementById('amount').value.trim();
-  const selectedRadio = document.querySelector('input[name=channel]:checked');
+  const zoneCode = zoneSelect.value;
+  const storeCode = storeSelect.value;
+  const amount = document.getElementById('amount').value.trim().replace(/,/g, '');
 
   if (!zoneCode) { showError('zoneCode'); valid = false; } else clearError('zoneCode');
-  if (!branchCode) { showError('branchCode'); valid = false; } else clearError('branchCode');
-  if (!depositDate) { showError('depositDate'); valid = false; } else clearError('depositDate');
-  if (!salesDate) { showError('salesDate'); valid = false; } else clearError('salesDate');
-  if (!amount || isNaN(amount.replace(/,/g,''))) { showError('amount'); valid = false; } else clearError('amount');
-  if (!selectedRadio) { showError('channel'); valid = false; } else clearError('channel');
+  if (!storeCode) { showError('storeCode'); valid = false; } else clearError('storeCode');
+  if (!amount || isNaN(amount) || Number(amount) <= 0) { showError('amount'); valid = false; } else clearError('amount');
   if (!selectedFile) { showError('file'); valid = false; } else clearError('file');
 
   if (!valid) {
@@ -617,48 +498,61 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  let channelName = selectedRadio.dataset.name;
-  let channelDetail = selectedRadio.dataset.detail;
-  if (selectedRadio.value === 'other') {
-    channelDetail = otherInput.value.trim() || '(ไม่ระบุรายละเอียด)';
-  }
-
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span class="spinner"></span>กำลังส่งข้อมูล...';
 
-  const payload = {
-    zoneCode, branchCode, depositDate, salesDate, amount,
-    channel: channelName,
-    accountNumber: channelDetail,
-    fileBase64: selectedFileBase64,
-    fileMimeType: selectedFile.type,
-    fileName: selectedFile.name,
-  };
-
   try {
-    if (SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
-      throw new Error('NO_BACKEND');
-    }
+    if (!supabase) throw new Error('NO_BACKEND');
 
-    const formData = new URLSearchParams();
-    formData.append('payload', JSON.stringify(payload));
+    const today = new Date();
+    const todayStr = today.toISOString().slice(0,10); // YYYY-MM-DD
 
-    const resp = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: formData,
-    });
-    const json = await resp.json();
+    // เช็คว่าส่งหลังเวลาที่กำหนดหรือไม่
+    const [cutH, cutM] = LATE_CUTOFF_TIME.split(':').map(Number);
+    const cutoff = new Date(today);
+    cutoff.setHours(cutH, cutM, 0, 0);
+    const isLate = today > cutoff;
 
-    if (json.result === 'success') {
-      showStatus('success');
-    } else {
-      throw new Error(json.message || 'unknown error');
-    }
+    // 1) อัปโหลดรูปเข้า Supabase Storage
+    const fileExt = selectedFile.name.split('.').pop();
+    const fileName = `${storeCode}_${todayStr}_${Date.now()}.${fileExt}`;
+    const filePath = `${storeCode}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('payin-slips')
+      .upload(filePath, selectedFile, { contentType: selectedFile.type });
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = supabase.storage
+      .from('payin-slips')
+      .getPublicUrl(filePath);
+
+    // 2) insert แถวข้อมูลลงตาราง payin_records
+    const { error: insertError } = await supabase
+      .from('payin_records')
+      .insert({
+        store_code: storeCode,
+        zone_code: zoneCode,
+        deposit_date: todayStr,
+        sales_date: todayStr,
+        amount: Number(amount),
+        channel: 'ธนาคาร (ตามรอบฝากปกติของสาขา)',
+        channel_detail: '',
+        slip_image_path: filePath,
+        slip_image_url: urlData.publicUrl,
+        submitted_late: isLate,
+      });
+
+    if (insertError) throw insertError;
+
+    showStatus('success', storeCode);
+
   } catch (err) {
     if (err.message === 'NO_BACKEND') {
       showStatus('noBackend');
     } else {
-      showStatus('error', err.message);
+      showStatus('error', err.message || 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ');
     }
   } finally {
     submitBtn.disabled = false;
@@ -674,28 +568,22 @@ function showStatus(type, detail){
     statusScreen.innerHTML = `
       <div class="status-icon">✅</div>
       <h2 class="status-title">ส่งข้อมูลสำเร็จ</h2>
-      <p class="status-msg">บันทึกหลักฐานการนำฝากเรียบร้อยแล้ว ขอบคุณค่ะ/ครับ</p>
-      <div class="status-actions">
-        <button class="btn-secondary" onclick="location.reload()">ส่งรายการใหม่</button>
-      </div>
+      <p class="status-msg">บันทึกหลักฐานการนำฝากของสาขา ${detail} เรียบร้อยแล้ว</p>
+      <button class="btn-secondary" onclick="location.reload()">ส่งรายการใหม่</button>
     `;
   } else if (type === 'noBackend') {
     statusScreen.innerHTML = `
       <div class="status-icon">⚙️</div>
       <h2 class="status-title">ยังไม่ได้เชื่อมต่อระบบหลังบ้าน</h2>
-      <p class="status-msg">กรุณาตั้งค่า Google Apps Script URL ในไฟล์ index.html (ตัวแปร SCRIPT_URL) ก่อนใช้งานจริง — ดูขั้นตอนในเอกสารคำแนะนำ</p>
-      <div class="status-actions">
-        <button class="btn-secondary" onclick="location.reload()">กลับไปหน้าฟอร์ม</button>
-      </div>
+      <p class="status-msg">กรุณาตั้งค่า Supabase URL และ anon key ในไฟล์นี้ก่อนใช้งานจริง</p>
+      <button class="btn-secondary" onclick="location.reload()">กลับไปหน้าฟอร์ม</button>
     `;
   } else {
     statusScreen.innerHTML = `
       <div class="status-icon">⚠️</div>
       <h2 class="status-title">ส่งข้อมูลไม่สำเร็จ</h2>
-      <p class="status-msg">เกิดข้อผิดพลาด: ${detail || 'กรุณาลองใหม่อีกครั้ง'}<br>หากปัญหายังคงอยู่ กรุณาติดต่อฝ่ายสำนักงาน</p>
-      <div class="status-actions">
-        <button class="btn-secondary" onclick="location.reload()">ลองอีกครั้ง</button>
-      </div>
+      <p class="status-msg">เกิดข้อผิดพลาด: ${detail}<br>กรุณาลองใหม่ หรือติดต่อสำนักงาน</p>
+      <button class="btn-secondary" onclick="location.reload()">ลองอีกครั้ง</button>
     `;
   }
 }
