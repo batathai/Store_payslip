@@ -30,33 +30,97 @@ body{
   color:var(--bata-dark);
 }
 .topband{
-  background:#fff;
-  border-bottom:4px solid var(--bata-red);
-  padding:24px 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #C8102E 0%,
+      #D61F3F 100%
+    );
+
+  padding:32px 20px 70px;
+
   text-align:center;
+
+  color:#fff;
+
+  position:relative;
 }
-.eyebrow{
-  color:#888;
+
+.logo{
+
+  font-size:48px;
+
+  font-weight:900;
+
+  letter-spacing:3px;
+
+  line-height:1;
+
+  margin-bottom:8px;
+}
+
+.portal-name{
+
+  font-size:18px;
+
+  font-weight:700;
+
+  opacity:.95;
+}
+
+.portal-version{
+
   font-size:12px;
-  letter-spacing:.12em;
+
+  opacity:.75;
+
+  letter-spacing:.08em;
+
   text-transform:uppercase;
-  margin:0;
+
+  margin-top:4px;
 }
+
 .storeBadge{
-  margin-top:10px;
-  display:inline-block;
-  padding:12px 24px;
+
+  position:absolute;
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+  bottom:-28px;
+
+  min-width:260px;
+
   background:#fff;
-  border-radius:16px;
+
+  color:#C8102E;
+
+  border-radius:18px;
+
+  padding:16px 24px;
+
   font-size:24px;
+
   font-weight:800;
-  color:var(--bata-red);
-  box-shadow:var(--shadow);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.12);
 }
+
 .dateNow{
-  margin-top:10px;
-  color:#777;
+
+  margin-top:40px;
+
   font-size:13px;
+
+  color:#6B7280;
+
+  text-align:center;
+
+  font-weight:500;
 }
 .wrap{
   max-width:520px;
