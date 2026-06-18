@@ -6,315 +6,315 @@
 <title>BATA Store — ส่ง Payslip</title>
 <style>
 :root{
-  --bata-red:#C8102E;
-  --bata-dark:#111827;
-  --paper:#F5F6F8;
+  --bata-red:#E11D2E;
+  --bata-red-deep:#8F0E1F;
+  --ink:#15171C;
+  --ink-soft:#6B7280;
+  --ink-faint:#9CA3AF;
+  --paper:#F2F3F7;
   --card:#FFFFFF;
-  --line:#E5E7EB;
-  --success:#16A34A;
-  --radius:20px;
-  --shadow:
-    0 8px 30px rgba(0,0,0,.06);
-  --font-body:
-    'Inter',
-    'Noto Sans Thai',
-    sans-serif;
+  --line:#ECEDF1;
+  --success:#0FA968;
+  --success-soft:#E7F8EF;
+  --danger:#E0263F;
+  --danger-soft:#FDEBED;
+  --radius-lg:28px;
+  --radius-md:18px;
+  --radius-sm:14px;
+  --shadow-card:0 12px 32px -8px rgba(21,23,28,.08), 0 2px 8px rgba(21,23,28,.04);
+  --shadow-float:0 20px 45px -12px rgba(225,29,46,.28);
+  --font-display:'Inter','Noto Sans Thai',sans-serif;
+  --font-body:'Inter','Noto Sans Thai',sans-serif;
 }
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 body{
   margin:0;
   background:var(--paper);
   font-family:var(--font-body);
-  color:var(--bata-dark);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
 }
+
 .topband{
-
-  background:
-    linear-gradient(
-      135deg,
-      #B30024 0%,
-      #D90429 100%
-    );
-
-  padding:50px 20px 90px;
-
-  text-align:center;
-
-  color:white;
-
   position:relative;
-
+  background:linear-gradient(160deg, var(--bata-red) 0%, var(--bata-red-deep) 100%);
+  padding:44px 20px 64px;
+  text-align:center;
+  color:#fff;
   overflow:hidden;
 }
-
-.logo{
-
-  font-size:52px;
-
-  font-weight:900;
-
-  letter-spacing:4px;
-
-  color:white;
-
-  line-height:1;
-}
-
-.portal-name{
-
-  margin-top:16px;
-
-  font-size:24px;
-
-  font-weight:700;
-
-  color:white;
-}
-
-.portal-version{
-
-  margin-top:8px;
-
-  font-size:14px;
-
-  opacity:.85;
-
-  color:white;
-}
-
-.storeBadge{
-
+.topband::before{
+  content:'';
   position:absolute;
-
-  left:50%;
-
-  transform:translateX(-50%);
-
-  bottom:-35px;
-
-  min-width:280px;
-
-  background:white;
-
-  color:#C8102E;
-
-  border-radius:22px;
-
-  padding:18px 28px;
-
-  font-size:22px;
-
+  top:-60px; right:-60px;
+  width:220px; height:220px;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+}
+.topband::after{
+  content:'';
+  position:absolute;
+  bottom:-80px; left:-40px;
+  width:180px; height:180px;
+  border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.brandRow{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:6px;
+}
+.logoMark{
+  width:34px; height:34px;
+  border-radius:10px;
+  background:rgba(255,255,255,.18);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:15px; letter-spacing:.02em;
+}
+.logoWord{
   font-weight:800;
-
-  box-shadow:
-      0 15px 40px rgba(0,0,0,.15);
+  font-size:20px;
+  letter-spacing:.06em;
+}
+.portal-name{
+  position:relative;
+  font-size:14px;
+  font-weight:600;
+  opacity:.85;
+  margin-top:2px;
+}
+.eyebrow{
+  position:relative;
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  opacity:.7;
+  margin:14px 0 0;
+  font-weight:600;
 }
 
-.dateNow{
-
-  margin-top:40px;
-
-  font-size:13px;
-
-  color:#6B7280;
-
-  text-align:center;
-
-  font-weight:500;
+.storeBadgeWrap{
+  position:relative;
+  margin-top:26px;
+  display:flex;
+  justify-content:center;
 }
-.wrap{
-
-  max-width:520px;
-
-  margin:auto;
-
-  padding:50px 20px 30px;
-}
-.card{
-
+.storeBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
   background:#fff;
-
-  border:none;
-
-  border-radius:24px;
-
-  box-shadow:
-    0 8px 25px rgba(0,0,0,.06);
-
-  padding:24px;
-
-  margin-bottom:20px;
+  color:var(--bata-red);
+  border-radius:999px;
+  padding:14px 26px 14px 16px;
+  font-size:18px;
+  font-weight:800;
+  box-shadow:0 18px 40px -8px rgba(0,0,0,.22);
 }
-.field{margin-bottom:20px;}
+.storeBadge .pin{
+  width:30px; height:30px;
+  border-radius:50%;
+  background:var(--danger-soft);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px;
+  flex-shrink:0;
+}
+.dateRow{
+  margin-top:14px;
+  text-align:center;
+  font-size:12.5px;
+  color:var(--ink-faint);
+  font-weight:600;
+}
+
+.wrap{
+  max-width:480px;
+  margin:0 auto;
+  padding:0 16px 48px;
+  margin-top:-30px;
+  position:relative;
+}
+
+.card{
+  background:var(--card);
+  border:none;
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-card);
+  padding:22px 20px;
+  margin-bottom:14px;
+}
+.field{margin-bottom:18px;}
 .field:last-child{margin-bottom:0;}
 .qlabel{
-  display:block;
+  display:flex;
+  align-items:center;
+  gap:6px;
   margin-bottom:10px;
   font-weight:700;
+  font-size:14px;
+  color:var(--ink);
 }
-.req{
-  color:var(--bata-red);
-}
+.req{color:var(--bata-red);}
+
 input[type=text],
 select{
   width:100%;
-  height:58px;
+  height:56px;
   padding:0 16px;
-  border:2px solid #ECECEC;
-  border-radius:14px;
-  font-size:18px;
-  transition:.2s;
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-sm);
+  font-size:17px;
+  font-weight:600;
+  transition:border-color .15s ease, box-shadow .15s ease;
   font-family:var(--font-body);
-  background:#fff;
-  color:var(--bata-dark);
+  background:#FAFAFB;
+  color:var(--ink);
 }
 select{
   appearance:none;
   -webkit-appearance:none;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1L7 7L13 1' stroke='%23888' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1L7 7L13 1' stroke='%239CA3AF' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   background-repeat:no-repeat;
-  background-position:right 16px center;
-  padding-right:40px;
+  background-position:right 18px center;
+  padding-right:42px;
+  font-weight:700;
 }
-select:disabled{background-color:#FAFAFA; color:#B0B0B0; cursor:not-allowed;}
-input[type=text]::placeholder{color:#B0B0B0;}
+select:disabled{background-color:#F4F4F6; color:var(--ink-faint); cursor:not-allowed;}
+input[type=text]::placeholder{color:var(--ink-faint); font-weight:500;}
 input:focus,
 select:focus{
   outline:none;
   border-color:var(--bata-red);
-  box-shadow:
-    0 0 0 4px
-    rgba(200,16,46,.10);
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(225,29,46,.10);
 }
+
 .upload-box{
-  border:2px dashed #D9D9D9;
-  border-radius:20px;
-  background:#FAFAFA;
-  padding:40px 20px;
+  border:1.5px dashed #D7D9E0;
+  border-radius:var(--radius-md);
+  background:#FAFAFB;
+  padding:38px 18px;
   text-align:center;
   cursor:pointer;
-  transition:.2s;
+  transition:border-color .15s ease, background .15s ease;
 }
-.upload-box:hover{
-  border-color:var(--bata-red);
-}
-.upload-box.has-file{
-  background:#F0FDF4;
-  border-color:var(--success);
-}
-.upload-box.invalid{
-  border-color:#DC2626;
-}
+.upload-box:hover{border-color:var(--bata-red);}
+.upload-box.has-file{background:var(--success-soft); border-color:var(--success); border-style:solid;}
+.upload-box.invalid{border-color:var(--danger);}
 .upload-icon{
-  font-size:40px;
-  margin-bottom:10px;
-  display:block;
+  width:52px; height:52px;
+  margin:0 auto 12px;
+  border-radius:50%;
+  background:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px;
+  box-shadow:0 6px 16px -4px rgba(21,23,28,.10);
 }
-.upload-text{
-  font-size:16px;
-  font-weight:700;
-}
-.upload-sub{
-  margin-top:6px;
-  font-size:13px;
-  color:#888;
-}
+.upload-text{font-size:15.5px; font-weight:700;}
+.upload-sub{margin-top:5px; font-size:12.5px; color:var(--ink-soft);}
+
 #fileInput{display:none;}
 #previewWrap{
   margin-top:14px;
-  background:#fff;
-  border:1px solid #eee;
-  border-radius:14px;
+  background:#FAFAFB;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
   padding:12px;
   display:none;
-  gap:10px;
+  gap:12px;
   align-items:center;
 }
 #previewWrap.show{display:flex;}
 #previewImg{
-  width:70px;
-  height:70px;
+  width:64px; height:64px;
   object-fit:cover;
   border-radius:12px;
+  box-shadow:0 4px 12px -2px rgba(21,23,28,.15);
 }
-#previewMeta{font-size:12.5px; color:#888; flex:1;}
-#previewMeta b{color:var(--bata-dark); display:block; font-size:13px;}
+#previewMeta{font-size:12.5px; color:var(--ink-soft); flex:1;}
+#previewMeta b{color:var(--ink); display:block; font-size:13px;}
 .remove-file{
   font-size:12px; color:var(--bata-red); font-weight:700;
-  background:none; border:none; cursor:pointer; padding:6px;
+  background:#fff; border:1px solid var(--line); border-radius:10px;
+  cursor:pointer; padding:8px 12px;
 }
+
 button#submitBtn{
   width:100%;
   height:60px;
   border:none;
-  border-radius:16px;
-  background:var(--bata-red);
+  border-radius:var(--radius-md);
+  background:linear-gradient(135deg, var(--bata-red) 0%, var(--bata-red-deep) 100%);
   color:#fff;
-  font-size:18px;
-  font-weight:700;
-  box-shadow:
-    0 10px 25px
-    rgba(200,16,46,.25);
-  transition:.2s;
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:.01em;
+  box-shadow:var(--shadow-float);
+  transition:transform .12s ease, box-shadow .12s ease;
   cursor:pointer;
-  margin-top:20px;
+  margin-top:6px;
 }
-button#submitBtn:hover{
-  transform:translateY(-1px);
-}
+button#submitBtn:hover{transform:translateY(-2px);}
+button#submitBtn:active{transform:translateY(0) scale(.99);}
 button#submitBtn:disabled{
-  opacity:.7;
-  cursor:not-allowed;
+  background:#D7D9E0; box-shadow:none; cursor:not-allowed; transform:none;
 }
+
 .footnote{
   text-align:center;
-  color:#888;
+  color:var(--ink-faint);
   font-size:12px;
-  margin-top:14px;
+  margin-top:16px;
   line-height:1.5;
 }
-#statusScreen{display:none; text-align:center; padding:70px 24px;}
+
+#statusScreen{display:none; text-align:center; padding:60px 24px;}
 #statusScreen.show{display:block;}
-.status-icon{font-size:56px; margin-bottom:16px;}
-.status-title{
-  font-size:24px;
-  font-weight:800;
-  margin-bottom:10px;
+.status-icon{
+  width:80px; height:80px;
+  margin:0 auto 18px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px;
 }
-.status-msg{
-  color:#666;
-  line-height:1.7;
-  font-size:14px;
-}
+.status-icon.ok{background:var(--success-soft);}
+.status-icon.warn{background:#FFF4E0;}
+.status-icon.err{background:var(--danger-soft);}
+.status-title{font-size:21px; font-weight:800; margin-bottom:8px;}
+.status-msg{color:var(--ink-soft); line-height:1.7; font-size:14px;}
 .btn-secondary{
   display:inline-block;
   margin-top:22px;
   background:#fff;
-  border:1px solid #ddd;
-  border-radius:12px;
-  padding:12px 24px;
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  padding:13px 26px;
   font-weight:700;
   font-size:14px;
   cursor:pointer;
-  color:var(--bata-dark);
+  color:var(--ink);
+  box-shadow:var(--shadow-card);
 }
+
 .err-msg{
-  color:#DC2626;
-  margin-top:6px;
-  font-size:12px;
+  color:var(--danger);
+  margin-top:7px;
+  font-size:12.5px;
+  font-weight:600;
   display:none;
 }
 .err-msg.show{display:block;}
-.invalid{
-  border-color:#DC2626 !important;
-}
+.invalid{border-color:var(--danger) !important;}
+
 #formScreen.hide{display:none;}
+
 .spinner{
   display:inline-block; width:16px; height:16px;
   border:2px solid rgba(255,255,255,0.5); border-top-color:#fff;
-  border-radius:50%; animation:spin 0.7s linear infinite;
+  border-radius:50%; animation:spin .7s linear infinite;
   vertical-align:middle; margin-right:8px;
 }
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -325,30 +325,20 @@ button#submitBtn:disabled{
 <div id="mainApp" style="display:block;">
 
   <div class="topband">
-
-    <div class="logo">
-        BATA
+    <div class="brandRow">
+      <div class="logoMark">B</div>
+      <div class="logoWord">BATA</div>
     </div>
+    <div class="portal-name">Store Operations</div>
+    <p class="eyebrow">Daily Deposit Submission Portal</p>
 
-    <div class="portal-name">
-        Store Operations
+    <div class="storeBadgeWrap">
+      <div class="storeBadge" id="storeBadge"><span class="pin">🏬</span>เลือกสาขา</div>
     </div>
-
-    <div class="portal-version">
-        Daily Deposit Submission Portal
-    </div>
-
-    <div class="storeBadge" id="storeBadge">
-        Select Store
-    </div>
-
-</div>
+  </div>
 
   <div class="wrap">
-
-</div>
-
-  <div class="wrap">
+    <div class="dateRow" id="dateNow">—</div>
 
     <form id="formScreen">
       <div class="card">
@@ -455,7 +445,7 @@ zoneSelect.addEventListener('change', () => {
 
   storeSelect.innerHTML = '';
   clearError('storeCode');
-  storeBadge.textContent = 'เลือกสาขา';
+  storeBadge.innerHTML = '<span class="pin">🏬</span>เลือกสาขา';
 
   if (!zone || !ZONE_BRANCHES[zone]) {
     storeSelect.disabled = true;
@@ -483,7 +473,7 @@ zoneSelect.addEventListener('change', () => {
 
 storeSelect.addEventListener('change', () => {
   clearError('storeCode');
-  storeBadge.textContent = storeSelect.value ? ('สาขา ' + storeSelect.value) : 'เลือกสาขา';
+  storeBadge.innerHTML = storeSelect.value ? ('<span class="pin">🏬</span>สาขา ' + storeSelect.value) : '<span class="pin">🏬</span>เลือกสาขา';
 });
 
 /* ============== FILE UPLOAD ============== */
@@ -638,21 +628,21 @@ function showStatus(type, detail){
 
   if (type === 'success') {
     statusScreen.innerHTML = `
-      <div class="status-icon">✅</div>
+      <div class="status-icon ok">✅</div>
       <h2 class="status-title">ส่งข้อมูลสำเร็จ</h2>
       <p class="status-msg">บันทึกหลักฐานการนำฝากของสาขา ${detail} เรียบร้อยแล้ว</p>
       <button class="btn-secondary" onclick="location.reload()">ส่งรายการใหม่</button>
     `;
   } else if (type === 'noBackend') {
     statusScreen.innerHTML = `
-      <div class="status-icon">⚙️</div>
+      <div class="status-icon warn">⚙️</div>
       <h2 class="status-title">ยังไม่ได้เชื่อมต่อระบบหลังบ้าน</h2>
       <p class="status-msg">กรุณาตั้งค่า Supabase URL และ anon key ในไฟล์นี้ก่อนใช้งานจริง</p>
       <button class="btn-secondary" onclick="location.reload()">กลับไปหน้าฟอร์ม</button>
     `;
   } else {
     statusScreen.innerHTML = `
-      <div class="status-icon">⚠️</div>
+      <div class="status-icon err">⚠️</div>
       <h2 class="status-title">ส่งข้อมูลไม่สำเร็จ</h2>
       <p class="status-msg">เกิดข้อผิดพลาด: ${detail}<br>กรุณาลองใหม่ หรือติดต่อสำนักงาน</p>
       <button class="btn-secondary" onclick="location.reload()">ลองอีกครั้ง</button>
