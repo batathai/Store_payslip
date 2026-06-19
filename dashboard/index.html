@@ -625,7 +625,10 @@ filterDateEl.min = dateNDaysAgo(30);
 filterDateEl.max = today;
 
 filterDateEl.addEventListener('change', () => { currentPage = 1; render(); });
-filterZoneEl.addEventListener('change', () => { activeZoneFilter = filterZoneEl.value; currentPage = 1; render(); });
+filterZoneEl.addEventListener('change', () => {
+  if (LOCKED_ZONE) return; // District Manager ไม่สามารถเปลี่ยนเขตได้
+  activeZoneFilter = filterZoneEl.value; currentPage = 1; render();
+});
 
 rangeToggleEl.querySelectorAll('button').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -681,7 +684,7 @@ function buildStoreList(){
   return list;
 }
 
-/* ==================== DATA LOADING (ผูกกับ schema จริง: submitted_at, google_file_url, slip_uploaded) ==================== */
+/* ==================== DATA LOADING (ผูกกับ schema จริง: submitted_at, slip_url) ==================== */
 async function loadData(){
   const sinceDate = dateNDaysAgo(30) + 'T00:00:00';
 
@@ -982,6 +985,7 @@ function render(){
 
   document.querySelectorAll('.zone-card').forEach(el => {
     el.addEventListener('click', () => {
+      if (LOCKED_ZONE) return; // District Manager ไม่สามารถเปลี่ยนเขตได้
       const z = el.dataset.zone;
       activeZoneFilter = (activeZoneFilter === z) ? '' : z;
       filterZoneEl.value = activeZoneFilter;
@@ -1032,7 +1036,7 @@ function render(){
     const rec = r.latest;
     const timeStr = rec ? new Date(rec.submitted_at).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) : '—';
     const amountStr = rec ? Number(rec.amount).toLocaleString('th-TH', {minimumFractionDigits:2}) : '—';
-    const slipLink = rec && rec.google_file_url ? `<a class="imglink" href="${rec.google_file_url}" target="_blank" rel="noopener">View</a>` : '—';
+    const slipLink = rec && rec.slip_url ? `<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>` : '—';
 
     let missClass = 'zero';
     if (r.missedDays > 0 && r.missedDays <= Math.ceil(activeRange * 0.3)) missClass = 'some';
@@ -1069,6 +1073,37 @@ function render(){
       render();
     });
   });
+}
+
+/* ==================== URL-BASED ZONE LOCK ====================
+   ถ้า URL มี ?zone=511 → District Manager mode: lock เขต 511 เท่านั้น
+   ถ้าไม่มี ?zone= → Accounting mode: เห็นทุกเขต (default)
+
+   ตัวอย่าง URL:
+   dashboard.html            → บัญชี เห็นทั้งหมด
+   dashboard.html?zone=511   → District Manager เขต 511
+   dashboard.html?zone=530   → District Manager เขต 530
+*/
+const urlParams = new URLSearchParams(window.location.search);
+const LOCKED_ZONE = urlParams.get('zone'); // เช่น '511' หรือ null
+
+if (LOCKED_ZONE) {
+  // District Manager mode — ซ่อน zone dropdown และ lock เขต
+  activeZoneFilter = LOCKED_ZONE;
+
+  // อัปเดต title ให้แสดงว่าดูเฉพาะเขตไหน
+  document.getElementById('updatedAt').textContent = `เขต ${LOCKED_ZONE} — District Manager View`;
+
+  // ซ่อน filterZone dropdown (DM ไม่ควรเปลี่ยนเขตได้)
+  const zoneSelectEl = document.getElementById('filterZone');
+  if (zoneSelectEl) zoneSelectEl.closest('.head-controls') && (zoneSelectEl.style.display = 'none');
+
+  // ซ่อน zone grid (ไม่จำเป็นถ้าเห็นแค่เขตเดียว)
+  const zoneGridSection = document.querySelector('.section-title');
+  if (zoneGridSection && zoneGridSection.textContent.includes('ภาพรวมรายเขต')) {
+    zoneGridSection.style.display = 'none';
+    document.getElementById('zoneGrid').style.display = 'none';
+  }
 }
 
 /* ==================== START ==================== */
