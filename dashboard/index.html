@@ -1106,7 +1106,10 @@ if (LOCKED_ZONE) {
   // ซ่อน District chart section (กราฟเปรียบเทียบทุกเขต ไม่เกี่ยวกับ DM)
   const districtSection = document.getElementById('districtSection');
   if (districtSection) districtSection.style.display = 'none';
-  if (zoneSelectEl) zoneSelectEl.closest('.head-controls') && (zoneSelectEl.style.display = 'none');
+
+  // ซ่อน filterZone dropdown (DM ไม่ควรเปลี่ยนเขตได้)
+  const zoneSelectEl = document.getElementById('filterZone');
+  if (zoneSelectEl) zoneSelectEl.style.display = 'none';
 
   // ซ่อน zone grid (ไม่จำเป็นถ้าเห็นแค่เขตเดียว)
   const zoneGridSection = document.querySelector('.section-title');
