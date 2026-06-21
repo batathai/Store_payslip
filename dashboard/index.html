@@ -250,10 +250,10 @@
     </div>
 
     <div class="sidebar-foot">
-      <div class="sidebar-avatar">AC</div>
+      <div class="sidebar-avatar" id="sidebarAvatar">AC</div>
       <div class="sidebar-foot-text">
-        <p class="sidebar-foot-name">Accounting Team</p>
-        <p class="sidebar-foot-sub">admin@bata.co.th</p>
+        <p class="sidebar-foot-name" id="sidebarName">Accounting Team</p>
+        <p class="sidebar-foot-sub" id="sidebarEmail">admin@bata.co.th</p>
       </div>
     </div>
   </div>
@@ -1093,6 +1093,11 @@ if (LOCKED_ZONE) {
 
   // อัปเดต title ให้แสดงว่าดูเฉพาะเขตไหน
   document.getElementById('updatedAt').textContent = `เขต ${LOCKED_ZONE} — District Manager View`;
+
+  // อัปเดต sidebar footer ให้แสดง District Team และ email ตามเขต
+  document.getElementById('sidebarAvatar').textContent = 'DM';
+  document.getElementById('sidebarName').textContent = 'District Team';
+  document.getElementById('sidebarEmail').textContent = `DM${LOCKED_ZONE}@bata.co.th`;
 
   // ซ่อน filterZone dropdown (DM ไม่ควรเปลี่ยนเขตได้)
   const zoneSelectEl = document.getElementById('filterZone');
