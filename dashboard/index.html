@@ -352,7 +352,13 @@
             <table>
               <thead>
                 <tr>
-                  <th>Store code</th><th>District</th><th>Status</th><th>Time</th><th>Deposit amount</th><th>Slip</th><th id="missColHeader">Missed (7d)</th>
+                  <th onclick="sortBy('store_code')" style="cursor:pointer;user-select:none;" id="th_store_code">Store code ↕</th>
+                  <th onclick="sortBy('zone')" style="cursor:pointer;user-select:none;" id="th_zone">District ↕</th>
+                  <th onclick="sortBy('status')" style="cursor:pointer;user-select:none;" id="th_status">Status ↕</th>
+                  <th onclick="sortBy('time')" style="cursor:pointer;user-select:none;" id="th_time">Time ↕</th>
+                  <th onclick="sortBy('amount')" style="cursor:pointer;user-select:none;" id="th_amount">Deposit amount ↕</th>
+                  <th onclick="sortBy('slip')" style="cursor:pointer;user-select:none;" id="th_slip">Slip ↕</th>
+                  <th onclick="sortBy('missed')" style="cursor:pointer;user-select:none;" id="th_missed" id="missColHeader">Missed (7d) ↕</th>
                 </tr>
               </thead>
               <tbody id="tableBody">
@@ -611,9 +617,18 @@ let allRecords = [];      // payin_records ของช่วง 30 วันล
 let activeZoneFilter = '';
 let activeMetricFilter = '';
 let searchQuery = '';
+let sortCol = 'store_code'; // default sort
+let sortDir = 'asc';       // asc หรือ desc
 
 function onSearchInput(){
   searchQuery = document.getElementById('storeSearch').value.trim().toLowerCase();
+  currentPage = 1;
+  render();
+}
+
+function sortBy(col){
+  if(sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortCol = col; sortDir = 'asc'; }
   currentPage = 1;
   render();
 }
@@ -1040,6 +1055,30 @@ function render(){
   })).sort((a, b) => b.missedDays - a.missedDays);
 
   document.getElementById('tableTitle').textContent = `All submissions (${filteredRows.length})`;
+
+  // --- Sort ---
+  filteredRows = [...filteredRows].sort((a, b) => {
+    let va, vb;
+    if(sortCol === 'store_code'){ va = a.store.store_code; vb = b.store.store_code; }
+    else if(sortCol === 'zone'){ va = a.store.zone_code; vb = b.store.zone_code; }
+    else if(sortCol === 'status'){ va = a.status; vb = b.status; }
+    else if(sortCol === 'time'){ va = a.rec ? a.rec.submitted_at : ''; vb = b.rec ? b.rec.submitted_at : ''; }
+    else if(sortCol === 'amount'){ va = a.rec ? Number(a.rec.amount) : -1; vb = b.rec ? Number(b.rec.amount) : -1; }
+    else if(sortCol === 'slip'){ va = a.rec && a.rec.slip_url ? 1 : 0; vb = b.rec && b.rec.slip_url ? 1 : 0; }
+    else if(sortCol === 'missed'){ va = a.missed7d || 0; vb = b.missed7d || 0; }
+    else { va = a.store.store_code; vb = b.store.store_code; }
+    if(va < vb) return sortDir === 'asc' ? -1 : 1;
+    if(va > vb) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // อัปเดต th indicator
+  ['store_code','zone','status','time','amount','slip','missed'].forEach(col => {
+    const th = document.getElementById('th_' + col);
+    if(!th) return;
+    const base = { store_code:'Store code', zone:'District', status:'Status', time:'Time', amount:'Deposit amount', slip:'Slip', missed:'Missed (7d)' }[col];
+    th.textContent = base + (sortCol === col ? (sortDir === 'asc' ? ' ▲' : ' ▼') : ' ↕');
+  });
 
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
   if (currentPage > totalPages) currentPage = totalPages;
