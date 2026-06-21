@@ -2,402 +2,480 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BATA Store Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BATA Store — ส่ง Payslip</title>
 <style>
-  :root{
-    --bata-red:#E11D2E;
-    --bata-red-dark:#8F0E1F;
-    --ink:#15171C;
-    --ink-soft:#6B7280;
-    --ink-faint:#9CA3AF;
-    --paper:#FFFFFF;
-    --card:#FFFFFF;
-    --line:#ECEDF1;
-    --sidebar-bg:#8F0E1F;
-    --ok:#0FA968;
-    --ok-bg:#E7F8EF;
-    --warn:#D97706;
-    --warn-bg:#FEF3DD;
-    --err:#E0263F;
-    --err-bg:#FDEBED;
-    --purple:#7C5CFC;
-    --purple-bg:#EFEAFE;
-    --blue:#2F7DE1;
-    --blue-bg:#E8F1FD;
-    --radius-lg:24px;
-    --radius-md:16px;
-    --shadow-card:0 12px 32px -8px rgba(21,23,28,.08), 0 2px 8px rgba(21,23,28,.04);
-    --font-display:'Inter','Noto Sans Thai',sans-serif;
-    --font-body:'Inter','Noto Sans Thai','Helvetica Neue',Arial,sans-serif;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0; background:var(--paper); color:var(--ink);
-    font-family:var(--font-body); -webkit-font-smoothing:antialiased;
-  }
+:root{
+  --bata-red:#E11D2E;
+  --bata-red-dark:#8F0E1F;
+  --bata-dark:#111827;
+  --paper:#F2F3F7;
+  --card:#FFFFFF;
+  --line:#E5E7EB;
+  --success:#0FA968;
+  --radius-lg:28px;
+  --radius-md:18px;
+  --radius-sm:14px;
+  --shadow:
+    0 1px 2px rgba(17,24,39,.04),
+    0 12px 32px rgba(17,24,39,.08);
+  --shadow-deep:
+    0 8px 24px rgba(225,29,46,.18),
+    0 2px 6px rgba(225,29,46,.12);
+  --font-body:'Inter','Noto Sans Thai',sans-serif;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  background:var(--paper);
+  font-family:var(--font-body);
+  color:var(--bata-dark);
+}
 
-  .layout{display:flex; min-height:100vh;}
+/* ---------- header ---------- */
+.topband{
+  position:relative;
+  background:linear-gradient(135deg,var(--bata-red) 0%,var(--bata-red-dark) 100%);
+  padding:36px 20px 56px;
+  overflow:hidden;
+  text-align:center;
+}
+.topband::before,
+.topband::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+}
+.topband::before{ width:220px; height:220px; top:-90px; left:-70px; }
+.topband::after{ width:160px; height:160px; bottom:-100px; right:-50px; }
+.brand-row{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  z-index:1;
+}
+.logo-mark{
+  width:34px; height:34px;
+  border-radius:10px;
+  background:#fff;
+  color:var(--bata-red);
+  font-weight:800;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.brand-name{
+  color:#fff;
+  font-weight:800;
+  font-size:20px;
+  letter-spacing:.02em;
+}
+.portal-name{
+  position:relative;
+  z-index:1;
+  color:rgba(255,255,255,.92);
+  font-size:14px;
+  margin:8px 0 2px;
+  font-weight:600;
+}
+.eyebrow{
+  position:relative;
+  z-index:1;
+  color:rgba(255,255,255,.6);
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin:0;
+}
+.storeBadge{
+  position:relative;
+  z-index:2;
+  margin-top:20px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 26px;
+  background:#fff;
+  border-radius:999px;
+  font-size:15px;
+  font-weight:700;
+  color:var(--bata-dark);
+  box-shadow:var(--shadow);
+}
+.storeBadge .pin{
+  width:26px; height:26px;
+  border-radius:50%;
+  background:#FEEAEC;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  flex-shrink:0;
+}
 
-  .sidebar{
-    width:230px; flex:0 0 230px;
-    background:var(--sidebar-bg); color:#fff;
-    display:flex; flex-direction:column;
-    position:sticky; top:0; height:100vh;
-  }
-  .sidebar-brand{
-    display:flex; align-items:center; gap:10px;
-    padding:22px 20px; border-bottom:1px solid rgba(255,255,255,.08);
-  }
-  .sidebar-logo{
-    width:30px; height:30px; border-radius:9px;
-    background:var(--bata-red); display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:14px;
-  }
-  .sidebar-word{font-weight:800; font-size:18px; letter-spacing:.03em;}
+/* ---------- layout ---------- */
+.wrap{
+  max-width:520px;
+  margin:auto;
+  padding:0 20px 40px;
+  margin-top:-26px;
+  position:relative;
+  z-index:1;
+}
+.card{
+  background:var(--card);
+  border:none;
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);
+  padding:24px;
+  margin-bottom:18px;
+}
+.no-deposit-card{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:18px 24px;
+  cursor:pointer;
+}
+.no-deposit-card input[type=checkbox]{
+  width:22px; height:22px;
+  accent-color:var(--bata-red);
+  flex-shrink:0;
+  cursor:pointer;
+}
+.no-deposit-card .nd-text .nd-title{
+  font-weight:700;
+  font-size:15px;
+}
+.no-deposit-card .nd-text .nd-sub{
+  font-size:12px;
+  color:#6B7280;
+  margin-top:2px;
+}
+.card.no-deposit-active{
+  border:2px solid var(--bata-red);
+  background:#FEF4F5;
+}
+.qlabel{
+  display:block;
+  margin-bottom:10px;
+  font-weight:700;
+  font-size:15px;
+}
+.req{ color:var(--bata-red); }
 
-  .sidebar-nav{flex:1; padding:14px 12px; overflow-y:auto;}
-  .nav-item{
-    display:flex; align-items:center; gap:11px;
-    padding:11px 14px; border-radius:10px;
-    color:rgba(255,255,255,.65); font-size:13.5px; font-weight:600;
-    cursor:pointer; margin-bottom:2px; transition:background .12s ease, color .12s ease;
-    border:none; background:none; width:100%; text-align:left; font-family:var(--font-body);
-  }
-  .nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
-  .nav-item.active{background:var(--bata-red); color:#fff;}
-  .nav-item .nav-icon{width:17px; text-align:center; flex:0 0 auto; font-size:14px;}
-  .nav-item .nav-count{
-    margin-left:auto; font-size:11px; font-weight:700;
-    background:rgba(255,255,255,.12); border-radius:6px; padding:1px 7px;
-  }
-  .nav-item.active .nav-count{background:rgba(255,255,255,.22);}
+input[type=text],
+input[type=date],
+select{
+  width:100%;
+  height:56px;
+  padding:0 16px;
+  border:2px solid #ECECEC;
+  background:#FAFAFB;
+  border-radius:var(--radius-sm);
+  font-size:16px;
+  font-family:inherit;
+  color:var(--bata-dark);
+  transition:.2s;
+}
+input:focus, select:focus{
+  outline:none;
+  border-color:var(--bata-red);
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(225,29,46,.10);
+}
+input::placeholder{ color:#9CA3AF; }
+select:disabled{ opacity:.5; cursor:not-allowed; }
 
-  .sidebar-foot{
-    padding:16px 20px; border-top:1px solid rgba(255,255,255,.08);
-    display:flex; align-items:center; gap:10px;
-  }
-  .sidebar-avatar{
-    width:32px; height:32px; border-radius:50%;
-    background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:700; flex:0 0 auto;
-  }
-  .sidebar-foot-text p{margin:0; line-height:1.3;}
-  .sidebar-foot-name{font-size:12.5px; font-weight:700;}
-  .sidebar-foot-sub{font-size:11px; color:rgba(255,255,255,.5);}
+.field{ margin-bottom:16px; }
+.field:last-child{ margin-bottom:0; }
+.field-row{ display:flex; gap:12px; }
+.field-row .field{ flex:1; margin-bottom:0; }
 
-  .main{flex:1; min-width:0; padding:24px 28px 60px;}
+/* ---------- channel radio cards ---------- */
+.channel-list{ display:flex; flex-direction:column; gap:10px; }
+.channel-card{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  border:2px solid #ECECEC;
+  border-radius:var(--radius-sm);
+  background:#FAFAFB;
+  cursor:pointer;
+  transition:.15s;
+}
+.channel-card:hover{ border-color:#D1D5DB; }
+.channel-card.selected{
+  border-color:var(--bata-red);
+  background:#FEF4F5;
+}
+.channel-card input[type=radio]{
+  width:20px; height:20px;
+  accent-color:var(--bata-red);
+  flex-shrink:0;
+}
+.channel-card .ch-text{ flex:1; }
+.channel-card .ch-name{ font-weight:700; font-size:15px; }
+.channel-card .ch-detail{ font-size:12px; color:#6B7280; margin-top:2px; }
+#otherDetailWrap{ margin-top:10px; display:none; }
 
-  .page-head{
-    display:flex; justify-content:space-between; align-items:center;
-    flex-wrap:wrap; gap:14px; margin-bottom:22px;
-  }
-  .page-title{font-size:21px; font-weight:800; margin:0;}
-  .page-sub{font-size:12.5px; color:var(--ink-soft); margin:3px 0 0;}
+/* ---------- upload ---------- */
+.upload-box{
+  border:2px dashed #D9D9D9;
+  border-radius:var(--radius-md);
+  background:#FAFAFA;
+  padding:36px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+.upload-box:hover{ border-color:var(--bata-red); }
+.upload-box.has-file{ background:#F0FDF4; border-color:var(--success); }
+.upload-icon{
+  width:56px; height:56px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  margin:0 auto 10px;
+}
+.upload-text{ font-size:15px; font-weight:700; }
+.upload-sub{ margin-top:6px; font-size:12px; color:#9CA3AF; }
+#previewWrap{
+  margin-top:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:var(--radius-sm);
+  padding:12px;
+}
+#previewImg{
+  width:64px; height:64px;
+  object-fit:cover;
+  border-radius:12px;
+  flex-shrink:0;
+}
+.remove-file{
+  margin-left:auto;
+  border:none;
+  background:#F3F4F6;
+  color:#6B7280;
+  width:30px; height:30px;
+  border-radius:50%;
+  font-size:16px;
+  cursor:pointer;
+  flex-shrink:0;
+}
 
-  .head-controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
-  select, input[type=date]{
-    padding:9px 12px; font-size:13px; border:1.5px solid var(--line);
-    border-radius:10px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600;
-  }
-  select:focus, input:focus{outline:none; border-color:var(--bata-red);}
+/* ---------- submit ---------- */
+button#submitBtn{
+  width:100%;
+  height:58px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--bata-red) 0%,var(--bata-red-dark) 100%);
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  font-family:inherit;
+  box-shadow:var(--shadow-deep);
+  transition:.15s;
+  cursor:pointer;
+}
+button#submitBtn:hover{ transform:translateY(-1px); }
+button#submitBtn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
+.spinner{
+  display:inline-block;
+  width:16px; height:16px;
+  border:2px solid rgba(255,255,255,.5);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  margin-right:8px;
+  vertical-align:-2px;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
 
-  .metrics{
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));
-    gap:14px; margin-bottom:24px;
-  }
-  .metric{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card);
-    padding:16px 16px; cursor:pointer; transition:border-color .15s ease, transform .05s ease;
-  }
-  .metric:hover{border-color:var(--ink-faint);}
-  .metric:active{transform:scale(0.98);}
-  .metric.active{border-color:var(--bata-red);}
-  .metric-top{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
-  .metric-icon{
-    width:30px; height:30px; border-radius:9px;
-    display:flex; align-items:center; justify-content:center; font-size:14px; flex:0 0 auto;
-  }
-  .metric-icon.blue{background:var(--blue-bg); color:var(--blue);}
-  .metric-icon.ok{background:var(--ok-bg); color:var(--ok);}
-  .metric-icon.warn{background:var(--warn-bg); color:var(--warn);}
-  .metric-icon.purple{background:var(--purple-bg); color:var(--purple);}
-  .metric-icon.err{background:var(--err-bg); color:var(--err);}
-  .metric-label{font-size:11px; color:var(--ink-soft); font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
-  .metric-value{font-size:26px; font-weight:800; line-height:1;}
-  .metric-pct{font-size:11.5px; font-weight:700; margin-top:4px;}
-  .metric-pct.blue{color:var(--blue);}
-  .metric-pct.ok{color:var(--ok);}
-  .metric-pct.warn{color:var(--warn);}
-  .metric-pct.purple{color:var(--purple);}
-  .metric-pct.err{color:var(--err);}
+.removable{ transition:opacity .2s, max-height .3s; }
+.removable.hidden{ display:none; }
+.err-msg{ color:#DC2626; margin-top:6px; font-size:12px; display:none; }
+.invalid{ border-color:#DC2626 !important; }
 
-  .section-title{font-size:14.5px; font-weight:800; margin:0 0 14px;}
-  .section-head{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
-  .section-head .section-title{margin:0;}
-  .section-link{font-size:12.5px; font-weight:700; color:var(--bata-red); text-decoration:none; cursor:pointer; border:none; background:none; font-family:var(--font-body);}
+/* ---------- status screen ---------- */
+#statusScreen{ display:none; }
+.status-icon{
+  width:72px; height:72px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  margin:0 auto 18px;
+}
+.status-icon.ok{ background:#DCFCE7; }
+.status-icon.warn{ background:#FFF3DC; }
+.status-icon.err{ background:#FEE2E2; }
+.status-title{ font-size:22px; font-weight:800; margin-bottom:8px; text-align:center; }
+.status-msg{ color:#6B7280; line-height:1.7; text-align:center; font-size:14px; }
+.btn-secondary{
+  width:100%;
+  margin-top:20px;
+  background:#fff;
+  border:2px solid #ECECEC;
+  border-radius:14px;
+  padding:14px 24px;
+  font-weight:700;
+  font-family:inherit;
+  font-size:15px;
+  cursor:pointer;
+}
 
-  .range-toggle{display:flex; gap:4px; background:#F4F5F7; border:1px solid var(--line); border-radius:9px; padding:3px;}
-  .range-toggle button{
-    border:none; background:none; padding:6px 14px; font-size:12.5px; font-weight:700;
-    color:var(--ink-soft); border-radius:7px; cursor:pointer; font-family:var(--font-body);
-  }
-  .range-toggle button.active{background:var(--bata-red); color:#fff;}
-
-  .card{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card);
-    padding:18px 18px;
-  }
-
-  .grid-2{display:grid; grid-template-columns:1.5fr 1fr; gap:16px; margin-bottom:24px; align-items:start;}
-  .grid-2b{display:grid; grid-template-columns:1.7fr 1fr; gap:16px; margin-bottom:24px; align-items:start;}
-  @media (max-width:880px){ .grid-2, .grid-2b{grid-template-columns:1fr;} }
-
-  .chart-legend{display:flex; gap:16px; margin-bottom:10px; font-size:12px; color:var(--ink-soft); flex-wrap:wrap;}
-  .chart-legend span{display:flex; align-items:center; gap:6px;}
-  .chart-legend .dot{width:9px; height:9px; border-radius:2px;}
-
-  .mini-table{width:100%; border-collapse:collapse; font-size:12.5px;}
-  .mini-table th{
-    text-align:left; padding:6px 8px; color:var(--ink-faint); font-weight:700;
-    font-size:10.5px; text-transform:uppercase; letter-spacing:.03em;
-    border-bottom:1px solid var(--line);
-  }
-  .mini-table td{padding:9px 8px; border-bottom:1px solid var(--line);}
-  .mini-table tr:last-child td{border-bottom:none;}
-  .mini-table-wrap{max-height:230px; overflow-y:auto;}
-
-  .table-wrap{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card); overflow:hidden; margin-bottom:24px;
-  }
-  .table-scroll{overflow-x:auto;}
-  table{width:100%; border-collapse:collapse; font-size:13px;}
-  th{
-    text-align:left; padding:11px 14px; background:#FAFAFB;
-    font-weight:700; color:var(--ink-soft); font-size:11px;
-    text-transform:uppercase; letter-spacing:.03em;
-    border-bottom:1px solid var(--line); white-space:nowrap;
-  }
-  td{padding:11px 14px; border-bottom:1px solid var(--line); white-space:nowrap;}
-  tr:last-child td{border-bottom:none;}
-  tr:hover td{background:#FAFAFB;}
-
-  .badge{
-    display:inline-block; font-size:11px; font-weight:700;
-    padding:3px 10px; border-radius:7px;
-  }
-  .badge.ok{background:var(--ok-bg); color:var(--ok);}
-  .badge.warn{background:var(--warn-bg); color:var(--warn);}
-  .badge.err{background:var(--err-bg); color:var(--err);}
-  .badge.purple{background:var(--purple-bg); color:var(--purple);}
-
-  .pager{display:flex; justify-content:center; align-items:center; gap:6px; padding:14px;}
-  .pager button{
-    border:1.5px solid var(--line); background:#fff; color:var(--ink-soft);
-    width:30px; height:30px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer;
-  }
-  .pager button.active{background:var(--bata-red); border-color:var(--bata-red); color:#fff;}
-  .pager button:disabled{opacity:.4; cursor:not-allowed;}
-
-  a.imglink{color:var(--bata-red); font-weight:700; text-decoration:none; font-size:12.5px;}
-
-  .zone-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px;}
-  .zone-card{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-md);
-    padding:13px 15px; cursor:pointer; transition:border-color .15s ease;
-  }
-  .zone-card:hover{border-color:var(--bata-red);}
-  .zone-card.active{border-color:var(--bata-red); background:#FFF6F6;}
-  .zone-name{font-weight:800; font-size:13.5px; margin-bottom:8px;}
-  .zone-stats{display:flex; gap:12px; font-size:12px; color:var(--ink-soft);}
-  .zone-stats b{color:var(--ink); font-size:13.5px; display:block;}
-
-  .miss-count{font-weight:700;}
-  .miss-count.zero{color:var(--ok);}
-  .miss-count.some{color:var(--warn);}
-  .miss-count.many{color:var(--err);}
-
-  .empty-state{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:13px;}
-  .loading{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:13px;}
-
-  .toggle-row{display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);}
-  .toggle-row p{margin:0; font-size:12.5px; font-weight:700;}
-  .toggle-row span{font-size:11.5px; color:var(--ink-soft);}
-  .switch{position:relative; width:38px; height:22px; background:var(--ok); border-radius:99px; flex:0 0 auto; cursor:pointer;}
-  .switch::after{content:''; position:absolute; top:2px; right:2px; width:18px; height:18px; background:#fff; border-radius:50%;}
+#formScreen.hide{ display:none; }
 </style>
 </head>
 <body>
 
-<div class="layout">
-
-  <div class="sidebar">
-    <div class="sidebar-brand">
-      <div class="sidebar-logo">B</div>
-      <div class="sidebar-word">BATA</div>
+<div id="formScreen">
+  <div class="topband">
+    <div class="brand-row">
+      <div class="logo-mark">B</div>
+      <div class="brand-name">BATA</div>
     </div>
-
-    <div class="sidebar-nav" id="sidebarNav">
-      <button class="nav-item active" data-view="dashboard"><span class="nav-icon">&#9632;</span>Dashboard</button>
-      <button class="nav-item" data-view="all"><span class="nav-icon">&#9776;</span>All Submissions</button>
-      <button class="nav-item" data-view="missing"><span class="nav-icon">&#9888;</span>Not Submitted<span class="nav-count" id="navCountMissing">—</span></button>
-      <button class="nav-item" data-view="duplicate"><span class="nav-icon">&#10063;</span>Duplicate<span class="nav-count" id="navCountDuplicate">—</span></button>
-      <button class="nav-item" data-view="late"><span class="nav-icon">&#9201;</span>Late Submission<span class="nav-count" id="navCountLate">—</span></button>
-      <button class="nav-item" id="navByDistrict" data-view="district"><span class="nav-icon">&#9776;</span>By District</button>
-    </div>
-
-    <div class="sidebar-foot">
-      <div class="sidebar-avatar" id="sidebarAvatar">AC</div>
-      <div class="sidebar-foot-text">
-        <p class="sidebar-foot-name" id="sidebarName">Accounting Team</p>
-        <p class="sidebar-foot-sub" id="sidebarEmail">admin@bata.co.th</p>
-      </div>
+    <p class="portal-name">Store Operations Portal</p>
+    <p class="eyebrow">Daily Deposit Submission</p>
+    <div class="storeBadge">
+      <span class="pin">🏬</span>
+      <span>ส่ง Payslip ประจำวัน</span>
     </div>
   </div>
 
-  <div class="main">
+  <div class="wrap">
 
-    <div class="page-head">
-      <div>
-        <h1 class="page-title">Daily Payslip Dashboard</h1>
-        <p class="page-sub" id="updatedAt">กำลังโหลด...</p>
-      </div>
-      <div class="head-controls">
-        <input type="date" id="filterDate">
-        <select id="filterZone">
-          <option value="">ทุกเขต</option>
+    <!-- เขต / สาขา -->
+    <div class="card">
+      <div class="field">
+        <label class="qlabel">เขต <span class="req">*</span></label>
+        <select id="zoneCode">
+          <option value="">— เลือกเขต —</option>
         </select>
+        <div class="err-msg" id="err-zoneCode">กรุณาเลือกเขต</div>
+      </div>
+      <div class="field">
+        <label class="qlabel">รหัสสาขา <span class="req">*</span></label>
+        <select id="storeCode" disabled>
+          <option value="">— เลือกเขตก่อน —</option>
+        </select>
+        <div class="err-msg" id="err-storeCode">กรุณาเลือกสาขา</div>
       </div>
     </div>
 
-    <div class="metrics" id="metricsRow">
-      <div class="metric"><div class="metric-label">สาขาทั้งหมด</div><div class="metric-value">—</div></div>
-    </div>
-
-    <div id="districtSection">
-      <div class="section-head">
-        <div class="section-title" id="districtTitle">Submission status by district</div>
-      </div>
-      <div class="card">
-        <div class="chart-legend">
-          <span><span class="dot" style="background:#0FA968;"></span>Submitted</span>
-          <span><span class="dot" style="background:#D97706;"></span>Not submitted</span>
-          <span><span class="dot" style="background:#E0263F;"></span>Late</span>
+    <!-- วันที่ -->
+    <div class="card">
+      <div class="field-row">
+        <div class="field">
+          <label class="qlabel">วันที่นำฝาก <span class="req">*</span></label>
+          <input type="date" id="depositDate">
+          <div class="err-msg" id="err-depositDate">กรุณาเลือกวันที่นำฝาก</div>
         </div>
-        <div style="position:relative; width:100%; height:260px;">
-          <canvas id="districtChart" role="img" aria-label="กราฟแท่งเปรียบเทียบจำนวนสาขาที่ส่งแล้ว ยังไม่ส่ง และส่งหลังเวลา แยกตามเขต สำหรับวันที่เลือก">กราฟเปรียบเทียบสถานะการส่งข้อมูลแยกตามเขต</canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div>
-        <div class="section-head">
-          <div class="section-title" id="trendTitle">แนวโน้มการส่งข้อมูล</div>
-          <div class="range-toggle" id="rangeToggle">
-            <button data-range="7" class="active">7 วัน</button>
-            <button data-range="30">30 วัน</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="chart-legend">
-            <span><span class="dot" style="background:#E11D2E;"></span>ส่งภายในวัน</span>
-            <span><span class="dot" style="background:#E7E4DF;"></span>สาขาทั้งหมด</span>
-          </div>
-          <div style="position:relative; width:100%; height:230px;">
-            <canvas id="trendChart" role="img" aria-label="กราฟแสดงจำนวนสาขาที่ส่งข้อมูลภายในวัน เทียบกับจำนวนสาขาทั้งหมด รายวัน">กราฟแนวโน้มจำนวนสาขาที่ส่งข้อมูลตรงเวลาในแต่ละวัน</canvas>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="section-head">
-          <div class="section-title" id="missingCardTitle">Not submitted stores</div>
-        </div>
-        <div class="card">
-          <div class="mini-table-wrap">
-            <table class="mini-table">
-              <thead><tr><th>Code</th><th>Store</th><th>Zone</th></tr></thead>
-              <tbody id="missingMiniTable"><tr><td colspan="3" class="empty-state">กำลังโหลด...</td></tr></tbody>
-            </table>
-          </div>
+        <div class="field">
+          <label class="qlabel">ยอดขายวันที่ <span class="req">*</span></label>
+          <input type="date" id="salesDate">
+          <div class="err-msg" id="err-salesDate">กรุณาเลือกยอดขายวันที่</div>
         </div>
       </div>
     </div>
 
-    <div class="section-title">ภาพรวมรายเขต</div>
-    <div class="zone-grid" id="zoneGrid" style="margin-bottom:24px;">
-      <div class="loading">กำลังโหลดข้อมูล...</div>
-    </div>
-
-    <div class="grid-2b">
-      <div>
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap;">
-          <div class="section-title" id="tableTitle" style="margin:0;">All submissions</div>
-          <input
-            type="text"
-            id="storeSearch"
-            placeholder="🔍 ค้นหารหัสหรือชื่อสาขา..."
-            style="padding:8px 12px; font-size:13px; border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600; width:220px; outline:none;"
-            oninput="onSearchInput()"
-            onfocus="this.style.borderColor='var(--bata-red)'"
-            onblur="this.style.borderColor='var(--line)'"
-          >
-        </div>
-        <div class="table-wrap">
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Store code</th><th>District</th><th>Status</th><th>Time</th><th>Deposit amount</th><th>Slip</th><th id="missColHeader">Missed (7d)</th>
-                </tr>
-              </thead>
-              <tbody id="tableBody">
-                <tr><td colspan="7" class="empty-state">กำลังโหลดข้อมูล...</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="pager" id="pager"></div>
-        </div>
-      </div>
-
-      <div>
-        <div class="section-title">Quick summary</div>
-        <div class="card">
-          <div style="position:relative; width:100%; height:190px;">
-            <canvas id="donutChart" role="img" aria-label="กราฟวงแหวนแสดงสัดส่วนสาขาที่ส่งแล้ว ยังไม่ส่ง ส่งหลังเวลา และส่งซ้ำ จากจำนวนสาขาทั้งหมด">สัดส่วนสถานะการส่งข้อมูลของสาขาทั้งหมด</canvas>
-          </div>
-          <div id="donutLegend" style="margin-top:14px; font-size:12.5px;"></div>
-
-          <div class="toggle-row">
-            <div>
-              <p>Auto refresh</p>
-              <span>Every 5 minutes</span>
-            </div>
-            <div class="switch" id="autoRefreshToggle"></div>
-          </div>
-        </div>
+    <!-- ไม่มีเงินนำส่ง -->
+    <div class="card no-deposit-card" id="noDepositCard">
+      <input type="checkbox" id="noDepositCheck">
+      <div class="nd-text">
+        <div class="nd-title">ไม่มีเงินนำส่งวันนี้</div>
+        <div class="nd-sub">ติ๊กถ้าไม่มียอดฝากในวันนี้ ระบบจะบันทึกยอด 0 บาท</div>
       </div>
     </div>
 
+    <!-- ยอดฝาก -->
+    <div class="card removable" id="depositSection">
+      <div class="field">
+        <label class="qlabel">มูลค่าที่ฝาก (บาท) <span class="req">*</span></label>
+        <input type="text" id="amount" inputmode="decimal" placeholder="เช่น 12500">
+        <div class="err-msg" id="err-amount">กรุณากรอกมูลค่าที่ฝากให้ถูกต้อง</div>
+      </div>
+    </div>
+
+    <!-- ช่องทางฝาก -->
+    <div class="card removable" id="channelSection">
+      <label class="qlabel">ช่องทางที่ทำการฝากเงิน <span class="req">*</span></label>
+      <div class="channel-list" id="channelList"></div>
+      <div id="otherDetailWrap">
+        <input type="text" id="channelDetail" placeholder="ระบุรายละเอียดช่องทางอื่นๆ">
+      </div>
+      <div class="err-msg" id="err-channel">กรุณาเลือกช่องทางที่ฝากเงิน</div>
+    </div>
+
+    <!-- อัปโหลดรูป -->
+    <div class="card removable" id="slipSection">
+      <label class="qlabel">รูปสลิป (Pay-in Slip) <span class="req">*</span></label>
+      <div class="upload-box" id="uploadBox">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">แตะเพื่อถ่าย / เลือกรูป</div>
+        <div class="upload-sub">JPG, PNG ไม่เกิน 10MB</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none">
+      <div id="previewWrap" style="display:none">
+        <img id="previewImg" src="" alt="preview">
+        <span id="fileName" style="font-size:13px;color:#6B7280;"></span>
+        <button class="remove-file" id="removeFile" type="button">✕</button>
+      </div>
+      <div class="err-msg" id="err-file">กรุณาแนบรูปสลิป</div>
+    </div>
+
+    <button id="submitBtn" type="button">ส่งข้อมูล</button>
+    <p class="footnote">BATA Thailand · Store Operations Portal</p>
+  </div>
+</div>
+
+<!-- status screen -->
+<div id="statusScreen">
+  <div class="wrap" style="margin-top:60px;">
+    <div class="card" id="statusCard">
+      <div class="status-icon" id="statusIcon"></div>
+      <div class="status-title" id="statusTitle"></div>
+      <div class="status-msg" id="statusMsg"></div>
+      <button class="btn-secondary" id="sendAnotherBtn" type="button">ส่งรายการใถม่</button>
+    </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 /* ==================== CONFIG ==================== */
 const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const LATE_CUTOFF_HOUR = 22; // ส่งหลัง 22:00 ถือว่า late
-const PAGE_SIZE = 25;
+const CHANNELS = [
+  { id:'krungsri',      name:'ธ.กรุงศรีอยุธยา (Saving)', detail:'เลขบัญชี: ระบุภายหลัง' },
+  { id:'scb',           name:'ธ.ไทยพาณิชย์ (Saving)',     detail:'เลขบัญชี: ระบุภายหลัง' },
+  { id:'bbl',           name:'ธ.กรุงเทพ (Current)',        detail:'เลขบัญชี: ระบุภายหลัง' },
+  { id:'seven_eleven',  name:'7-Eleven',                   detail:'ฝากผ่านเคาน์เตอร์เซเว่น' },
+  { id:'lotus',         name:'Lotus',                      detail:'ฝากผ่านเคาน์เตอร์โลตัส' },
+  { id:'bigc',          name:'Big C',                       detail:'ฝากผ่านเคาน์เตอร์บิ๊กซี' },
+  { id:'other',         name:'อื่นๆ',                       detail:'ระบุรายละเอียดเพิ่มเติม' },
+];
 
-/* ==================== ZONE / STORE DATA (จาก schema จริง 199 สาขา) ==================== */
+/* ==================== ZONE / STORE DATA ==================== */
 const ZONE_BRANCHES = {
   '511': ['51002','51426','51428','51436','51438','51450','51508','51510','51511','51514','51518','51521','51524','51530','51534','51542','51546','51549','51550','51905','51906','51944','51960','51968'],
   '512': ['51403','51404','51407','51409','51415','51416','51418','51419','51425','51430','51446','51498','51520','51533','51535','51540','51903','51938','51939','51946','51948','51965'],
@@ -605,551 +683,342 @@ const STORE_NAMES = {
   '75012': 'โวค กระบี่',
   '75014': 'โอเชียน ชุมพร',
 };
-/* ==================== STATE ==================== */
-let allStoresList = [];   // [{store_code, zone_code, store_name}]  จาก ZONE_BRANCHES/STORE_NAMES (ไม่ query ตาราง stores ทุกครั้ง)
-let allRecords = [];      // payin_records ของช่วง 30 วันล่าสุด (ใช้คำนวณ trend + missed days)
-let activeZoneFilter = '';
-let activeMetricFilter = '';
-let searchQuery = '';
+/* ==================== NO-DEPOSIT CHECKBOX ==================== */
+const noDepositCheck = document.getElementById('noDepositCheck');
+const noDepositCard = document.getElementById('noDepositCard');
+const depositSection = document.getElementById('depositSection');
+const channelSection = document.getElementById('channelSection');
+const slipSection = document.getElementById('slipSection');
 
-function onSearchInput(){
-  searchQuery = document.getElementById('storeSearch').value.trim().toLowerCase();
-  currentPage = 1;
-  render();
-}
-let activeRange = 7;
-let currentPage = 1;
-let autoRefreshOn = true;
-let autoRefreshTimer = null;
-let trendChartInstance = null;
-let districtChartInstance = null;
-let donutChartInstance = null;
+noDepositCheck.addEventListener('change', () => {
+  const isNoDeposit = noDepositCheck.checked;
+  noDepositCard.classList.toggle('no-deposit-active', isNoDeposit);
 
-const filterDateEl = document.getElementById('filterDate');
-const filterZoneEl = document.getElementById('filterZone');
-const rangeToggleEl = document.getElementById('rangeToggle');
-const autoRefreshToggleEl = document.getElementById('autoRefreshToggle');
+  // ซ่อน/แสดง card ยอดเงิน, ช่องทาง, รูปสลิป
+  depositSection.style.display = isNoDeposit ? 'none' : '';
+  channelSection.style.display = isNoDeposit ? 'none' : '';
+  slipSection.style.display = isNoDeposit ? 'none' : '';
 
-const today = new Date().toISOString().slice(0,10);
-filterDateEl.value = today;
-
-function dateNDaysAgo(n){
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0,10);
-}
-
-filterDateEl.min = dateNDaysAgo(30);
-filterDateEl.max = today;
-
-filterDateEl.addEventListener('change', () => { currentPage = 1; render(); });
-filterZoneEl.addEventListener('change', () => {
-  if (LOCKED_ZONE) return; // District Manager ไม่สามารถเปลี่ยนเขตได้
-  activeZoneFilter = filterZoneEl.value; currentPage = 1; render();
-});
-
-rangeToggleEl.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    activeRange = Number(btn.dataset.range);
-    rangeToggleEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('missColHeader').textContent = `Missed (${activeRange}d)`;
-    currentPage = 1;
-    render();
-  });
-});
-
-autoRefreshToggleEl.addEventListener('click', () => {
-  autoRefreshOn = !autoRefreshOn;
-  autoRefreshToggleEl.style.background = autoRefreshOn ? 'var(--ok)' : '#D7D9E0';
-  setupAutoRefresh();
-});
-
-function setupAutoRefresh(){
-  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
-  if (autoRefreshOn) {
-    autoRefreshTimer = setInterval(loadData, 5 * 60 * 1000);
+  // ล้าง error ถ้ามี
+  if (isNoDeposit) {
+    clearError('amount');
+    clearError('channel');
+    clearError('file');
+    selectedChannel = 'none';
+    selectedFile = null;
+  } else {
+    selectedChannel = null;
+    selectedFile = null;
   }
-}
-
-// sidebar nav -> ผูกกับ metric filter เดิม (ไม่สร้างหน้าใหม่ แค่เปลี่ยนตัวกรอง)
-document.querySelectorAll('.nav-item').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const view = btn.dataset.view;
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    if (view === 'dashboard') { activeMetricFilter = ''; window.scrollTo({top:0, behavior:'smooth'}); }
-    else if (view === 'all') { activeMetricFilter = ''; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
-    else if (view === 'missing') { activeMetricFilter = 'missing'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
-    else if (view === 'duplicate') { activeMetricFilter = 'duplicate'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
-    else if (view === 'late') { activeMetricFilter = 'late'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
-    else if (view === 'district') { document.getElementById('districtSection').scrollIntoView({behavior:'smooth', block:'start'}); }
-
-    currentPage = 1;
-    render();
-  });
 });
 
-/* ==================== BUILD STORE LIST จาก ZONE_BRANCHES (ไม่ผูกกับคอลัมน์ active ที่ไม่มีจริง) ==================== */
-function buildStoreList(){
-  const list = [];
+/* ==================== STATE ==================== */
+let selectedChannel = null;
+let selectedFile = null;
+
+const zoneSelect = document.getElementById('zoneCode');
+const storeSelect = document.getElementById('storeCode');
+const channelListEl = document.getElementById('channelList');
+const otherDetailWrap = document.getElementById('otherDetailWrap');
+const channelDetailInput = document.getElementById('channelDetail');
+const uploadBox = document.getElementById('uploadBox');
+const fileInput = document.getElementById('fileInput');
+const previewWrap = document.getElementById('previewWrap');
+const previewImg = document.getElementById('previewImg');
+const fileNameEl = document.getElementById('fileName');
+const removeFileBtn = document.getElementById('removeFile');
+const submitBtn = document.getElementById('submitBtn');
+const formScreen = document.getElementById('formScreen');
+const statusScreen = document.getElementById('statusScreen');
+
+/* ==================== INIT ==================== */
+function populateZones(){
   Object.keys(ZONE_BRANCHES).sort().forEach(zone => {
-    ZONE_BRANCHES[zone].forEach(code => {
-      list.push({ store_code: code, zone_code: zone, store_name: STORE_NAMES[code] || null });
-    });
+    const opt = document.createElement('option');
+    opt.value = zone;
+    opt.textContent = `เขต ${zone}`;
+    zoneSelect.appendChild(opt);
   });
-  return list;
 }
 
-/* ==================== DATA LOADING (ผูกกับ schema จริง: submitted_at, slip_url) ==================== */
-async function loadData(){
-  const sinceDate = dateNDaysAgo(30) + 'T00:00:00';
-
-  const { data: records, error: recordsErr } = await sb
-    .from('payin_records')
-    .select('*')
-    .gte('submitted_at', sinceDate)
-    .order('submitted_at', { ascending: false });
-
-  if (recordsErr) {
-    document.getElementById('zoneGrid').innerHTML = '<div class="empty-state">โหลดข้อมูลไม่สำเร็จ: ' + recordsErr.message + '</div>';
-    document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">โหลดข้อมูลไม่สำเร็จ</td></tr>';
+function populateStores(zone){
+  storeSelect.innerHTML = '';
+  if(!zone){
+    storeSelect.disabled = true;
+    storeSelect.innerHTML = '<option value="">— เลือกเขตก่อน —</option>';
     return;
   }
+  storeSelect.disabled = false;
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '— เลือกสาขา —';
+  storeSelect.appendChild(placeholder);
 
-  allRecords = records || [];
-
-  const zones = Object.keys(ZONE_BRANCHES).sort();
-  filterZoneEl.innerHTML = '<option value="">ทุกเขต</option>' + zones.map(z => `<option value="${z}">เขต ${z}</option>`).join('');
-
-  document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('th-TH');
-
-  render();
-}
-
-/* ==================== STATUS LOGIC ====================
-   เทียบ submitted_at (เวลาส่งจริง) กับวันที่เลือก ไม่ใช่ deposit_date
-   late = submitted_at มีชั่วโมง >= LATE_CUTOFF_HOUR (22:00) ของวันนั้น
-   duplicate = มากกว่า 1 แถวในวันเดียวกัน
-*/
-function getStoreStatus(storeCode, dateStr){
-  const recs = allRecords.filter(r => r.store_code === storeCode && r.submitted_at.slice(0,10) === dateStr);
-  if (recs.length === 0) return { status:'missing', records: [] };
-
-  const latest = recs.reduce((a,b) => new Date(a.submitted_at) > new Date(b.submitted_at) ? a : b);
-  const isLate = new Date(latest.submitted_at).getHours() >= LATE_CUTOFF_HOUR;
-
-  if (recs.length > 1) return { status:'duplicate', records: recs, latest, isLate };
-  if (isLate) return { status:'late', records: recs, latest };
-  return { status:'sent', records: recs, latest };
-}
-
-function buildTrendData(stores, days){
-  const labels = [];
-  const sentCounts = [];
-  const totalCount = stores.length;
-
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dStr = d.toISOString().slice(0,10);
-
-    const sentToday = stores.filter(s => {
-      const result = getStoreStatus(s.store_code, dStr);
-      return result.status === 'sent' || result.status === 'duplicate';
-    }).length;
-
-    labels.push(d.toLocaleDateString('th-TH', { day:'numeric', month:'short' }));
-    sentCounts.push(sentToday);
-  }
-
-  return { labels, sentCounts, totalCount };
-}
-
-function countMissedDays(storeCode, days){
-  let missed = 0;
-  for (let i = 0; i < days; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dStr = d.toISOString().slice(0,10);
-    const result = getStoreStatus(storeCode, dStr);
-    if (result.status === 'missing') missed++;
-  }
-  return missed;
-}
-
-function renderTrendChart(stores){
-  const { labels, sentCounts, totalCount } = buildTrendData(stores, activeRange);
-  const totalLine = labels.map(() => totalCount);
-
-  document.getElementById('trendTitle').textContent =
-    activeZoneFilter ? `แนวโน้มการส่งข้อมูล — เขต ${activeZoneFilter}` : 'แนวโน้มการส่งข้อมูล — ทุกเขต';
-
-  if (trendChartInstance) trendChartInstance.destroy();
-
-  const ctx = document.getElementById('trendChart');
-  trendChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'สาขาทั้งหมด',
-          data: totalLine,
-          type: 'line',
-          borderColor: '#E7E4DF',
-          backgroundColor: '#E7E4DF',
-          borderWidth: 2,
-          pointRadius: 0,
-          borderDash: [4,4],
-          fill: false,
-          order: 1,
-        },
-        {
-          label: 'ส่งภายในวัน',
-          data: sentCounts,
-          backgroundColor: '#E11D2E',
-          borderRadius: 4,
-          order: 2,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 } },
-        x: { ticks: { autoSkip: activeRange > 14, maxRotation: 45 } },
-      },
-    },
+  const codes = ZONE_BRANCHES[zone] || [];
+  codes.forEach(code => {
+    const opt = document.createElement('option');
+    opt.value = code;
+    const name = STORE_NAMES[code];
+    opt.textContent = name ? `${code} - ${name}` : code;
+    storeSelect.appendChild(opt);
   });
 }
 
-function renderDistrictChart(dateStr){
-  const zones = Object.keys(ZONE_BRANCHES).sort();
-
-  const submittedData = [];
-  const notSubmittedData = [];
-  const lateData = [];
-
-  zones.forEach(z => {
-    const zoneStores = allStoresList.filter(s => s.zone_code === z);
-    let submitted = 0, notSubmitted = 0, late = 0;
-    zoneStores.forEach(s => {
-      const result = getStoreStatus(s.store_code, dateStr);
-      if (result.status === 'sent' || result.status === 'duplicate') submitted++;
-      else if (result.status === 'late') late++;
-      else notSubmitted++;
-    });
-    submittedData.push(submitted);
-    notSubmittedData.push(notSubmitted);
-    lateData.push(late);
-  });
-
-  document.getElementById('districtTitle').textContent = `Submission status by district — ${new Date(dateStr).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'})}`;
-
-  if (districtChartInstance) districtChartInstance.destroy();
-
-  const ctx = document.getElementById('districtChart');
-  districtChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: zones.map(z => `เขต ${z}`),
-      datasets: [
-        { label: 'Submitted', data: submittedData, backgroundColor: '#0FA968', borderRadius: 4 },
-        { label: 'Not submitted', data: notSubmittedData, backgroundColor: '#D97706', borderRadius: 4 },
-        { label: 'Late', data: lateData, backgroundColor: '#E0263F', borderRadius: 4 },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 } },
-        x: { ticks: { autoSkip: false, maxRotation: 0 } },
-      },
-    },
-  });
-}
-
-function renderDonutChart(total, sent, missing, duplicate, late){
-  if (donutChartInstance) donutChartInstance.destroy();
-
-  const ctx = document.getElementById('donutChart');
-  donutChartInstance = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Submitted', 'Not submitted', 'Late', 'Duplicate'],
-      datasets: [{
-        data: [sent, missing, late, duplicate],
-        backgroundColor: ['#0FA968', '#D97706', '#E0263F', '#7C5CFC'],
-        borderWidth: 0,
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '72%',
-      plugins: { legend: { display: false } },
-    },
-  });
-
-  const pct = (n) => total > 0 ? ((n/total)*100).toFixed(1) : '0.0';
-  document.getElementById('donutLegend').innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#0FA968;"></span>Submitted</span>
-      <b>${sent} (${pct(sent)}%)</b>
-    </div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#D97706;"></span>Not submitted</span>
-      <b>${missing} (${pct(missing)}%)</b>
-    </div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#E0263F;"></span>Late</span>
-      <b>${late} (${pct(late)}%)</b>
-    </div>
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#7C5CFC;"></span>Duplicate</span>
-      <b>${duplicate} (${pct(duplicate)}%)</b>
-    </div>
-  `;
-}
-
-function render(){
-  const dateStr = filterDateEl.value || today;
-  let stores = allStoresList;
-  if (activeZoneFilter) stores = stores.filter(s => s.zone_code === activeZoneFilter);
-
-  const rows = stores.map(s => {
-    const result = getStoreStatus(s.store_code, dateStr);
-    return { store: s, ...result };
-  });
-
-  renderTrendChart(stores);
-  renderDistrictChart(dateStr);
-
-  const total = rows.length;
-  const sent = rows.filter(r => r.status === 'sent').length;
-  const missing = rows.filter(r => r.status === 'missing').length;
-  const duplicate = rows.filter(r => r.status === 'duplicate').length;
-  const late = rows.filter(r => r.status === 'late').length;
-
-  renderDonutChart(total, sent, missing, duplicate, late);
-
-  document.getElementById('navCountMissing').textContent = missing;
-  document.getElementById('navCountDuplicate').textContent = duplicate;
-  document.getElementById('navCountLate').textContent = late;
-
-  const pct = (n) => total > 0 ? ((n/total)*100).toFixed(2) + '%' : '—';
-
-  document.getElementById('metricsRow').innerHTML = `
-    <div class="metric" data-filter="">
-      <div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total stores</div></div>
-      <div class="metric-value">${total}</div>
-      <div class="metric-pct blue">100%</div>
-    </div>
-    <div class="metric ok" data-filter="sent">
-      <div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div>
-      <div class="metric-value">${sent}</div>
-      <div class="metric-pct ok">${pct(sent)}</div>
-    </div>
-    <div class="metric warn" data-filter="missing">
-      <div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not submitted</div></div>
-      <div class="metric-value">${missing}</div>
-      <div class="metric-pct warn">${pct(missing)}</div>
-    </div>
-    <div class="metric purple" data-filter="duplicate">
-      <div class="metric-top"><div class="metric-icon purple">&#10063;</div><div class="metric-label">Duplicate</div></div>
-      <div class="metric-value">${duplicate}</div>
-      <div class="metric-pct purple">${pct(duplicate)}</div>
-    </div>
-    <div class="metric err" data-filter="late">
-      <div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late submission</div></div>
-      <div class="metric-value">${late}</div>
-      <div class="metric-pct err">${pct(late)}</div>
-    </div>
-  `;
-
-  document.querySelectorAll('.metric').forEach(el => {
-    const f = el.dataset.filter;
-    if (f === activeMetricFilter) el.classList.add('active');
-    el.addEventListener('click', () => {
-      activeMetricFilter = (activeMetricFilter === f) ? '' : f;
-      currentPage = 1;
-      render();
-    });
-  });
-
-  const zones = Object.keys(ZONE_BRANCHES).sort();
-  document.getElementById('zoneGrid').innerHTML = zones.map(z => {
-    const zoneStores = allStoresList.filter(s => s.zone_code === z);
-    const zoneRows = zoneStores.map(s => getStoreStatus(s.store_code, dateStr));
-    const zSent = zoneRows.filter(r => r.status === 'sent' || r.status === 'late' || r.status === 'duplicate').length;
-    const zMissing = zoneRows.filter(r => r.status === 'missing').length;
-    return `
-      <div class="zone-card ${activeZoneFilter===z?'active':''}" data-zone="${z}">
-        <div class="zone-name">เขต ${z}</div>
-        <div class="zone-stats">
-          <div><b>${zoneStores.length}</b>ทั้งหมด</div>
-          <div><b style="color:var(--ok)">${zSent}</b>ส่งแล้ว</div>
-          <div><b style="color:var(--err)">${zMissing}</b>ยังไม่ส่ง</div>
-        </div>
+function renderChannels(){
+  channelListEl.innerHTML = '';
+  CHANNELS.forEach(ch => {
+    const card = document.createElement('label');
+    card.className = 'channel-card';
+    card.dataset.channelId = ch.id;
+    card.innerHTML = `
+      <input type="radio" name="channel" value="${ch.id}">
+      <div class="ch-text">
+        <div class="ch-name">${ch.name}</div>
+        <div class="ch-detail">${ch.detail}</div>
       </div>
     `;
-  }).join('');
-
-  document.querySelectorAll('.zone-card').forEach(el => {
-    el.addEventListener('click', () => {
-      if (LOCKED_ZONE) return; // District Manager ไม่สามารถเปลี่ยนเขตได้
-      const z = el.dataset.zone;
-      activeZoneFilter = (activeZoneFilter === z) ? '' : z;
-      filterZoneEl.value = activeZoneFilter;
-      currentPage = 1;
-      render();
-    });
-  });
-
-  const missingRows = rows.filter(r => r.status === 'missing');
-  document.getElementById('missingCardTitle').textContent = `Not submitted stores (${missingRows.length})`;
-  if (missingRows.length === 0) {
-    document.getElementById('missingMiniTable').innerHTML = '<tr><td colspan="3" class="empty-state">ทุกสาขาส่งข้อมูลแล้ว</td></tr>';
-  } else {
-    document.getElementById('missingMiniTable').innerHTML = missingRows.slice(0, 30).map(r => `
-      <tr><td><b>${r.store.store_code}</b></td><td>${r.store.store_name || '—'}</td><td>เขต ${r.store.zone_code}</td></tr>
-    `).join('');
-  }
-
-
-  let filteredRows = rows;
-  if (activeMetricFilter) filteredRows = filteredRows.filter(r => r.status === activeMetricFilter);
-
-  // filter ตามคำค้นหา (รหัสสาขา หรือ ชื่อสาขา)
-  if (searchQuery) {
-    filteredRows = filteredRows.filter(r =>
-      r.store.store_code.toLowerCase().includes(searchQuery) ||
-      (r.store.store_name && r.store.store_name.toLowerCase().includes(searchQuery))
-    );
-  }
-
-  filteredRows = filteredRows.map(r => ({
-    ...r,
-    missedDays: countMissedDays(r.store.store_code, activeRange),
-  })).sort((a, b) => b.missedDays - a.missedDays);
-
-  document.getElementById('tableTitle').textContent = `All submissions (${filteredRows.length})`;
-
-  const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
-  if (currentPage > totalPages) currentPage = totalPages;
-  const pageStart = (currentPage - 1) * PAGE_SIZE;
-  const pageRows = filteredRows.slice(pageStart, pageStart + PAGE_SIZE);
-
-  if (filteredRows.length === 0) {
-    document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">ไม่พบข้อมูลตามตัวกรองที่เลือก</td></tr>';
-    document.getElementById('pager').innerHTML = '';
-    return;
-  }
-
-  document.getElementById('tableBody').innerHTML = pageRows.map(r => {
-    const badgeMap = {
-      sent: '<span class="badge ok">Submitted</span>',
-      missing: '<span class="badge warn">Not submitted</span>',
-      duplicate: '<span class="badge purple">Duplicate (' + r.records.length + ')</span>',
-      late: '<span class="badge err">Late</span>',
-    };
-    const rec = r.latest;
-    const timeStr = rec ? new Date(rec.submitted_at).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) : '—';
-    const amountStr = rec ? Number(rec.amount).toLocaleString('th-TH', {minimumFractionDigits:2}) : '—';
-    const slipLink = rec && rec.slip_url ? `<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>` : '—';
-
-    let missClass = 'zero';
-    if (r.missedDays > 0 && r.missedDays <= Math.ceil(activeRange * 0.3)) missClass = 'some';
-    else if (r.missedDays > Math.ceil(activeRange * 0.3)) missClass = 'many';
-
-    return `
-      <tr>
-        <td><b>${r.store.store_code}</b></td>
-        <td>${r.store.zone_code}</td>
-        <td>${badgeMap[r.status]}</td>
-        <td>${timeStr}</td>
-        <td>${amountStr}</td>
-        <td>${slipLink}</td>
-        <td><span class="miss-count ${missClass}">${r.missedDays}d</span></td>
-      </tr>
-    `;
-  }).join('');
-
-  const pagerEl = document.getElementById('pager');
-  let pagerHtml = `<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
-  for (let p = 1; p <= totalPages; p++) {
-    if (totalPages > 7 && p > 2 && p < totalPages - 1 && Math.abs(p - currentPage) > 1) {
-      if (p === 3 || p === totalPages - 2) pagerHtml += `<span style="padding:0 4px; color:var(--ink-faint);">…</span>`;
-      continue;
-    }
-    pagerHtml += `<button class="${p===currentPage?'active':''}" data-page="${p}">${p}</button>`;
-  }
-  pagerHtml += `<button ${currentPage===totalPages?'disabled':''} data-page="${currentPage+1}">&#8250;</button>`;
-  pagerEl.innerHTML = pagerHtml;
-
-  pagerEl.querySelectorAll('button[data-page]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentPage = Number(btn.dataset.page);
-      render();
-    });
+    card.addEventListener('click', () => selectChannel(ch.id, card));
+    channelListEl.appendChild(card);
   });
 }
 
-/* ==================== URL-BASED ZONE LOCK ====================
-   ถ้า URL มี ?zone=511 → District Manager mode: lock เขต 511 เท่านั้น
-   ถ้าไม่มี ?zone= → Accounting mode: เห็นทุกเขต (default)
+function selectChannel(id, cardEl){
+  selectedChannel = id;
+  document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('selected'));
+  cardEl.classList.add('selected');
+  cardEl.querySelector('input[type=radio]').checked = true;
+  otherDetailWrap.style.display = (id === 'other') ? 'block' : 'none';
+  clearError('channel');
+}
 
-   ตัวอย่าง URL:
-   dashboard.html            → บัญชี เห็นทั้งหมด
-   dashboard.html?zone=511   → District Manager เขต 511
-   dashboard.html?zone=530   → District Manager เขต 530
+/* ==================== EVENTS ==================== */
+zoneSelect.addEventListener('change', () => {
+  populateStores(zoneSelect.value);
+  clearError('zoneCode');
+});
+storeSelect.addEventListener('change', () => clearError('storeCode'));
+document.getElementById('depositDate').addEventListener('change', () => clearError('depositDate'));
+document.getElementById('salesDate').addEventListener('change', () => clearError('salesDate'));
+document.getElementById('amount').addEventListener('input', () => clearError('amount'));
+
+/* ==================== IMAGE COMPRESSION ====================
+   บีบอัดรูปฝั่ง browser ก่อน upload เพื่อประหยัด Supabase Storage
+   (free plan มี 1GB; ถ้าไม่บีบอัด 199 สาขา x ~1MB/รูป จะเต็มใน ~5 วัน)
+   resize ให้กว้างไม่เกิน MAX_WIDTH แล้ว export เป็น JPEG คุณภาพ JPEG_QUALITY
 */
-const urlParams = new URLSearchParams(window.location.search);
-const LOCKED_ZONE = urlParams.get('zone'); // เช่น '511' หรือ null
+const MAX_WIDTH = 1280;
+const JPEG_QUALITY = 0.75;
 
-if (LOCKED_ZONE) {
-  // District Manager mode — ซ่อน zone dropdown และ lock เขต
-  activeZoneFilter = LOCKED_ZONE;
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
 
-  // อัปเดต title ให้แสดงว่าดูเฉพาะเขตไหน
-  document.getElementById('updatedAt').textContent = `เขต ${LOCKED_ZONE} — District Manager View`;
+    reader.onload = (e) => { img.src = e.target.result; };
+    reader.onerror = reject;
 
-  // อัปเดต sidebar footer ให้แสดง District Team และ email ตามเขต
-  document.getElementById('sidebarAvatar').textContent = 'DM';
-  document.getElementById('sidebarName').textContent = 'District Team';
-  document.getElementById('sidebarEmail').textContent = `DM${LOCKED_ZONE}@bata.co.th`;
+    img.onload = () => {
+      let { width, height } = img;
+      if(width > MAX_WIDTH){
+        height = Math.round(height * (MAX_WIDTH / width));
+        width = MAX_WIDTH;
+      }
 
-  // ซ่อนเมนู By District (DM เห็นแค่เขตตัวเอง ไม่จำเป็นต้องดู by district)
-  const navByDistrict = document.getElementById('navByDistrict');
-  if (navByDistrict) navByDistrict.style.display = 'none';
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
 
-  // ซ่อน District chart section (กราฟเปรียบเทียบทุกเขต ไม่เกี่ยวกับ DM)
-  const districtSection = document.getElementById('districtSection');
-  if (districtSection) districtSection.style.display = 'none';
+      canvas.toBlob((blob) => {
+        if(!blob){ reject(new Error('Compress failed')); return; }
+        const compressedFile = new File(
+          [blob],
+          file.name.replace(/\.[^.]+$/, '') + '.jpg',
+          { type: 'image/jpeg' }
+        );
+        resolve(compressedFile);
+      }, 'image/jpeg', JPEG_QUALITY);
+    };
 
-  // ซ่อน filterZone dropdown (DM ไม่ควรเปลี่ยนเขตได้)
-  const zoneSelectEl = document.getElementById('filterZone');
-  if (zoneSelectEl) zoneSelectEl.style.display = 'none';
-
-  // ซ่อน zone grid (ไม่จำเป็นถ้าเห็นแค่เขตเดียว)
-  const zoneGridSection = document.querySelector('.section-title');
-  if (zoneGridSection && zoneGridSection.textContent.includes('ภาพรวมรายเขต')) {
-    zoneGridSection.style.display = 'none';
-    document.getElementById('zoneGrid').style.display = 'none';
-  }
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
+
+uploadBox.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+
+  uploadBox.classList.add('has-file');
+  uploadBox.querySelector('.upload-text').textContent = 'กำลังประมวลผลรูป...';
+
+  try{
+    const compressed = await compressImage(file);
+    selectedFile = compressed;
+
+    previewWrap.style.display = 'flex';
+    const sizeKB = Math.round(compressed.size / 1024);
+    fileNameEl.textContent = `${compressed.name} (${sizeKB} KB)`;
+    const reader = new FileReader();
+    reader.onload = (ev) => { previewImg.src = ev.target.result; };
+    reader.readAsDataURL(compressed);
+    clearError('file');
+  }catch(err){
+    console.error('Compress error:', err);
+    // ถ้าบีบอัดไม่สำเร็จ ใช้ไฟล์ต้นฉบับแทน ดีกว่าทำให้ผู้ใช้ส่งไม่ได้เลย
+    selectedFile = file;
+    previewWrap.style.display = 'flex';
+    fileNameEl.textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => { previewImg.src = ev.target.result; };
+    reader.readAsDataURL(file);
+    clearError('file');
+  }finally{
+    uploadBox.querySelector('.upload-text').textContent = 'แตะเพื่อถ่าย / เลือกรูป';
+  }
+});
+removeFileBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  selectedFile = null;
+  fileInput.value = '';
+  uploadBox.classList.remove('has-file');
+  previewWrap.style.display = 'none';
+});
+
+
+
+function showError(field){
+  const el = document.getElementById(field);
+  const errEl = document.getElementById('err-' + field);
+  if(el) el.classList.add('invalid');
+  if(errEl) errEl.style.display = 'block';
+}
+function clearError(field){
+  const el = document.getElementById(field);
+  const errEl = document.getElementById('err-' + field);
+  if(el) el.classList.remove('invalid');
+  if(errEl) errEl.style.display = 'none';
+}
+function clearAllErrors(){
+  ['zoneCode','storeCode','depositDate','salesDate','amount','channel','file'].forEach(clearError);
+}
+
+function validate(){
+  clearAllErrors();
+  let ok = true;
+  const isNoDeposit = noDepositCheck.checked;
+
+  if(!zoneSelect.value){ showError('zoneCode'); ok = false; }
+  if(!storeSelect.value){ showError('storeCode'); ok = false; }
+  if(!document.getElementById('depositDate').value){ showError('depositDate'); ok = false; }
+  if(!document.getElementById('salesDate').value){ showError('salesDate'); ok = false; }
+
+  if(!isNoDeposit){
+    const amountVal = document.getElementById('amount').value.trim();
+    if(!amountVal || isNaN(amountVal.replace(/,/g,'')) || Number(amountVal.replace(/,/g,'')) <= 0){
+      showError('amount'); ok = false;
+    }
+    if(!selectedChannel){ showError('channel'); ok = false; }
+    if(!selectedFile){ showError('file'); ok = false; }
+  }
+  return ok;
+}
+
+/* ==================== SUBMIT ==================== */
+submitBtn.addEventListener('click', async () => {
+  if(!validate()) return;
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner"></span>กำลังส่ง...';
+
+  const isNoDeposit = noDepositCheck.checked;
+  const zoneCode = zoneSelect.value;
+  const storeCode = storeSelect.value;
+  const depositDate = document.getElementById('depositDate').value;
+  const salesDate = document.getElementById('salesDate').value;
+  const amount = isNoDeposit ? 0 : Number(document.getElementById('amount').value.replace(/,/g,''));
+  const channel = isNoDeposit ? 'none' : selectedChannel;
+  const channelDetail = (channel === 'other') ? channelDetailInput.value.trim() : null;
+
+  try{
+    let slipPath = 'no_deposit';
+    let slipUrl = null;
+
+    if(!isNoDeposit){
+      // 1) อัปโหลดรูปสลิปเข้า Supabase Storage ก่อน
+      const fileExt = (selectedFile.name.split('.').pop() || 'jpg').toLowerCase();
+      const safeExt = ['jpg','jpeg','png','webp'].includes(fileExt) ? fileExt : 'jpg';
+      const timestamp = Date.now();
+      slipPath = `${storeCode}/${depositDate}_${timestamp}.${safeExt}`;
+
+      const { error: uploadError } = await sb
+        .storage
+        .from('payin-slips')
+        .upload(slipPath, selectedFile, {
+          contentType: selectedFile.type || 'image/jpeg',
+          upsert: false
+        });
+
+      if(uploadError) throw uploadError;
+
+      const { data: urlData } = sb
+        .storage
+        .from('payin-slips')
+        .getPublicUrl(slipPath);
+
+      slipUrl = urlData.publicUrl;
+    }
+
+    // 2) Insert record เข้า Supabase
+    const { error: insertError } = await sb
+      .from('payin_records')
+      .insert({
+        zone_code: zoneCode,
+        store_code: storeCode,
+        deposit_date: depositDate,
+        sales_date: salesDate,
+        amount: amount,
+        channel: channel,
+        channel_detail: channelDetail,
+        slip_path: slipPath,
+        slip_url: slipUrl
+      });
+
+    if(insertError) throw insertError;
+
+    const successMsg = isNoDeposit
+      ? `สาขา ${storeCode} รายงาน "ไม่มีเงินนำส่ง" เรียบร้อยแล้ว`
+      : `สาขา ${storeCode} ส่งข้อมูลและรูปสลิปเรียบร้อยแล้ว`;
+
+    showStatus('ok', 'ส่งข้อมูลสำเร็จ', successMsg);
+  }catch(err){
+    console.error(err);
+    showStatus('err', 'ส่งข้อมูลไม่สำเร็จ', 'เกิดข้อผิดพลาดระหว่างส่งข้อมูล กรุณาลองใหม่อีกครั้ง หรือแจ้งฝ่าย IT หากยังไม่สำเร็จ');
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'ส่งข้อมูล';
+  }
+});
+
+function showStatus(type, title, msg){
+  formScreen.classList.add('hide');
+  statusScreen.style.display = 'block';
+  const iconEl = document.getElementById('statusIcon');
+  iconEl.className = 'status-icon ' + type;
+  iconEl.textContent = type === 'ok' ? '✓' : (type === 'warn' ? '!' : '✕');
+  document.getElementById('statusTitle').textContent = title;
+  document.getElementById('statusMsg').textContent = msg;
+}
+
+document.getElementById('sendAnotherBtn').addEventListener('click', () => {
+  location.reload();
+});
 
 /* ==================== START ==================== */
-allStoresList = buildStoreList();
-setupAutoRefresh();
-loadData();
+populateZones();
+renderChannels();
 </script>
-
 </body>
 </html>
