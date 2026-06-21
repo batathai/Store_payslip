@@ -335,7 +335,18 @@
 
     <div class="grid-2b">
       <div>
-        <div class="section-title" id="tableTitle">All submissions</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap;">
+          <div class="section-title" id="tableTitle" style="margin:0;">All submissions</div>
+          <input
+            type="text"
+            id="storeSearch"
+            placeholder="🔍 ค้นหารหัสหรือชื่อสาขา..."
+            style="padding:8px 12px; font-size:13px; border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600; width:220px; outline:none;"
+            oninput="onSearchInput()"
+            onfocus="this.style.borderColor='var(--bata-red)'"
+            onblur="this.style.borderColor='var(--line)'"
+          >
+        </div>
         <div class="table-wrap">
           <div class="table-scroll">
             <table>
@@ -384,7 +395,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const LATE_CUTOFF_HOUR = 22; // ส่งหลัง 22:00 ถือว่า late
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 25;
 
 /* ==================== ZONE / STORE DATA (จาก schema จริง 199 สาขา) ==================== */
 const ZONE_BRANCHES = {
@@ -599,6 +610,13 @@ let allStoresList = [];   // [{store_code, zone_code, store_name}]  จาก ZO
 let allRecords = [];      // payin_records ของช่วง 30 วันล่าสุด (ใช้คำนวณ trend + missed days)
 let activeZoneFilter = '';
 let activeMetricFilter = '';
+let searchQuery = '';
+
+function onSearchInput(){
+  searchQuery = document.getElementById('storeSearch').value.trim().toLowerCase();
+  currentPage = 1;
+  render();
+}
 let activeRange = 7;
 let currentPage = 1;
 let autoRefreshOn = true;
@@ -1007,6 +1025,14 @@ function render(){
 
   let filteredRows = rows;
   if (activeMetricFilter) filteredRows = filteredRows.filter(r => r.status === activeMetricFilter);
+
+  // filter ตามคำค้นหา (รหัสสาขา หรือ ชื่อสาขา)
+  if (searchQuery) {
+    filteredRows = filteredRows.filter(r =>
+      r.store.store_code.toLowerCase().includes(searchQuery) ||
+      (r.store.store_name && r.store.store_name.toLowerCase().includes(searchQuery))
+    );
+  }
 
   filteredRows = filteredRows.map(r => ({
     ...r,
