@@ -246,7 +246,7 @@
       <button class="nav-item" data-view="missing"><span class="nav-icon">&#9888;</span>Not Submitted<span class="nav-count" id="navCountMissing">—</span></button>
       <button class="nav-item" data-view="duplicate"><span class="nav-icon">&#10063;</span>Duplicate<span class="nav-count" id="navCountDuplicate">—</span></button>
       <button class="nav-item" data-view="late"><span class="nav-icon">&#9201;</span>Late Submission<span class="nav-count" id="navCountLate">—</span></button>
-      <button class="nav-item" data-view="district"><span class="nav-icon">&#9776;</span>By District</button>
+      <button class="nav-item" id="navByDistrict" data-view="district"><span class="nav-icon">&#9776;</span>By District</button>
     </div>
 
     <div class="sidebar-foot">
@@ -1099,8 +1099,13 @@ if (LOCKED_ZONE) {
   document.getElementById('sidebarName').textContent = 'District Team';
   document.getElementById('sidebarEmail').textContent = `DM${LOCKED_ZONE}@bata.co.th`;
 
-  // ซ่อน filterZone dropdown (DM ไม่ควรเปลี่ยนเขตได้)
-  const zoneSelectEl = document.getElementById('filterZone');
+  // ซ่อนเมนู By District (DM เห็นแค่เขตตัวเอง ไม่จำเป็นต้องดู by district)
+  const navByDistrict = document.getElementById('navByDistrict');
+  if (navByDistrict) navByDistrict.style.display = 'none';
+
+  // ซ่อน District chart section (กราฟเปรียบเทียบทุกเขต ไม่เกี่ยวกับ DM)
+  const districtSection = document.getElementById('districtSection');
+  if (districtSection) districtSection.style.display = 'none';
   if (zoneSelectEl) zoneSelectEl.closest('.head-controls') && (zoneSelectEl.style.display = 'none');
 
   // ซ่อน zone grid (ไม่จำเป็นถ้าเห็นแค่เขตเดียว)
