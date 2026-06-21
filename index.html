@@ -135,6 +135,32 @@ body{
   padding:24px;
   margin-bottom:18px;
 }
+.no-deposit-card{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:18px 24px;
+  cursor:pointer;
+}
+.no-deposit-card input[type=checkbox]{
+  width:22px; height:22px;
+  accent-color:var(--bata-red);
+  flex-shrink:0;
+  cursor:pointer;
+}
+.no-deposit-card .nd-text .nd-title{
+  font-weight:700;
+  font-size:15px;
+}
+.no-deposit-card .nd-text .nd-sub{
+  font-size:12px;
+  color:#6B7280;
+  margin-top:2px;
+}
+.card.no-deposit-active{
+  border:2px solid var(--bata-red);
+  background:#FEF4F5;
+}
 .qlabel{
   display:block;
   margin-bottom:10px;
@@ -281,7 +307,8 @@ button#submitBtn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
 }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
-.footnote{ text-align:center; color:#9CA3AF; font-size:12px; margin-top:14px; }
+.removable{ transition:opacity .2s, max-height .3s; }
+.removable.hidden{ display:none; }
 .err-msg{ color:#DC2626; margin-top:6px; font-size:12px; display:none; }
 .invalid{ border-color:#DC2626 !important; }
 
@@ -369,8 +396,17 @@ button#submitBtn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
       </div>
     </div>
 
+    <!-- ไม่มีเงินนำส่ง -->
+    <div class="card no-deposit-card" id="noDepositCard">
+      <input type="checkbox" id="noDepositCheck">
+      <div class="nd-text">
+        <div class="nd-title">ไม่มีเงินนำส่งวันนี้</div>
+        <div class="nd-sub">ติ๊กถ้าไม่มียอดฝากในวันนี้ ระบบจะบันทึกยอด 0 บาท</div>
+      </div>
+    </div>
+
     <!-- ยอดฝาก -->
-    <div class="card">
+    <div class="card removable" id="depositSection">
       <div class="field">
         <label class="qlabel">มูลค่าที่ฝาก (บาท) <span class="req">*</span></label>
         <input type="text" id="amount" inputmode="decimal" placeholder="เช่น 12500">
@@ -379,7 +415,7 @@ button#submitBtn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
     </div>
 
     <!-- ช่องทางฝาก -->
-    <div class="card">
+    <div class="card removable" id="channelSection">
       <label class="qlabel">ช่องทางที่ทำการฝากเงิน <span class="req">*</span></label>
       <div class="channel-list" id="channelList"></div>
       <div id="otherDetailWrap">
@@ -389,7 +425,7 @@ button#submitBtn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
     </div>
 
     <!-- อัปโหลดรูป -->
-    <div class="card">
+    <div class="card removable" id="slipSection">
       <label class="qlabel">รูปสลิป (Pay-in Slip) <span class="req">*</span></label>
       <div class="upload-box" id="uploadBox">
         <div class="upload-icon">📷</div>
@@ -417,7 +453,7 @@ button#submitBtn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
       <div class="status-icon" id="statusIcon"></div>
       <div class="status-title" id="statusTitle"></div>
       <div class="status-msg" id="statusMsg"></div>
-      <button class="btn-secondary" id="sendAnotherBtn" type="button">ส่งรายการใหม่</button>
+      <button class="btn-secondary" id="sendAnotherBtn" type="button">ส่งรายการใถม่</button>
     </div>
   </div>
 </div>
@@ -647,6 +683,35 @@ const STORE_NAMES = {
   '75012': 'โวค กระบี่',
   '75014': 'โอเชียน ชุมพร',
 };
+/* ==================== NO-DEPOSIT CHECKBOX ==================== */
+const noDepositCheck = document.getElementById('noDepositCheck');
+const noDepositCard = document.getElementById('noDepositCard');
+const depositSection = document.getElementById('depositSection');
+const channelSection = document.getElementById('channelSection');
+const slipSection = document.getElementById('slipSection');
+
+noDepositCheck.addEventListener('change', () => {
+  const isNoDeposit = noDepositCheck.checked;
+  noDepositCard.classList.toggle('no-deposit-active', isNoDeposit);
+
+  // ซ่อน/แสดง card ยอดเงิน, ช่องทาง, รูปสลิป
+  depositSection.style.display = isNoDeposit ? 'none' : '';
+  channelSection.style.display = isNoDeposit ? 'none' : '';
+  slipSection.style.display = isNoDeposit ? 'none' : '';
+
+  // ล้าง error ถ้ามี
+  if (isNoDeposit) {
+    clearError('amount');
+    clearError('channel');
+    clearError('file');
+    selectedChannel = 'none';
+    selectedFile = null;
+  } else {
+    selectedChannel = null;
+    selectedFile = null;
+  }
+});
+
 /* ==================== STATE ==================== */
 let selectedChannel = null;
 let selectedFile = null;
@@ -822,7 +887,8 @@ removeFileBtn.addEventListener('click', (e) => {
   previewWrap.style.display = 'none';
 });
 
-/* ==================== VALIDATION ==================== */
+
+
 function showError(field){
   const el = document.getElementById(field);
   const errEl = document.getElementById('err-' + field);
@@ -842,16 +908,21 @@ function clearAllErrors(){
 function validate(){
   clearAllErrors();
   let ok = true;
+  const isNoDeposit = noDepositCheck.checked;
+
   if(!zoneSelect.value){ showError('zoneCode'); ok = false; }
   if(!storeSelect.value){ showError('storeCode'); ok = false; }
   if(!document.getElementById('depositDate').value){ showError('depositDate'); ok = false; }
   if(!document.getElementById('salesDate').value){ showError('salesDate'); ok = false; }
-  const amountVal = document.getElementById('amount').value.trim();
-  if(!amountVal || isNaN(amountVal.replace(/,/g,'')) || Number(amountVal.replace(/,/g,'')) <= 0){
-    showError('amount'); ok = false;
+
+  if(!isNoDeposit){
+    const amountVal = document.getElementById('amount').value.trim();
+    if(!amountVal || isNaN(amountVal.replace(/,/g,'')) || Number(amountVal.replace(/,/g,'')) <= 0){
+      showError('amount'); ok = false;
+    }
+    if(!selectedChannel){ showError('channel'); ok = false; }
+    if(!selectedFile){ showError('file'); ok = false; }
   }
-  if(!selectedChannel){ showError('channel'); ok = false; }
-  if(!selectedFile){ showError('file'); ok = false; }
   return ok;
 }
 
@@ -862,36 +933,45 @@ submitBtn.addEventListener('click', async () => {
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span class="spinner"></span>กำลังส่ง...';
 
+  const isNoDeposit = noDepositCheck.checked;
   const zoneCode = zoneSelect.value;
   const storeCode = storeSelect.value;
   const depositDate = document.getElementById('depositDate').value;
   const salesDate = document.getElementById('salesDate').value;
-  const amount = Number(document.getElementById('amount').value.replace(/,/g,''));
-  const channelDetail = (selectedChannel === 'other') ? channelDetailInput.value.trim() : null;
+  const amount = isNoDeposit ? 0 : Number(document.getElementById('amount').value.replace(/,/g,''));
+  const channel = isNoDeposit ? 'none' : selectedChannel;
+  const channelDetail = (channel === 'other') ? channelDetailInput.value.trim() : null;
 
   try{
-    // 1) อัปโหลดรูปสลิปเข้า Supabase Storage ก่อน
-    const fileExt = (selectedFile.name.split('.').pop() || 'jpg').toLowerCase();
-    const safeExt = ['jpg','jpeg','png','webp'].includes(fileExt) ? fileExt : 'jpg';
-    const timestamp = Date.now();
-    const slipPath = `${storeCode}/${depositDate}_${timestamp}.${safeExt}`;
+    let slipPath = 'no_deposit';
+    let slipUrl = null;
 
-    const { error: uploadError } = await sb
-      .storage
-      .from('payin-slips')
-      .upload(slipPath, selectedFile, {
-        contentType: selectedFile.type || 'image/jpeg',
-        upsert: false
-      });
+    if(!isNoDeposit){
+      // 1) อัปโหลดรูปสลิปเข้า Supabase Storage ก่อน
+      const fileExt = (selectedFile.name.split('.').pop() || 'jpg').toLowerCase();
+      const safeExt = ['jpg','jpeg','png','webp'].includes(fileExt) ? fileExt : 'jpg';
+      const timestamp = Date.now();
+      slipPath = `${storeCode}/${depositDate}_${timestamp}.${safeExt}`;
 
-    if(uploadError) throw uploadError;
+      const { error: uploadError } = await sb
+        .storage
+        .from('payin-slips')
+        .upload(slipPath, selectedFile, {
+          contentType: selectedFile.type || 'image/jpeg',
+          upsert: false
+        });
 
-    const { data: urlData } = sb
-      .storage
-      .from('payin-slips')
-      .getPublicUrl(slipPath);
+      if(uploadError) throw uploadError;
 
-    // 2) Insert record เข้า Supabase พร้อม path/url ของรูปในจังหวะเดียวกัน
+      const { data: urlData } = sb
+        .storage
+        .from('payin-slips')
+        .getPublicUrl(slipPath);
+
+      slipUrl = urlData.publicUrl;
+    }
+
+    // 2) Insert record เข้า Supabase
     const { error: insertError } = await sb
       .from('payin_records')
       .insert({
@@ -900,15 +980,19 @@ submitBtn.addEventListener('click', async () => {
         deposit_date: depositDate,
         sales_date: salesDate,
         amount: amount,
-        channel: selectedChannel,
+        channel: channel,
         channel_detail: channelDetail,
         slip_path: slipPath,
-        slip_url: urlData.publicUrl
+        slip_url: slipUrl
       });
 
     if(insertError) throw insertError;
 
-    showStatus('ok', 'ส่งข้อมูลสำเร็จ', `สาขา ${storeCode} ส่งข้อมูลและรูปสลิปเรียบร้อยแล้ว`);
+    const successMsg = isNoDeposit
+      ? `สาขา ${storeCode} รายงาน "ไม่มีเงินนำส่ง" เรียบร้อยแล้ว`
+      : `สาขา ${storeCode} ส่งข้อมูลและรูปสลิปเรียบร้อยแล้ว`;
+
+    showStatus('ok', 'ส่งข้อมูลสำเร็จ', successMsg);
   }catch(err){
     console.error(err);
     showStatus('err', 'ส่งข้อมูลไม่สำเร็จ', 'เกิดข้อผิดพลาดระหว่างส่งข้อมูล กรุณาลองใหม่อีกครั้ง หรือแจ้งฝ่าย IT หากยังไม่สำเร็จ');
