@@ -360,14 +360,6 @@
         </div>
       </div>
       <div class="topbar-controls">
-        <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:9px;padding:3px 10px;">
-          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
-          <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12.5px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:9px;padding:3px 10px;">
-          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Deposit Date</label>
-          <input type="date" id="filterDepositDate" style="border:none;background:transparent;padding:3px 0;font-size:12.5px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
-        </div>
         <select id="filterZone"><option value="">All Districts</option></select>
       </div>
     </div>
@@ -427,13 +419,23 @@
         <div class="table-wrap">
           <div class="table-head-bar">
             <div class="table-title" id="tableTitle">All submissions</div>
-            <input
-              class="search-input"
-              type="text"
-              id="storeSearch"
-              placeholder="🔍 Search store code or name..."
-              oninput="onSearchInput()"
-            >
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
+                <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
+                <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
+                <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Deposit Date</label>
+                <input type="date" id="filterDepositDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+              </div>
+              <input
+                class="search-input"
+                type="text"
+                id="storeSearch"
+                placeholder="🔍 Search store code or name..."
+                oninput="onSearchInput()"
+              >
+            </div>
           </div>
           <div class="table-scroll">
             <table>
@@ -545,21 +547,25 @@ let trendChartInstance = null;
 let districtChartInstance = null;
 let donutChartInstance = null;
 
-const filterSalesDateEl   = document.getElementById('filterSalesDate');
-const filterDepositDateEl = document.getElementById('filterDepositDate');
+// filterSalesDateEl และ filterDepositDateEl resolve ตอน render (DOM พร้อมแล้ว)
+function getFilterSalesDateEl()   { return document.getElementById('filterSalesDate'); }
+function getFilterDepositDateEl() { return document.getElementById('filterDepositDate'); }
 const filterZoneEl = document.getElementById('filterZone');
 
 const today = new Date().toISOString().slice(0,10);
-filterSalesDateEl.value = today;
-filterSalesDateEl.max   = today;
-filterDepositDateEl.max = today;
 
 function dateNDaysAgo(n){
   const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0,10);
 }
 
-filterSalesDateEl.addEventListener('change',   () => { currentPage = 1; render(); });
-filterDepositDateEl.addEventListener('change', () => { currentPage = 1; render(); });
+// init date filters after DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  const sd = getFilterSalesDateEl();
+  const dd = getFilterDepositDateEl();
+  if (sd) { sd.value = today; sd.max = today; sd.addEventListener('change', () => { currentPage = 1; render(); }); }
+  if (dd) { dd.max = today; dd.addEventListener('change', () => { currentPage = 1; render(); }); }
+});
+
 filterZoneEl.addEventListener('change', () => {
   if (LOCKED_ZONE) return;
   activeZoneFilter = filterZoneEl.value; currentPage = 1; render();
@@ -662,10 +668,10 @@ async function loadData(){
 /* ==================== STATUS LOGIC ==================== */
 function getStoreStatus(storeCode, salesDate, depositDate){
   let recs = allRecords.filter(r => r.store_code === storeCode);
-  if (salesDate)   recs = recs.filter(r => (r.sales_date   || '').slice(0,10) === salesDate);
+  // default: ถ้าไม่ได้เลือก filter ให้ใช้ sales_date = วันนี้
+  const sd = salesDate || today;
+  recs = recs.filter(r => (r.sales_date || '').slice(0,10) === sd);
   if (depositDate) recs = recs.filter(r => (r.deposit_date || '').slice(0,10) === depositDate);
-  // ถ้าไม่ filter date เลย ให้ดึงเฉพาะวันนี้ตาม submitted_at (fallback)
-  if (!salesDate && !depositDate) recs = recs.filter(r => r.submitted_at.slice(0,10) === today);
   if (recs.length === 0) return { status:'missing', records:[] };
   const latest = recs.reduce((a,b) => new Date(a.submitted_at) > new Date(b.submitted_at) ? a : b);
   const isLate = new Date(latest.submitted_at).getHours() >= LATE_CUTOFF_HOUR;
@@ -678,7 +684,8 @@ function countMissedDays(storeCode, days){
   let missed = 0;
   for (let i = 0; i < days; i++){
     const d = new Date(); d.setDate(d.getDate() - i);
-    if (getStoreStatus(storeCode, d.toISOString().slice(0,10)).status === 'missing') missed++;
+    const dStr = d.toISOString().slice(0,10);
+    if (getStoreStatus(storeCode, dStr, '').status === 'missing') missed++;
   }
   return missed;
 }
@@ -692,7 +699,7 @@ function renderTrendChart(stores){
     const dStr = d.toISOString().slice(0,10);
     labels.push(d.toLocaleDateString('th-TH', {day:'numeric', month:'short'}));
     sentCounts.push(stores.filter(s => {
-      const r = getStoreStatus(s.store_code, dStr);
+      const r = getStoreStatus(s.store_code, dStr, '');
       return r.status === 'sent' || r.status === 'duplicate';
     }).length);
   }
@@ -716,7 +723,7 @@ function renderDistrictChart(dateStr){
     const zoneStores = allStoresList.filter(s => s.zone_code === z);
     let sub=0, notSub=0, late=0;
     zoneStores.forEach(s => {
-      const r = getStoreStatus(s.store_code, dateStr);
+      const r = getStoreStatus(s.store_code, dateStr, '');
       if (r.status==='sent'||r.status==='duplicate') sub++;
       else if (r.status==='late') late++;
       else notSub++;
@@ -762,8 +769,8 @@ function renderDonutChart(total, sent, missing, dup, late){
 
 /* ==================== RENDER ==================== */
 function render(){
-  const salesDateFilter   = filterSalesDateEl.value   || '';
-  const depositDateFilter = filterDepositDateEl.value || '';
+  const salesDateFilter   = (getFilterSalesDateEl()   && getFilterSalesDateEl().value)   || '';
+  const depositDateFilter = (getFilterDepositDateEl() && getFilterDepositDateEl().value) || '';
   let stores = allStoresList;
   if (activeZoneFilter) stores = stores.filter(s => s.zone_code === activeZoneFilter);
 
