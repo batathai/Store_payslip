@@ -249,7 +249,7 @@
   .donut-legend-row .leg-left .dot{width:8px; height:8px; border-radius:2px; display:inline-block;}
   .donut-legend-row b{font-weight:700; color:var(--ink);}
 
-    /* District overview list */
+  /* District overview list */
   .zone-list{display:flex; flex-direction:column; gap:0; overflow-y:auto;}
   .zone-row{
     display:flex; align-items:center; justify-content:space-between;
@@ -360,7 +360,10 @@
         </div>
       </div>
       <div class="topbar-controls">
-        <input type="date" id="filterDate">
+        <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:9px;padding:3px 10px;">
+          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Date</label>
+          <input type="date" id="filterDate" style="border:none;background:transparent;padding:3px 0;font-size:12.5px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+        </div>
         <select id="filterZone"><option value="">All Districts</option></select>
       </div>
     </div>
@@ -545,7 +548,7 @@ filterDateEl.value = today;
 function dateNDaysAgo(n){
   const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0,10);
 }
-filterDateEl.min = dateNDaysAgo(30);
+filterDateEl.min = dateNDaysAgo(90);
 filterDateEl.max = today;
 
 filterDateEl.addEventListener('change', () => { currentPage = 1; render(); });
@@ -629,7 +632,7 @@ function buildStoreList(){
 
 /* ==================== DATA LOADING ==================== */
 async function loadData(){
-  const sinceDate = dateNDaysAgo(30) + 'T00:00:00';
+  const sinceDate = dateNDaysAgo(90) + 'T00:00:00';
   const { data: records, error } = await sb
     .from('payin_records').select('*')
     .gte('submitted_at', sinceDate)
@@ -793,24 +796,13 @@ function render(){
     const zStores = allStoresList.filter(s => s.zone_code === z);
     const zRows = zStores.map(s => getStoreStatus(s.store_code, dateStr));
     const zSent = zRows.filter(r => r.status !== 'missing').length;
-    const zMiss = zRows.filter(r => r.status === 'missing').length;
-    const storeItems = zStores.map(s => {
-      const sr = getStoreStatus(s.store_code, dateStr);
-      const dot = sr.status === 'missing' ? '#D97706' : sr.status === 'late' ? '#E0263F' : sr.status === 'duplicate' ? '#7C5CFC' : '#0FA968';
-      return `<div style="display:flex;align-items:center;gap:6px;padding:3px 10px 3px 22px;font-size:11px;color:var(--ink-soft);">
-        <span style="width:6px;height:6px;border-radius:50%;background:${dot};flex:0 0 auto;"></span>
-        <span style="font-weight:600;color:var(--ink);min-width:44px;">${s.store_code}</span>
-        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.store_name||'—'}</span>
-      </div>`;
-    }).join('');
-    return `<div style="border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:4px;">
-      <div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}">
-        <span class="zone-row-name">Zone ${z}</span>
-        <span class="zone-row-stats">
-          <span class="zs-ok">${zSent}</span><span class="zs-sep">/</span><span style="color:var(--ink-soft)">${zStores.length}</span>
-        </span>
-      </div>
-      ${storeItems}
+    return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}">
+      <span class="zone-row-name">Zone ${z}</span>
+      <span class="zone-row-stats">
+        <span class="zs-ok">${zSent}</span>
+        <span class="zs-sep">/</span>
+        <span style="color:var(--ink-soft)">${zStores.length}</span>
+      </span>
     </div>`;
   }).join('');
 
