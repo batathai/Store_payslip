@@ -11,7 +11,7 @@
     --ink:#15171C;
     --ink-soft:#6B7280;
     --ink-faint:#9CA3AF;
-    --paper:#FFFFFF;
+    --paper:#F4F5F7;
     --card:#FFFFFF;
     --line:#ECEDF1;
     --sidebar-bg:#8F0E1F;
@@ -25,215 +25,286 @@
     --purple-bg:#EFEAFE;
     --blue:#2F7DE1;
     --blue-bg:#E8F1FD;
-    --radius-lg:24px;
-    --radius-md:16px;
-    --shadow-card:0 12px 32px -8px rgba(21,23,28,.08), 0 2px 8px rgba(21,23,28,.04);
-    --font-display:'Inter','Noto Sans Thai',sans-serif;
+    --radius-lg:16px;
+    --radius-md:10px;
+    --shadow-card:0 1px 4px rgba(21,23,28,.06);
     --font-body:'Inter','Noto Sans Thai','Helvetica Neue',Arial,sans-serif;
   }
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box; margin:0; padding:0;}
   body{
-    margin:0; background:var(--paper); color:var(--ink);
+    background:var(--paper); color:var(--ink);
     font-family:var(--font-body); -webkit-font-smoothing:antialiased;
+    font-size:14px;
   }
 
-  .layout{display:flex; min-height:100vh;}
+  /* ===================== LAYOUT ===================== */
+  .shell{display:flex; min-height:100vh;}
 
+  /* ---- Sidebar ---- */
   .sidebar{
-    width:230px; flex:0 0 230px;
+    width:220px; flex:0 0 220px;
     background:var(--sidebar-bg); color:#fff;
     display:flex; flex-direction:column;
-    position:sticky; top:0; height:100vh;
+    position:sticky; top:0; height:100vh; z-index:10;
   }
   .sidebar-brand{
     display:flex; align-items:center; gap:10px;
-    padding:22px 20px; border-bottom:1px solid rgba(255,255,255,.08);
+    padding:20px 18px 16px; border-bottom:1px solid rgba(255,255,255,.08);
   }
   .sidebar-logo{
-    width:30px; height:30px; border-radius:9px;
+    width:28px; height:28px; border-radius:8px;
     background:var(--bata-red); display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:14px;
+    font-weight:800; font-size:13px;
   }
-  .sidebar-word{font-weight:800; font-size:18px; letter-spacing:.03em;}
+  .sidebar-word{font-weight:800; font-size:17px; letter-spacing:.03em;}
 
-  .sidebar-nav{flex:1; padding:14px 12px; overflow-y:auto;}
+  .sidebar-nav{flex:1; padding:10px 10px; overflow-y:auto;}
+
+  .nav-group-label{
+    font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:rgba(255,255,255,.35); padding:12px 10px 4px;
+  }
   .nav-item{
-    display:flex; align-items:center; gap:11px;
-    padding:11px 14px; border-radius:10px;
-    color:rgba(255,255,255,.65); font-size:13.5px; font-weight:600;
-    cursor:pointer; margin-bottom:2px; transition:background .12s ease, color .12s ease;
+    display:flex; align-items:center; gap:10px;
+    padding:9px 12px; border-radius:8px;
+    color:rgba(255,255,255,.65); font-size:13px; font-weight:600;
+    cursor:pointer; margin-bottom:1px; transition:background .12s, color .12s;
     border:none; background:none; width:100%; text-align:left; font-family:var(--font-body);
   }
-  .nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .nav-item:hover{background:rgba(255,255,255,.07); color:#fff;}
   .nav-item.active{background:var(--bata-red); color:#fff;}
-  .nav-item .nav-icon{width:17px; text-align:center; flex:0 0 auto; font-size:14px;}
+  .nav-item .nav-icon{font-size:15px; width:18px; text-align:center; flex:0 0 auto;}
   .nav-item .nav-count{
     margin-left:auto; font-size:11px; font-weight:700;
-    background:rgba(255,255,255,.12); border-radius:6px; padding:1px 7px;
+    background:rgba(255,255,255,.15); border-radius:6px; padding:1px 7px; min-width:24px; text-align:center;
   }
-  .nav-item.active .nav-count{background:rgba(255,255,255,.22);}
+  .nav-item.active .nav-count{background:rgba(255,255,255,.25);}
+  .nav-count.warn-count{background:rgba(217,119,6,.35)!important;}
+  .nav-count.err-count{background:rgba(224,38,63,.35)!important;}
 
   .sidebar-foot{
-    padding:16px 20px; border-top:1px solid rgba(255,255,255,.08);
+    padding:14px 16px; border-top:1px solid rgba(255,255,255,.08);
     display:flex; align-items:center; gap:10px;
   }
   .sidebar-avatar{
-    width:32px; height:32px; border-radius:50%;
-    background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:700; flex:0 0 auto;
+    width:30px; height:30px; border-radius:50%;
+    background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:700; flex:0 0 auto;
   }
-  .sidebar-foot-text p{margin:0; line-height:1.3;}
-  .sidebar-foot-name{font-size:12.5px; font-weight:700;}
-  .sidebar-foot-sub{font-size:11px; color:rgba(255,255,255,.5);}
+  .sidebar-foot-name{font-size:12px; font-weight:700; line-height:1.3;}
+  .sidebar-foot-sub{font-size:11px; color:rgba(255,255,255,.45); line-height:1.3;}
 
-  .main{flex:1; min-width:0; padding:24px 28px 60px;}
+  /* ---- Main content area ---- */
+  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
 
-  .page-head{
-    display:flex; justify-content:space-between; align-items:center;
-    flex-wrap:wrap; gap:14px; margin-bottom:22px;
+  /* ---- Topbar ---- */
+  .topbar{
+    position:sticky; top:0; z-index:9;
+    background:var(--card); border-bottom:1px solid var(--line);
+    padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
   }
-  .page-title{font-size:21px; font-weight:800; margin:0;}
-  .page-sub{font-size:12.5px; color:var(--ink-soft); margin:3px 0 0;}
+  .topbar-left{display:flex; align-items:center; gap:10px;}
+  .page-title{font-size:16px; font-weight:800; margin:0;}
+  .topbar-sub{font-size:12px; color:var(--ink-soft); margin-top:1px;}
+  .topbar-controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
 
-  .head-controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
   select, input[type=date]{
-    padding:9px 12px; font-size:13px; border:1.5px solid var(--line);
-    border-radius:10px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600;
+    padding:7px 10px; font-size:12.5px; border:1.5px solid var(--line);
+    border-radius:8px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600;
+    cursor:pointer;
   }
   select:focus, input:focus{outline:none; border-color:var(--bata-red);}
 
+  /* ---- Body split: left content + right panel ---- */
+  .body-split{display:flex; flex:1; align-items:flex-start; min-height:0;}
+  .content-col{flex:1; min-width:0; padding:20px 20px 60px; overflow-y:auto;}
+  .right-panel{
+    width:260px; flex:0 0 260px;
+    padding:20px 16px 60px;
+    border-left:1px solid var(--line);
+    background:var(--card);
+    overflow-y:auto;
+    position:sticky; top:57px; height:calc(100vh - 57px);
+  }
+
+  /* ===================== COMPONENTS ===================== */
   .metrics{
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));
-    gap:14px; margin-bottom:24px;
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr));
+    gap:10px; margin-bottom:18px;
   }
   .metric{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card);
-    padding:16px 16px; cursor:pointer; transition:border-color .15s ease, transform .05s ease;
+    background:var(--card); border:1.5px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card); padding:14px 16px; cursor:pointer;
+    transition:border-color .15s, transform .05s;
   }
   .metric:hover{border-color:var(--ink-faint);}
-  .metric:active{transform:scale(0.98);}
+  .metric:active{transform:scale(.98);}
   .metric.active{border-color:var(--bata-red);}
-  .metric-top{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+  .metric-top{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
   .metric-icon{
-    width:30px; height:30px; border-radius:9px;
-    display:flex; align-items:center; justify-content:center; font-size:14px; flex:0 0 auto;
+    width:28px; height:28px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:13px; flex:0 0 auto;
   }
   .metric-icon.blue{background:var(--blue-bg); color:var(--blue);}
   .metric-icon.ok{background:var(--ok-bg); color:var(--ok);}
   .metric-icon.warn{background:var(--warn-bg); color:var(--warn);}
   .metric-icon.purple{background:var(--purple-bg); color:var(--purple);}
   .metric-icon.err{background:var(--err-bg); color:var(--err);}
-  .metric-label{font-size:11px; color:var(--ink-soft); font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
-  .metric-value{font-size:26px; font-weight:800; line-height:1;}
-  .metric-pct{font-size:11.5px; font-weight:700; margin-top:4px;}
+  .metric-label{font-size:10.5px; color:var(--ink-soft); font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
+  .metric-value{font-size:24px; font-weight:800; line-height:1;}
+  .metric-pct{font-size:11px; font-weight:700; margin-top:3px;}
   .metric-pct.blue{color:var(--blue);}
   .metric-pct.ok{color:var(--ok);}
   .metric-pct.warn{color:var(--warn);}
   .metric-pct.purple{color:var(--purple);}
   .metric-pct.err{color:var(--err);}
 
-  .section-title{font-size:14.5px; font-weight:800; margin:0 0 14px;}
-  .section-head{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
-  .section-head .section-title{margin:0;}
-  .section-link{font-size:12.5px; font-weight:700; color:var(--bata-red); text-decoration:none; cursor:pointer; border:none; background:none; font-family:var(--font-body);}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card); padding:16px;
+  }
+  .section-head{
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:8px; margin-bottom:12px;
+  }
+  .section-title{font-size:13px; font-weight:800; color:var(--ink); margin:0;}
 
-  .range-toggle{display:flex; gap:4px; background:#F4F5F7; border:1px solid var(--line); border-radius:9px; padding:3px;}
+  .range-toggle{display:flex; gap:3px; background:#F4F5F7; border:1px solid var(--line); border-radius:8px; padding:2px;}
   .range-toggle button{
-    border:none; background:none; padding:6px 14px; font-size:12.5px; font-weight:700;
-    color:var(--ink-soft); border-radius:7px; cursor:pointer; font-family:var(--font-body);
+    border:none; background:none; padding:5px 12px; font-size:12px; font-weight:700;
+    color:var(--ink-soft); border-radius:6px; cursor:pointer; font-family:var(--font-body);
   }
   .range-toggle button.active{background:var(--bata-red); color:#fff;}
 
-  .card{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card);
-    padding:18px 18px;
-  }
+  .chart-legend{display:flex; gap:14px; margin-bottom:8px; font-size:11.5px; color:var(--ink-soft); flex-wrap:wrap;}
+  .chart-legend span{display:flex; align-items:center; gap:5px;}
+  .chart-legend .dot{width:8px; height:8px; border-radius:2px; flex:0 0 auto;}
 
-  .grid-2{display:grid; grid-template-columns:1.5fr 1fr; gap:16px; margin-bottom:24px; align-items:start;}
-  .grid-2b{display:grid; grid-template-columns:1.7fr 1fr; gap:16px; margin-bottom:24px; align-items:start;}
-  @media (max-width:880px){ .grid-2, .grid-2b{grid-template-columns:1fr;} }
+  /* Trend + district: horizontal side by side */
+  .charts-row{display:grid; grid-template-columns:1.6fr 1fr; gap:14px; margin-bottom:16px;}
+  @media(max-width:900px){.charts-row{grid-template-columns:1fr;}}
 
-  .chart-legend{display:flex; gap:16px; margin-bottom:10px; font-size:12px; color:var(--ink-soft); flex-wrap:wrap;}
-  .chart-legend span{display:flex; align-items:center; gap:6px;}
-  .chart-legend .dot{width:9px; height:9px; border-radius:2px;}
-
-  .mini-table{width:100%; border-collapse:collapse; font-size:12.5px;}
-  .mini-table th{
-    text-align:left; padding:6px 8px; color:var(--ink-faint); font-weight:700;
-    font-size:10.5px; text-transform:uppercase; letter-spacing:.03em;
-    border-bottom:1px solid var(--line);
-  }
-  .mini-table td{padding:9px 8px; border-bottom:1px solid var(--line);}
-  .mini-table tr:last-child td{border-bottom:none;}
-  .mini-table-wrap{max-height:230px; overflow-y:auto;}
-
+  /* ---- Big table ---- */
   .table-wrap{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card); overflow:hidden; margin-bottom:24px;
+    box-shadow:var(--shadow-card); overflow:hidden;
   }
+  .table-head-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap;
+  }
+  .table-title{font-size:13px; font-weight:800; margin:0;}
   .table-scroll{overflow-x:auto;}
-  table{width:100%; border-collapse:collapse; font-size:13px;}
+  table{width:100%; border-collapse:collapse; font-size:12.5px;}
   th{
-    text-align:left; padding:11px 14px; background:#FAFAFB;
-    font-weight:700; color:var(--ink-soft); font-size:11px;
+    text-align:left; padding:9px 12px; background:#FAFAFB;
+    font-weight:700; color:var(--ink-soft); font-size:10.5px;
     text-transform:uppercase; letter-spacing:.03em;
-    border-bottom:1px solid var(--line); white-space:nowrap;
+    border-bottom:1px solid var(--line); white-space:nowrap; cursor:pointer; user-select:none;
   }
-  td{padding:11px 14px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  th:hover{color:var(--ink);}
+  td{padding:9px 12px; border-bottom:1px solid var(--line); white-space:nowrap;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:#FAFAFB;}
 
   .badge{
     display:inline-block; font-size:11px; font-weight:700;
-    padding:3px 10px; border-radius:7px;
+    padding:2px 9px; border-radius:6px;
   }
   .badge.ok{background:var(--ok-bg); color:var(--ok);}
   .badge.warn{background:var(--warn-bg); color:var(--warn);}
   .badge.err{background:var(--err-bg); color:var(--err);}
   .badge.purple{background:var(--purple-bg); color:var(--purple);}
 
-  .pager{display:flex; justify-content:center; align-items:center; gap:6px; padding:14px;}
+  .pager{display:flex; justify-content:center; align-items:center; gap:5px; padding:12px;}
   .pager button{
     border:1.5px solid var(--line); background:#fff; color:var(--ink-soft);
-    width:30px; height:30px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer;
+    width:28px; height:28px; border-radius:7px; font-size:12px; font-weight:700; cursor:pointer;
+    font-family:var(--font-body);
   }
   .pager button.active{background:var(--bata-red); border-color:var(--bata-red); color:#fff;}
   .pager button:disabled{opacity:.4; cursor:not-allowed;}
 
-  a.imglink{color:var(--bata-red); font-weight:700; text-decoration:none; font-size:12.5px;}
+  a.imglink{color:var(--bata-red); font-weight:700; text-decoration:none; font-size:12px;}
 
-  .zone-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px;}
-  .zone-card{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-md);
-    padding:13px 15px; cursor:pointer; transition:border-color .15s ease;
-  }
-  .zone-card:hover{border-color:var(--bata-red);}
-  .zone-card.active{border-color:var(--bata-red); background:#FFF6F6;}
-  .zone-name{font-weight:800; font-size:13.5px; margin-bottom:8px;}
-  .zone-stats{display:flex; gap:12px; font-size:12px; color:var(--ink-soft);}
-  .zone-stats b{color:var(--ink); font-size:13.5px; display:block;}
-
-  .miss-count{font-weight:700;}
+  .miss-count{font-weight:700; font-size:12px;}
   .miss-count.zero{color:var(--ok);}
   .miss-count.some{color:var(--warn);}
   .miss-count.many{color:var(--err);}
 
-  .empty-state{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:13px;}
-  .loading{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:13px;}
+  .empty-state{padding:32px 16px; text-align:center; color:var(--ink-soft); font-size:13px;}
+  .loading{padding:32px 16px; text-align:center; color:var(--ink-soft); font-size:13px;}
 
-  .toggle-row{display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);}
-  .toggle-row p{margin:0; font-size:12.5px; font-weight:700;}
-  .toggle-row span{font-size:11.5px; color:var(--ink-soft);}
-  .switch{position:relative; width:38px; height:22px; background:var(--ok); border-radius:99px; flex:0 0 auto; cursor:pointer;}
-  .switch::after{content:''; position:absolute; top:2px; right:2px; width:18px; height:18px; background:#fff; border-radius:50%;}
+  /* ===================== RIGHT PANEL ===================== */
+  .rp-section{margin-bottom:20px;}
+  .rp-title{font-size:11.5px; font-weight:800; color:var(--ink); margin-bottom:10px; text-transform:uppercase; letter-spacing:.04em;}
+
+  /* Quick summary donut */
+  .donut-wrap{display:flex; justify-content:center; margin-bottom:12px;}
+  .donut-legend-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:5px 0; border-bottom:1px solid var(--line); font-size:12px;
+  }
+  .donut-legend-row:last-child{border-bottom:none;}
+  .donut-legend-row .leg-left{display:flex; align-items:center; gap:6px; color:var(--ink-soft);}
+  .donut-legend-row .leg-left .dot{width:8px; height:8px; border-radius:2px; display:inline-block;}
+  .donut-legend-row b{font-weight:700; color:var(--ink);}
+
+  /* District overview list */
+  .zone-list{display:flex; flex-direction:column; gap:0;}
+  .zone-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:7px 10px; border-radius:8px; cursor:pointer;
+    font-size:12.5px; transition:background .1s;
+  }
+  .zone-row:hover{background:var(--paper);}
+  .zone-row.active{background:#FFF0F0;}
+  .zone-row-name{font-weight:700; color:var(--ink);}
+  .zone-row-stats{display:flex; align-items:center; gap:6px; font-size:11.5px;}
+  .zs-ok{color:var(--ok); font-weight:700;}
+  .zs-err{color:var(--err); font-weight:700;}
+  .zs-sep{color:var(--ink-faint);}
+
+  /* Missing stores list */
+  .missing-list{max-height:280px; overflow-y:auto;}
+  .missing-item{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:6px 8px; border-radius:7px; font-size:12px;
+  }
+  .missing-item:hover{background:var(--paper);}
+  .missing-code{font-weight:700; color:var(--ink); min-width:48px;}
+  .missing-name{color:var(--ink-soft); flex:1; margin:0 8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .missing-zone{font-size:11px; color:var(--ink-faint); background:var(--paper); padding:1px 6px; border-radius:5px;}
+
+  /* Auto refresh toggle */
+  .toggle-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0 0; margin-top:10px; border-top:1px solid var(--line);
+  }
+  .toggle-label{font-size:12px; font-weight:700;}
+  .toggle-sub{font-size:11px; color:var(--ink-soft);}
+  .switch{position:relative; width:36px; height:20px; background:var(--ok); border-radius:99px; cursor:pointer; flex:0 0 auto; transition:background .2s;}
+  .switch::after{content:''; position:absolute; top:2px; right:2px; width:16px; height:16px; background:#fff; border-radius:50%; transition:right .2s;}
+  .switch.off{background:#D7D9E0;}
+  .switch.off::after{right:auto; left:2px;}
+
+  /* District chart section (Accounting only) */
+  #districtSection{margin-bottom:16px;}
+
+  /* Search input */
+  .search-input{
+    padding:7px 12px; font-size:12.5px; border:1.5px solid var(--line);
+    border-radius:8px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600;
+    width:200px; outline:none;
+  }
+  .search-input:focus{border-color:var(--bata-red);}
 </style>
 </head>
 <body>
 
-<div class="layout">
+<div class="shell">
 
+  <!-- ===================== SIDEBAR ===================== -->
   <div class="sidebar">
     <div class="sidebar-brand">
       <div class="sidebar-logo">B</div>
@@ -241,124 +312,134 @@
     </div>
 
     <div class="sidebar-nav" id="sidebarNav">
-      <button class="nav-item active" data-view="dashboard"><span class="nav-icon">&#9632;</span>Dashboard</button>
-      <button class="nav-item" data-view="all"><span class="nav-icon">&#9776;</span>All Submissions</button>
-      <button class="nav-item" data-view="missing"><span class="nav-icon">&#9888;</span>Not Submitted<span class="nav-count" id="navCountMissing">—</span></button>
-      <button class="nav-item" data-view="duplicate"><span class="nav-icon">&#10063;</span>Duplicate<span class="nav-count" id="navCountDuplicate">—</span></button>
-      <button class="nav-item" data-view="late"><span class="nav-icon">&#9201;</span>Late Submission<span class="nav-count" id="navCountLate">—</span></button>
-      <button class="nav-item" id="navByDistrict" data-view="district"><span class="nav-icon">&#9776;</span>By District</button>
+      <div class="nav-group-label">ภาพรวม</div>
+      <button class="nav-item active" data-view="dashboard">
+        <span class="nav-icon">&#9632;</span>Dashboard
+      </button>
+
+      <div class="nav-group-label">รายการส่ง</div>
+      <button class="nav-item" data-view="all">
+        <span class="nav-icon">&#9776;</span>All Submissions
+      </button>
+      <button class="nav-item" data-view="missing">
+        <span class="nav-icon">&#9888;</span>Not Submitted
+        <span class="nav-count err-count" id="navCountMissing">—</span>
+      </button>
+      <button class="nav-item" data-view="duplicate">
+        <span class="nav-icon">&#10063;</span>Duplicate
+        <span class="nav-count warn-count" id="navCountDuplicate">—</span>
+      </button>
+      <button class="nav-item" data-view="late">
+        <span class="nav-icon">&#9201;</span>Late Submission
+        <span class="nav-count warn-count" id="navCountLate">—</span>
+      </button>
+
+      <div class="nav-group-label" id="districtNavGroup">วิเคราะห์</div>
+      <button class="nav-item" id="navByDistrict" data-view="district">
+        <span class="nav-icon">&#9776;</span>By District
+      </button>
     </div>
 
     <div class="sidebar-foot">
       <div class="sidebar-avatar" id="sidebarAvatar">AC</div>
-      <div class="sidebar-foot-text">
-        <p class="sidebar-foot-name" id="sidebarName">Accounting Team</p>
-        <p class="sidebar-foot-sub" id="sidebarEmail">admin@bata.co.th</p>
+      <div>
+        <div class="sidebar-foot-name" id="sidebarName">Accounting Team</div>
+        <div class="sidebar-foot-sub" id="sidebarEmail">admin@bata.co.th</div>
       </div>
     </div>
   </div>
 
+  <!-- ===================== MAIN ===================== -->
   <div class="main">
 
-    <div class="page-head">
-      <div>
-        <h1 class="page-title">Daily Payslip Dashboard</h1>
-        <p class="page-sub" id="updatedAt">กำลังโหลด...</p>
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="page-title" id="pageTitle">Daily Payslip Dashboard</div>
+          <div class="topbar-sub" id="updatedAt">กำลังโหลด...</div>
+        </div>
       </div>
-      <div class="head-controls">
+      <div class="topbar-controls">
         <input type="date" id="filterDate">
-        <select id="filterZone">
-          <option value="">ทุกเขต</option>
-        </select>
+        <select id="filterZone"><option value="">ทุกเขต</option></select>
       </div>
     </div>
 
-    <div class="metrics" id="metricsRow">
-      <div class="metric"><div class="metric-label">สาขาทั้งหมด</div><div class="metric-value">—</div></div>
-    </div>
+    <!-- Body: content + right panel -->
+    <div class="body-split">
 
-    <div id="districtSection">
-      <div class="section-head">
-        <div class="section-title" id="districtTitle">Submission status by district</div>
-      </div>
-      <div class="card">
-        <div class="chart-legend">
-          <span><span class="dot" style="background:#0FA968;"></span>Submitted</span>
-          <span><span class="dot" style="background:#D97706;"></span>Not submitted</span>
-          <span><span class="dot" style="background:#E0263F;"></span>Late</span>
+      <!-- ---- Left content column ---- -->
+      <div class="content-col">
+
+        <!-- Metric cards -->
+        <div class="metrics" id="metricsRow">
+          <div class="metric"><div class="metric-label">สาขาทั้งหมด</div><div class="metric-value">—</div></div>
         </div>
-        <div style="position:relative; width:100%; height:260px;">
-          <canvas id="districtChart" role="img" aria-label="กราฟแท่งเปรียบเทียบจำนวนสาขาที่ส่งแล้ว ยังไม่ส่ง และส่งหลังเวลา แยกตามเขต สำหรับวันที่เลือก">กราฟเปรียบเทียบสถานะการส่งข้อมูลแยกตามเขต</canvas>
-        </div>
-      </div>
-    </div>
 
-    <div class="grid-2">
-      <div>
-        <div class="section-head">
-          <div class="section-title" id="trendTitle">แนวโน้มการส่งข้อมูล</div>
-          <div class="range-toggle" id="rangeToggle">
-            <button data-range="7" class="active">7 วัน</button>
-            <button data-range="30">30 วัน</button>
+        <!-- Charts row: Trend (wide) + District (Accounting only) -->
+        <div class="charts-row" id="chartsRow">
+          <!-- Trend chart -->
+          <div>
+            <div class="section-head">
+              <div class="section-title" id="trendTitle">แนวโน้มการส่งข้อมูล</div>
+              <div class="range-toggle" id="rangeToggle">
+                <button data-range="7" class="active">7 วัน</button>
+                <button data-range="30">30 วัน</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="chart-legend">
+                <span><span class="dot" style="background:#E11D2E;"></span>ส่งภายในวัน</span>
+                <span><span class="dot" style="background:#D8D4CF;"></span>สาขาทั้งหมด</span>
+              </div>
+              <div style="position:relative; width:100%; height:200px;">
+                <canvas id="trendChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- District chart (Accounting only) -->
+          <div id="districtSection">
+            <div class="section-head">
+              <div class="section-title" id="districtTitle">By District</div>
+            </div>
+            <div class="card">
+              <div class="chart-legend">
+                <span><span class="dot" style="background:#0FA968;"></span>Submitted</span>
+                <span><span class="dot" style="background:#D97706;"></span>Not submitted</span>
+                <span><span class="dot" style="background:#E0263F;"></span>Late</span>
+              </div>
+              <div style="position:relative; width:100%; height:200px;">
+                <canvas id="districtChart"></canvas>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="card">
-          <div class="chart-legend">
-            <span><span class="dot" style="background:#E11D2E;"></span>ส่งภายในวัน</span>
-            <span><span class="dot" style="background:#E7E4DF;"></span>สาขาทั้งหมด</span>
-          </div>
-          <div style="position:relative; width:100%; height:230px;">
-            <canvas id="trendChart" role="img" aria-label="กราฟแสดงจำนวนสาขาที่ส่งข้อมูลภายในวัน เทียบกับจำนวนสาขาทั้งหมด รายวัน">กราฟแนวโน้มจำนวนสาขาที่ส่งข้อมูลตรงเวลาในแต่ละวัน</canvas>
-          </div>
-        </div>
-      </div>
 
-      <div>
-        <div class="section-head">
-          <div class="section-title" id="missingCardTitle">Not submitted stores</div>
-        </div>
-        <div class="card">
-          <div class="mini-table-wrap">
-            <table class="mini-table">
-              <thead><tr><th>Code</th><th>Store</th><th>Zone</th></tr></thead>
-              <tbody id="missingMiniTable"><tr><td colspan="3" class="empty-state">กำลังโหลด...</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-title">ภาพรวมรายเขต</div>
-    <div class="zone-grid" id="zoneGrid" style="margin-bottom:24px;">
-      <div class="loading">กำลังโหลดข้อมูล...</div>
-    </div>
-
-    <div class="grid-2b">
-      <div>
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap;">
-          <div class="section-title" id="tableTitle" style="margin:0;">All submissions</div>
-          <input
-            type="text"
-            id="storeSearch"
-            placeholder="🔍 ค้นหารหัสหรือชื่อสาขา..."
-            style="padding:8px 12px; font-size:13px; border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600; width:220px; outline:none;"
-            oninput="onSearchInput()"
-            onfocus="this.style.borderColor='var(--bata-red)'"
-            onblur="this.style.borderColor='var(--line)'"
-          >
-        </div>
+        <!-- All Submissions table -->
         <div class="table-wrap">
+          <div class="table-head-bar">
+            <div class="table-title" id="tableTitle">All submissions</div>
+            <input
+              class="search-input"
+              type="text"
+              id="storeSearch"
+              placeholder="🔍 ค้นหารหัสหรือชื่อสาขา..."
+              oninput="onSearchInput()"
+            >
+          </div>
           <div class="table-scroll">
             <table>
               <thead>
                 <tr>
-                  <th onclick="sortBy('store_code')" style="cursor:pointer;user-select:none;" id="th_store_code">Store code ↕</th>
-                  <th onclick="sortBy('zone')" style="cursor:pointer;user-select:none;" id="th_zone">District ↕</th>
-                  <th onclick="sortBy('status')" style="cursor:pointer;user-select:none;" id="th_status">Status ↕</th>
-                  <th onclick="sortBy('time')" style="cursor:pointer;user-select:none;" id="th_time">Time ↕</th>
-                  <th onclick="sortBy('amount')" style="cursor:pointer;user-select:none;" id="th_amount">Deposit amount ↕</th>
-                  <th onclick="sortBy('slip')" style="cursor:pointer;user-select:none;" id="th_slip">Slip ↕</th>
-                  <th onclick="sortBy('missed')" style="cursor:pointer;user-select:none;" id="th_missed" id="missColHeader">Missed (7d) ↕</th>
+                  <th onclick="sortBy('store_code')" id="th_store_code">Store code ↕</th>
+                  <th onclick="sortBy('zone')" id="th_zone">District ↕</th>
+                  <th onclick="sortBy('status')" id="th_status">Status ↕</th>
+                  <th onclick="sortBy('time')" id="th_time">Time ↕</th>
+                  <th onclick="sortBy('amount')" id="th_amount">Deposit amount ↕</th>
+                  <th onclick="sortBy('slip')" id="th_slip">Slip ↕</th>
+                  <th onclick="sortBy('missed')" id="th_missed">Missed (7d) ↕</th>
                 </tr>
               </thead>
               <tbody id="tableBody">
@@ -368,29 +449,51 @@
           </div>
           <div class="pager" id="pager"></div>
         </div>
-      </div>
 
-      <div>
-        <div class="section-title">Quick summary</div>
-        <div class="card">
-          <div style="position:relative; width:100%; height:190px;">
-            <canvas id="donutChart" role="img" aria-label="กราฟวงแหวนแสดงสัดส่วนสาขาที่ส่งแล้ว ยังไม่ส่ง ส่งหลังเวลา และส่งซ้ำ จากจำนวนสาขาทั้งหมด">สัดส่วนสถานะการส่งข้อมูลของสาขาทั้งหมด</canvas>
+      </div><!-- /content-col -->
+
+      <!-- ---- Right panel ---- -->
+      <div class="right-panel" id="rightPanel">
+
+        <!-- Quick summary donut -->
+        <div class="rp-section">
+          <div class="rp-title">Quick summary</div>
+          <div class="donut-wrap">
+            <canvas id="donutChart" width="140" height="140"></canvas>
           </div>
-          <div id="donutLegend" style="margin-top:14px; font-size:12.5px;"></div>
+          <div id="donutLegend"></div>
+        </div>
 
-          <div class="toggle-row">
-            <div>
-              <p>Auto refresh</p>
-              <span>Every 5 minutes</span>
-            </div>
-            <div class="switch" id="autoRefreshToggle"></div>
+        <!-- District overview list -->
+        <div class="rp-section" id="zoneListSection">
+          <div class="rp-title">ภาพรวมรายเขต</div>
+          <div class="zone-list" id="zoneList">
+            <div class="loading">กำลังโหลด...</div>
           </div>
         </div>
-      </div>
-    </div>
 
-  </div>
-</div>
+        <!-- Not submitted stores list -->
+        <div class="rp-section">
+          <div class="rp-title" id="missingCardTitle">Not submitted</div>
+          <div class="missing-list">
+            <div id="missingListBody"><div class="loading">กำลังโหลด...</div></div>
+          </div>
+        </div>
+
+        <!-- Auto refresh -->
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Auto refresh</div>
+            <div class="toggle-sub">Every 5 minutes</div>
+          </div>
+          <div class="switch" id="autoRefreshToggle"></div>
+        </div>
+
+      </div><!-- /right-panel -->
+
+    </div><!-- /body-split -->
+  </div><!-- /main -->
+</div><!-- /shell -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -400,10 +503,10 @@ const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const LATE_CUTOFF_HOUR = 22; // ส่งหลัง 22:00 ถือว่า late
+const LATE_CUTOFF_HOUR = 22;
 const PAGE_SIZE = 25;
 
-/* ==================== ZONE / STORE DATA (จาก schema จริง 199 สาขา) ==================== */
+/* ==================== ZONE / STORE DATA ==================== */
 const ZONE_BRANCHES = {
   '511': ['51002','51426','51428','51436','51438','51450','51508','51510','51511','51514','51518','51521','51524','51530','51534','51542','51546','51549','51550','51905','51906','51944','51960','51968'],
   '512': ['51403','51404','51407','51409','51415','51416','51418','51419','51425','51430','51446','51498','51520','51533','51535','51540','51903','51938','51939','51946','51948','51965'],
@@ -415,223 +518,17 @@ const ZONE_BRANCHES = {
   '560': ['55005','55008','55009','55010','55012','55018','55019','55023','55024','55030','55031','55033','55035','55036','55038','55040','55041','55042','55043','55046','55049','55901','55902','55906','55949','55950','55951','75011','75012','75014'],
 };
 const STORE_NAMES = {
-  '51002': 'เซ็นทรัลวิจเลจ',
-  '51091': 'เทอร์มินอล 21 โคราชแฟร์',
-  '51132': 'บิ๊กซี ลพบุรี',
-  '51403': 'ฟิวเจอร์พาร์ค',
-  '51404': 'แฟชั่นไอส์แลนด์',
-  '51407': 'มอลล์ 6',
-  '51409': 'ไอทีสแควร์ หลักสี่',
-  '51410': 'เซนทรัลบางนา',
-  '51415': 'เซ็นทรัล รามอินทรา',
-  '51416': 'มอลล์ 8',
-  '51418': 'โลตัส รังสิต คลอง 7',
-  '51419': 'โลตัส นวนคร',
-  '51425': 'เซ็นทรัล แจ้งวัฒนะ',
-  '51426': 'บิ๊กซี ราชดำริ',
-  '51427': 'พาราไดซ์พาร์ค',
-  '51428': 'มาบุญครอง 2',
-  '51430': 'เซ็นทรัล พระราม 9',
-  '51431': 'เมกาบางนา',
-  '51433': 'เซ็นทรัล ศาลายา',
-  '51434': 'สุขุมวิท 15',
-  '51435': 'โฮมโปร สุวรรณภูมิ',
-  '51436': 'เซ็นทรัล เวสท์เกต',
-  '51438': 'เซ็นทรัลปิ่นเกล้า',
-  '51439': 'โรบินสัน ลาดกระบัง',
-  '51446': 'โลตัส รังสิตคลอง 4',
-  '51450': 'เซ็นทรัลเวสต์วิลล์',
-  '51498': 'มีนบุรีเอาท์เล็ท',
-  '51506': 'อิมพีเรียลเวิลด์ สำโรง',
-  '51508': 'ท่าพระจันทร์',
-  '51510': 'เยาวราช',
-  '51511': 'มอลล์ 7',
-  '51512': 'ซีคอนสแควร์',
-  '51514': 'บิ๊กซี พระราม 4',
-  '51517': 'โลตัส ศาลายา',
-  '51518': 'เซ็นทรัล พระราม 3',
-  '51520': 'โรบินสัน ศรีสมาน',
-  '51521': 'โลตัส บางประกอก',
-  '51524': 'โลตัส จรัญสนิทวงศ์',
-  '51530': 'บิ๊กซี เพชรเกษม 2',
-  '51532': 'บิ๊กซี อ้อมใหญ่',
-  '51533': 'โลตัส ลำลูกกา',
-  '51534': 'บิ๊กซี บางปะกอก',
-  '51535': 'บิ๊กซี สุวินทวงศ์',
-  '51540': 'บิ๊กซี รามอินทรา',
-  '51542': 'สุพรีม สามเสน',
-  '51545': 'โรบินสัน สมุทรปราการ',
-  '51546': 'โลตัส บางใหญ่',
-  '51548': 'บิ๊กซีบางพลี',
-  '51549': 'บิ๊กซี บางใหญ่',
-  '51550': 'บิ๊กซี สุขสวัสดิ์',
-  '51903': 'อิมพีเรียล ลาดพร้าว',
-  '51905': 'เซ็นทรัล พระราม 2',
-  '51906': 'ซีคอน บางแค',
-  '51938': 'โลตัส ลาดพร้าว',
-  '51939': 'โลตัส แจ้งวัฒนะ',
-  '51944': 'มาบุญครอง',
-  '51946': 'บิ๊กซี รังสิต',
-  '51948': 'โลตัส หลักสี่',
-  '51960': 'บิ๊กซี พระราม 2',
-  '51965': 'โลตัส บางกะปิ',
-  '51968': 'โลตัส พระราม 4',
-  '52002': 'เซ็นทรัล เชียงราย',
-  '52003': 'อยุธยาพาร์ค',
-  '52005': 'บิ๊กซี เชียงใหม่',
-  '52007': 'โลตัส เชียงใหม่คำเที่ยง',
-  '52008': 'เซ็นทรัล แอร์พอร์ต',
-  '52010': 'เซ็นทรัล พิษณุโลก',
-  '52017': 'โลตัส แม่สอด',
-  '52018': 'โรบินสัน กำแพงเพชร',
-  '52019': 'โลตัสพะเยา',
-  '52023': 'แพร่',
-  '52025': 'เมญ่า เชียงใหม่',
-  '52026': 'เซ็นทรัล นครสวรรค์',
-  '52031': 'เซ็นทรัล ลำปาง',
-  '52032': 'โลตัส พิษณุโลก 2',
-  '52033': 'แฮปปี้พลาซ่า',
-  '52036': 'โลตัส รวมโชค',
-  '52037': 'เซ็นทรัล เชียงใหม่',
-  '52040': 'บิ๊กซี พิษณุโลก',
-  '52042': 'อุตรดิตถ์',
-  '52043': 'บิ๊กซี เพชรบูรณ์',
-  '52048': 'โลตัส น่าน',
-  '52098': 'เชียงใหม่ เอาท์เล็ท',
-  '52901': 'บิ๊กซี กำแพงเพชร',
-  '52902': 'บิ๊กซี เชียงใหม่ 2',
-  '52942': 'บิ๊กซี เชียงราย',
-  '52943': 'บิ๊กซี ลำปาง',
-  '53002': 'บิ๊กซี อุดร',
-  '53003': 'ทวีกิจ บุรีรัมย์ 2',
-  '53006': 'โลตัส ท่าบ่อ หนองคาย',
-  '53008': 'โลตัส เดชอุดม',
-  '53009': 'มอลล์ โคราช',
-  '53010': 'สุรินทร์พลาซ่า',
-  '53011': 'กาฬสินธุ์พลาซ่า',
-  '53012': 'เซ็นทรัล อุดร',
-  '53018': 'บิ๊กซี วารินชำราบ',
-  '53020': 'บิ๊กซี ศรีสะเกษ',
-  '53021': 'โลตัส อุดร',
-  '53022': 'เซ็นทรัล ขอนแก่น',
-  '53023': 'ท็อปส์ พลาซ่า พล',
-  '53024': 'บิ๊กซี ปากช่อง',
-  '53026': 'แฟรี่ขอนแก่น',
-  '53029': 'เสริมไทย คอมเพล็กซ์',
-  '53030': 'บิ๊กซี ร้อยเอ็ด',
-  '53031': 'เซ็นทรัล อุบล',
-  '53032': 'โรบินสัน สกลนคร',
-  '53035': 'โรบินสัน ร้อยเอ็ด',
-  '53036': 'โรบินสัน มุกดาหาร',
-  '53037': 'อัศวรรณ 2 หนองคาย',
-  '53038': 'โลตัส ขอนแก่น',
-  '53040': 'บิ๊กชี โคราช 2',
-  '53041': 'เซ็นทรัล โคราช',
-  '53043': 'บิ๊กชี อำนาจเจริญ',
-  '53045': 'โลตัส นางรอง',
-  '53046': 'โลตัส ขอนแก่น 2',
-  '53047': 'โลตัส อุบล',
-  '53048': 'โลตัส ชุมแพ',
-  '53049': 'โรบินสัน ชัยภูมิ',
-  '53905': 'บิ๊กซี เลย',
-  '53947': 'บิ๊กซี ระยอง',
-  '53948': 'บิ๊กซี โคราช',
-  '53953': 'บิ๊กซี อุบล',
-  '53955': 'โลตัส หนองคาย',
-  '53958': 'บิ๊กซี ขอนแก่น',
-  '54001': 'เพชรบุรี',
-  '54004': 'บิ๊กซี พัทยา',
-  '54005': 'เซ็นทรัลศรีราชา',
-  '54007': 'โลตัส พัทยาเหนือ',
-  '54011': 'เซ็นทรัล อยุธยา',
-  '54012': 'บิ๊กซี เพชรบุรี',
-  '54013': 'บิ๊กซี ฉะเชิงเทรา 2',
-  '54014': 'โลตัส บ้านโป่ง',
-  '54016': 'บิ๊กซี ชลบุรี 2',
-  '54017': 'โรบินสัน กาญจนบุรี',
-  '54018': 'บิ๊กซี อยุธยา',
-  '54019': 'บิ๊กซี สระแก้ว',
-  '54021': 'เซ็นทรัล พัทยาบีช',
-  '54022': 'เซ็นทรัล มหาชัย',
-  '54023': 'เซ็นทรัล ชลบุรี',
-  '54026': 'บิ๊กซี พัทยา 2',
-  '54027': 'บิ๊กซี มหาชัย',
-  '54029': 'ฮาเบอร์มอลล์',
-  '54030': 'บิ๊กซี ชลบุรี',
-  '54032': 'สุขอนันต์ปาร์ค',
-  '54035': 'โรบินสัน สระบุรี',
-  '54038': 'บิ๊กซี ศรีมหาโพธิ์',
-  '54039': 'โลตัส นครนายก',
-  '54040': 'โรบินสัน สุพรรณบุรี',
-  '54042': 'นครปฐม',
-  '54044': 'โรบินสัน ฉะเชิงเทรา',
-  '54045': 'โรบินสัน ปราจีนบุรี',
-  '54046': 'เซ็นทรัล ระยอง',
-  '54048': 'เซ็นทรัล มารีนา พัทยา',
-  '54094': 'เซ็นทรัลนครปฐม',
-  '54095': 'โลตัสสระบุรี',
-  '54945': 'โลตัส สุพรรณบุรี',
-  '54960': 'โลตัส ราชบุรี',
-  '55001': 'หัวหินมาร์เก็ต',
-  '55005': 'โลตัส สุราษฎร์',
-  '55008': 'จังซีลอน',
-  '55009': 'บิ๊กซี หาดใหญ่ 2',
-  '55010': 'โลตัส กระบี่',
-  '55012': 'เซ็นทรัล ภูเก็ต',
-  '55018': 'โลตัส พัทลุง',
-  '55019': 'โลตัส สมุย ละไม',
-  '55023': 'ปัตตานี',
-  '55024': 'โลตัส หาดใหญ่ 2',
-  '55030': 'เซ็นทรัล สุราษฎร์',
-  '55031': 'บิ๊กซี ภูเก็ต',
-  '55033': 'โลตัสเวียงสระ',
-  '55035': 'เซ็นทรัล หาดใหญ่',
-  '55036': 'บิ๊กซี ตรัง',
-  '55038': 'เซ็นทรัล สมุย',
-  '55040': 'โลตัส จะนะ',
-  '55041': 'โลตัส หาดใหญ่ 1',
-  '55042': 'โลตัสสงขลา',
-  '55043': 'เซ็นทรัล นครศรีธรรมราช',
-  '55044': 'บูลพอร์ต',
-  '55046': 'บิ๊กซี พังงา',
-  '55049': 'Lotus Yala',
-  '55901': 'โรบินสัน ตรัง',
-  '55902': 'บิ๊กซี นครศรี',
-  '55906': 'บิ๊กซี สตูล',
-  '55949': 'บิ๊กซี สุราษฎร์',
-  '55950': 'โลตัส ภูเก็ต',
-  '55951': 'บิ๊กซี หาดใหญ่',
-  '71205': 'อินฟินิท ปากน้ำ',
-  '72007': 'ชัยพงษ์ พิจิตร',
-  '72011': 'เจริญภัณฑ์ พะเยา',
-  '73005': 'ร้อยเอ็ดพลาซ่า',
-  '73015': 'ซุ่นเฮง ศรีสะเกษ',
-  '74023': 'กนกกาญจน์',
-  '75011': 'สิริบรรณ ตรัง',
-  '75012': 'โวค กระบี่',
-  '75014': 'โอเชียน ชุมพร',
+  '51002':'เซ็นทรัลวิจเลจ','51091':'เทอร์มินอล 21 โคราชแฟร์','51132':'บิ๊กซี ลพบุรี','51403':'ฟิวเจอร์พาร์ค','51404':'แฟชั่นไอส์แลนด์','51407':'มอลล์ 6','51409':'ไอทีสแควร์ หลักสี่','51410':'เซนทรัลบางนา','51415':'เซ็นทรัล รามอินทรา','51416':'มอลล์ 8','51418':'โลตัส รังสิต คลอง 7','51419':'โลตัส นวนคร','51425':'เซ็นทรัล แจ้งวัฒนะ','51426':'บิ๊กซี ราชดำริ','51427':'พาราไดซ์พาร์ค','51428':'มาบุญครอง 2','51430':'เซ็นทรัล พระราม 9','51431':'เมกาบางนา','51433':'เซ็นทรัล ศาลายา','51434':'สุขุมวิท 15','51435':'โฮมโปร สุวรรณภูมิ','51436':'เซ็นทรัล เวสท์เกต','51438':'เซ็นทรัลปิ่นเกล้า','51439':'โรบินสัน ลาดกระบัง','51446':'โลตัส รังสิตคลอง 4','51450':'เซ็นทรัลเวสต์วิลล์','51498':'มีนบุรีเอาท์เล็ท','51506':'อิมพีเรียลเวิลด์ สำโรง','51508':'ท่าพระจันทร์','51510':'เยาวราช','51511':'มอลล์ 7','51512':'ซีคอนสแควร์','51514':'บิ๊กซี พระราม 4','51517':'โลตัส ศาลายา','51518':'เซ็นทรัล พระราม 3','51520':'โรบินสัน ศรีสมาน','51521':'โลตัส บางประกอก','51524':'โลตัส จรัญสนิทวงศ์','51530':'บิ๊กซี เพชรเกษม 2','51532':'บิ๊กซี อ้อมใหญ่','51533':'โลตัส ลำลูกกา','51534':'บิ๊กซี บางปะกอก','51535':'บิ๊กซี สุวินทวงศ์','51540':'บิ๊กซี รามอินทรา','51542':'สุพรีม สามเสน','51545':'โรบินสัน สมุทรปราการ','51546':'โลตัส บางใหญ่','51548':'บิ๊กซีบางพลี','51549':'บิ๊กซี บางใหญ่','51550':'บิ๊กซี สุขสวัสดิ์','51903':'อิมพีเรียล ลาดพร้าว','51905':'เซ็นทรัล พระราม 2','51906':'ซีคอน บางแค','51938':'โลตัส ลาดพร้าว','51939':'โลตัส แจ้งวัฒนะ','51944':'มาบุญครอง','51946':'บิ๊กซี รังสิต','51948':'โลตัส หลักสี่','51960':'บิ๊กซี พระราม 2','51965':'โลตัส บางกะปิ','51968':'โลตัส พระราม 4','52002':'เซ็นทรัล เชียงราย','52003':'อยุธยาพาร์ค','52005':'บิ๊กซี เชียงใหม่','52007':'โลตัส เชียงใหม่คำเที่ยง','52008':'เซ็นทรัล แอร์พอร์ต','52010':'เซ็นทรัล พิษณุโลก','52017':'โลตัส แม่สอด','52018':'โรบินสัน กำแพงเพชร','52019':'โลตัสพะเยา','52023':'แพร่','52025':'เมญ่า เชียงใหม่','52026':'เซ็นทรัล นครสวรรค์','52031':'เซ็นทรัล ลำปาง','52032':'โลตัส พิษณุโลก 2','52033':'แฮปปี้พลาซ่า','52036':'โลตัส รวมโชค','52037':'เซ็นทรัล เชียงใหม่','52040':'บิ๊กซี พิษณุโลก','52042':'อุตรดิตถ์','52043':'บิ๊กซี เพชรบูรณ์','52048':'โลตัส น่าน','52098':'เชียงใหม่ เอาท์เล็ท','52901':'บิ๊กซี กำแพงเพชร','52902':'บิ๊กซี เชียงใหม่ 2','52942':'บิ๊กซี เชียงราย','52943':'บิ๊กซี ลำปาง','53002':'บิ๊กซี อุดร','53003':'ทวีกิจ บุรีรัมย์ 2','53006':'โลตัส ท่าบ่อ หนองคาย','53008':'โลตัส เดชอุดม','53009':'มอลล์ โคราช','53010':'สุรินทร์พลาซ่า','53011':'กาฬสินธุ์พลาซ่า','53012':'เซ็นทรัล อุดร','53018':'บิ๊กซี วารินชำราบ','53020':'บิ๊กซี ศรีสะเกษ','53021':'โลตัส อุดร','53022':'เซ็นทรัล ขอนแก่น','53023':'ท็อปส์ พลาซ่า พล','53024':'บิ๊กซี ปากช่อง','53026':'แฟรี่ขอนแก่น','53029':'เสริมไทย คอมเพล็กซ์','53030':'บิ๊กซี ร้อยเอ็ด','53031':'เซ็นทรัล อุบล','53032':'โรบินสัน สกลนคร','53035':'โรบินสัน ร้อยเอ็ด','53036':'โรบินสัน มุกดาหาร','53037':'อัศวรรณ 2 หนองคาย','53038':'โลตัส ขอนแก่น','53040':'บิ๊กชี โคราช 2','53041':'เซ็นทรัล โคราช','53043':'บิ๊กชี อำนาจเจริญ','53045':'โลตัส นางรอง','53046':'โลตัส ขอนแก่น 2','53047':'โลตัส อุบล','53048':'โลตัส ชุมแพ','53049':'โรบินสัน ชัยภูมิ','53905':'บิ๊กซี เลย','53947':'บิ๊กซี ระยอง','53948':'บิ๊กซี โคราช','53953':'บิ๊กซี อุบล','53955':'โลตัส หนองคาย','53958':'บิ๊กซี ขอนแก่น','54001':'เพชรบุรี','54004':'บิ๊กซี พัทยา','54005':'เซ็นทรัลศรีราชา','54007':'โลตัส พัทยาเหนือ','54011':'เซ็นทรัล อยุธยา','54012':'บิ๊กซี เพชรบุรี','54013':'บิ๊กซี ฉะเชิงเทรา 2','54014':'โลตัส บ้านโป่ง','54016':'บิ๊กซี ชลบุรี 2','54017':'โรบินสัน กาญจนบุรี','54018':'บิ๊กซี อยุธยา','54019':'บิ๊กซี สระแก้ว','54021':'เซ็นทรัล พัทยาบีช','54022':'เซ็นทรัล มหาชัย','54023':'เซ็นทรัล ชลบุรี','54026':'บิ๊กซี พัทยา 2','54027':'บิ๊กซี มหาชัย','54029':'ฮาเบอร์มอลล์','54030':'บิ๊กซี ชลบุรี','54032':'สุขอนันต์ปาร์ค','54035':'โรบินสัน สระบุรี','54038':'บิ๊กซี ศรีมหาโพธิ์','54039':'โลตัส นครนายก','54040':'โรบินสัน สุพรรณบุรี','54042':'นครปฐม','54044':'โรบินสัน ฉะเชิงเทรา','54045':'โรบินสัน ปราจีนบุรี','54046':'เซ็นทรัล ระยอง','54048':'เซ็นทรัล มารีนา พัทยา','54094':'เซ็นทรัลนครปฐม','54095':'โลตัสสระบุรี','54945':'โลตัส สุพรรณบุรี','54960':'โลตัส ราชบุรี','55001':'หัวหินมาร์เก็ต','55005':'โลตัส สุราษฎร์','55008':'จังซีลอน','55009':'บิ๊กซี หาดใหญ่ 2','55010':'โลตัส กระบี่','55012':'เซ็นทรัล ภูเก็ต','55018':'โลตัส พัทลุง','55019':'โลตัส สมุย ละไม','55023':'ปัตตานี','55024':'โลตัส หาดใหญ่ 2','55030':'เซ็นทรัล สุราษฎร์','55031':'บิ๊กซี ภูเก็ต','55033':'โลตัสเวียงสระ','55035':'เซ็นทรัล หาดใหญ่','55036':'บิ๊กซี ตรัง','55038':'เซ็นทรัล สมุย','55040':'โลตัส จะนะ','55041':'โลตัส หาดใหญ่ 1','55042':'โลตัสสงขลา','55043':'เซ็นทรัล นครศรีธรรมราช','55044':'บูลพอร์ต','55046':'บิ๊กซี พังงา','55049':'Lotus Yala','55901':'โรบินสัน ตรัง','55902':'บิ๊กซี นครศรี','55906':'บิ๊กซี สตูล','55949':'บิ๊กซี สุราษฎร์','55950':'โลตัส ภูเก็ต','55951':'บิ๊กซี หาดใหญ่','71205':'อินฟินิท ปากน้ำ','72007':'ชัยพงษ์ พิจิตร','72011':'เจริญภัณฑ์ พะเยา','73005':'ร้อยเอ็ดพลาซ่า','73015':'ซุ่นเฮง ศรีสะเกษ','74023':'กนกกาญจน์','75011':'สิริบรรณ ตรัง','75012':'โวค กระบี่','75014':'โอเชียน ชุมพร',
 };
+
 /* ==================== STATE ==================== */
-let allStoresList = [];   // [{store_code, zone_code, store_name}]  จาก ZONE_BRANCHES/STORE_NAMES (ไม่ query ตาราง stores ทุกครั้ง)
-let allRecords = [];      // payin_records ของช่วง 30 วันล่าสุด (ใช้คำนวณ trend + missed days)
+let allStoresList = [];
+let allRecords = [];
 let activeZoneFilter = '';
 let activeMetricFilter = '';
 let searchQuery = '';
-let sortCol = 'store_code'; // default sort
-let sortDir = 'asc';       // asc หรือ desc
-
-function onSearchInput(){
-  searchQuery = document.getElementById('storeSearch').value.trim().toLowerCase();
-  currentPage = 1;
-  render();
-}
-
-function sortBy(col){
-  if(sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-  else { sortCol = col; sortDir = 'asc'; }
-  currentPage = 1;
-  render();
-}
+let sortCol = 'store_code';
+let sortDir = 'asc';
 let activeRange = 7;
 let currentPage = 1;
 let autoRefreshOn = true;
@@ -642,71 +539,85 @@ let donutChartInstance = null;
 
 const filterDateEl = document.getElementById('filterDate');
 const filterZoneEl = document.getElementById('filterZone');
-const rangeToggleEl = document.getElementById('rangeToggle');
-const autoRefreshToggleEl = document.getElementById('autoRefreshToggle');
 
 const today = new Date().toISOString().slice(0,10);
 filterDateEl.value = today;
 
 function dateNDaysAgo(n){
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0,10);
+  const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0,10);
 }
-
 filterDateEl.min = dateNDaysAgo(30);
 filterDateEl.max = today;
 
 filterDateEl.addEventListener('change', () => { currentPage = 1; render(); });
 filterZoneEl.addEventListener('change', () => {
-  if (LOCKED_ZONE) return; // District Manager ไม่สามารถเปลี่ยนเขตได้
+  if (LOCKED_ZONE) return;
   activeZoneFilter = filterZoneEl.value; currentPage = 1; render();
 });
 
-rangeToggleEl.querySelectorAll('button').forEach(btn => {
+document.getElementById('rangeToggle').querySelectorAll('button').forEach(btn => {
   btn.addEventListener('click', () => {
     activeRange = Number(btn.dataset.range);
-    rangeToggleEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    document.getElementById('rangeToggle').querySelectorAll('button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('missColHeader').textContent = `Missed (${activeRange}d)`;
-    currentPage = 1;
-    render();
+    document.getElementById('th_missed').textContent = `Missed (${activeRange}d) ↕`;
+    currentPage = 1; render();
   });
 });
 
-autoRefreshToggleEl.addEventListener('click', () => {
+document.getElementById('autoRefreshToggle').addEventListener('click', () => {
   autoRefreshOn = !autoRefreshOn;
-  autoRefreshToggleEl.style.background = autoRefreshOn ? 'var(--ok)' : '#D7D9E0';
+  const el = document.getElementById('autoRefreshToggle');
+  el.classList.toggle('off', !autoRefreshOn);
   setupAutoRefresh();
 });
 
 function setupAutoRefresh(){
   if (autoRefreshTimer) clearInterval(autoRefreshTimer);
-  if (autoRefreshOn) {
-    autoRefreshTimer = setInterval(loadData, 5 * 60 * 1000);
-  }
+  if (autoRefreshOn) autoRefreshTimer = setInterval(loadData, 5 * 60 * 1000);
 }
 
-// sidebar nav -> ผูกกับ metric filter เดิม (ไม่สร้างหน้าใหม่ แค่เปลี่ยนตัวกรอง)
+/* Sidebar nav */
 document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const view = btn.dataset.view;
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
-    if (view === 'dashboard') { activeMetricFilter = ''; window.scrollTo({top:0, behavior:'smooth'}); }
-    else if (view === 'all') { activeMetricFilter = ''; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
-    else if (view === 'missing') { activeMetricFilter = 'missing'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
-    else if (view === 'duplicate') { activeMetricFilter = 'duplicate'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
-    else if (view === 'late') { activeMetricFilter = 'late'; document.getElementById('tableTitle').scrollIntoView({behavior:'smooth', block:'start'}); }
-    else if (view === 'district') { document.getElementById('districtSection').scrollIntoView({behavior:'smooth', block:'start'}); }
-
-    currentPage = 1;
-    render();
+    if (view === 'dashboard') {
+      activeMetricFilter = '';
+      window.scrollTo({top:0, behavior:'smooth'});
+    } else if (view === 'all') {
+      activeMetricFilter = '';
+      document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+    } else if (view === 'missing') {
+      activeMetricFilter = 'missing';
+      document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+    } else if (view === 'duplicate') {
+      activeMetricFilter = 'duplicate';
+      document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+    } else if (view === 'late') {
+      activeMetricFilter = 'late';
+      document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+    } else if (view === 'district') {
+      document.getElementById('districtSection').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    currentPage = 1; render();
   });
 });
 
-/* ==================== BUILD STORE LIST จาก ZONE_BRANCHES (ไม่ผูกกับคอลัมน์ active ที่ไม่มีจริง) ==================== */
+function onSearchInput(){
+  searchQuery = document.getElementById('storeSearch').value.trim().toLowerCase();
+  currentPage = 1; render();
+}
+
+function sortBy(col){
+  if(sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortCol = col; sortDir = 'asc'; }
+  currentPage = 1; render();
+}
+
+/* ==================== BUILD STORE LIST ==================== */
 function buildStoreList(){
   const list = [];
   Object.keys(ZONE_BRANCHES).sort().forEach(zone => {
@@ -717,471 +628,310 @@ function buildStoreList(){
   return list;
 }
 
-/* ==================== DATA LOADING (ผูกกับ schema จริง: submitted_at, slip_url) ==================== */
+/* ==================== DATA LOADING ==================== */
 async function loadData(){
   const sinceDate = dateNDaysAgo(30) + 'T00:00:00';
-
-  const { data: records, error: recordsErr } = await sb
-    .from('payin_records')
-    .select('*')
+  const { data: records, error } = await sb
+    .from('payin_records').select('*')
     .gte('submitted_at', sinceDate)
     .order('submitted_at', { ascending: false });
 
-  if (recordsErr) {
-    document.getElementById('zoneGrid').innerHTML = '<div class="empty-state">โหลดข้อมูลไม่สำเร็จ: ' + recordsErr.message + '</div>';
-    document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">โหลดข้อมูลไม่สำเร็จ</td></tr>';
+  if (error) {
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="7" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
     return;
   }
-
   allRecords = records || [];
 
   const zones = Object.keys(ZONE_BRANCHES).sort();
   filterZoneEl.innerHTML = '<option value="">ทุกเขต</option>' + zones.map(z => `<option value="${z}">เขต ${z}</option>`).join('');
 
   document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('th-TH');
-
   render();
 }
 
-/* ==================== STATUS LOGIC ====================
-   เทียบ submitted_at (เวลาส่งจริง) กับวันที่เลือก ไม่ใช่ deposit_date
-   late = submitted_at มีชั่วโมง >= LATE_CUTOFF_HOUR (22:00) ของวันนั้น
-   duplicate = มากกว่า 1 แถวในวันเดียวกัน
-*/
+/* ==================== STATUS LOGIC ==================== */
 function getStoreStatus(storeCode, dateStr){
   const recs = allRecords.filter(r => r.store_code === storeCode && r.submitted_at.slice(0,10) === dateStr);
-  if (recs.length === 0) return { status:'missing', records: [] };
-
+  if (recs.length === 0) return { status:'missing', records:[] };
   const latest = recs.reduce((a,b) => new Date(a.submitted_at) > new Date(b.submitted_at) ? a : b);
   const isLate = new Date(latest.submitted_at).getHours() >= LATE_CUTOFF_HOUR;
-
-  if (recs.length > 1) return { status:'duplicate', records: recs, latest, isLate };
-  if (isLate) return { status:'late', records: recs, latest };
-  return { status:'sent', records: recs, latest };
-}
-
-function buildTrendData(stores, days){
-  const labels = [];
-  const sentCounts = [];
-  const totalCount = stores.length;
-
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dStr = d.toISOString().slice(0,10);
-
-    const sentToday = stores.filter(s => {
-      const result = getStoreStatus(s.store_code, dStr);
-      return result.status === 'sent' || result.status === 'duplicate';
-    }).length;
-
-    labels.push(d.toLocaleDateString('th-TH', { day:'numeric', month:'short' }));
-    sentCounts.push(sentToday);
-  }
-
-  return { labels, sentCounts, totalCount };
+  if (recs.length > 1) return { status:'duplicate', records:recs, latest, isLate };
+  if (isLate) return { status:'late', records:recs, latest };
+  return { status:'sent', records:recs, latest };
 }
 
 function countMissedDays(storeCode, days){
   let missed = 0;
-  for (let i = 0; i < days; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dStr = d.toISOString().slice(0,10);
-    const result = getStoreStatus(storeCode, dStr);
-    if (result.status === 'missing') missed++;
+  for (let i = 0; i < days; i++){
+    const d = new Date(); d.setDate(d.getDate() - i);
+    if (getStoreStatus(storeCode, d.toISOString().slice(0,10)).status === 'missing') missed++;
   }
   return missed;
 }
 
+/* ==================== CHARTS ==================== */
 function renderTrendChart(stores){
-  const { labels, sentCounts, totalCount } = buildTrendData(stores, activeRange);
-  const totalLine = labels.map(() => totalCount);
-
+  const labels = [], sentCounts = [];
+  const totalCount = stores.length;
+  for (let i = activeRange - 1; i >= 0; i--){
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const dStr = d.toISOString().slice(0,10);
+    labels.push(d.toLocaleDateString('th-TH', {day:'numeric', month:'short'}));
+    sentCounts.push(stores.filter(s => {
+      const r = getStoreStatus(s.store_code, dStr);
+      return r.status === 'sent' || r.status === 'duplicate';
+    }).length);
+  }
   document.getElementById('trendTitle').textContent =
-    activeZoneFilter ? `แนวโน้มการส่งข้อมูล — เขต ${activeZoneFilter}` : 'แนวโน้มการส่งข้อมูล — ทุกเขต';
-
+    activeZoneFilter ? `แนวโน้ม — เขต ${activeZoneFilter}` : 'แนวโน้มการส่งข้อมูล — ทุกเขต';
   if (trendChartInstance) trendChartInstance.destroy();
-
-  const ctx = document.getElementById('trendChart');
-  trendChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'สาขาทั้งหมด',
-          data: totalLine,
-          type: 'line',
-          borderColor: '#E7E4DF',
-          backgroundColor: '#E7E4DF',
-          borderWidth: 2,
-          pointRadius: 0,
-          borderDash: [4,4],
-          fill: false,
-          order: 1,
-        },
-        {
-          label: 'ส่งภายในวัน',
-          data: sentCounts,
-          backgroundColor: '#E11D2E',
-          borderRadius: 4,
-          order: 2,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 } },
-        x: { ticks: { autoSkip: activeRange > 14, maxRotation: 45 } },
-      },
-    },
+  trendChartInstance = new Chart(document.getElementById('trendChart'), {
+    type:'bar',
+    data:{ labels, datasets:[
+      { label:'สาขาทั้งหมด', data:labels.map(()=>totalCount), type:'line', borderColor:'#D8D4CF', backgroundColor:'#D8D4CF', borderWidth:2, pointRadius:0, borderDash:[4,4], fill:false, order:1 },
+      { label:'ส่งภายในวัน', data:sentCounts, backgroundColor:'#E11D2E', borderRadius:4, order:2 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true, ticks:{precision:0}}, x:{ticks:{autoSkip:activeRange>14, maxRotation:45}} }},
   });
 }
 
 function renderDistrictChart(dateStr){
   const zones = Object.keys(ZONE_BRANCHES).sort();
-
-  const submittedData = [];
-  const notSubmittedData = [];
-  const lateData = [];
-
+  const submittedData = [], notSubmittedData = [], lateData = [];
   zones.forEach(z => {
     const zoneStores = allStoresList.filter(s => s.zone_code === z);
-    let submitted = 0, notSubmitted = 0, late = 0;
+    let sub=0, notSub=0, late=0;
     zoneStores.forEach(s => {
-      const result = getStoreStatus(s.store_code, dateStr);
-      if (result.status === 'sent' || result.status === 'duplicate') submitted++;
-      else if (result.status === 'late') late++;
-      else notSubmitted++;
+      const r = getStoreStatus(s.store_code, dateStr);
+      if (r.status==='sent'||r.status==='duplicate') sub++;
+      else if (r.status==='late') late++;
+      else notSub++;
     });
-    submittedData.push(submitted);
-    notSubmittedData.push(notSubmitted);
-    lateData.push(late);
+    submittedData.push(sub); notSubmittedData.push(notSub); lateData.push(late);
   });
-
-  document.getElementById('districtTitle').textContent = `Submission status by district — ${new Date(dateStr).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'})}`;
-
+  document.getElementById('districtTitle').textContent =
+    `By District — ${new Date(dateStr).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'})}`;
   if (districtChartInstance) districtChartInstance.destroy();
-
-  const ctx = document.getElementById('districtChart');
-  districtChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: zones.map(z => `เขต ${z}`),
-      datasets: [
-        { label: 'Submitted', data: submittedData, backgroundColor: '#0FA968', borderRadius: 4 },
-        { label: 'Not submitted', data: notSubmittedData, backgroundColor: '#D97706', borderRadius: 4 },
-        { label: 'Late', data: lateData, backgroundColor: '#E0263F', borderRadius: 4 },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 } },
-        x: { ticks: { autoSkip: false, maxRotation: 0 } },
-      },
-    },
+  districtChartInstance = new Chart(document.getElementById('districtChart'), {
+    type:'bar',
+    data:{ labels:zones.map(z=>`เขต ${z}`), datasets:[
+      { label:'Submitted', data:submittedData, backgroundColor:'#0FA968', borderRadius:3 },
+      { label:'Not submitted', data:notSubmittedData, backgroundColor:'#D97706', borderRadius:3 },
+      { label:'Late', data:lateData, backgroundColor:'#E0263F', borderRadius:3 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true, ticks:{precision:0}}, x:{ticks:{autoSkip:false, maxRotation:0, font:{size:10}}} }},
   });
 }
 
-function renderDonutChart(total, sent, missing, duplicate, late){
+function renderDonutChart(total, sent, missing, dup, late){
   if (donutChartInstance) donutChartInstance.destroy();
-
-  const ctx = document.getElementById('donutChart');
-  donutChartInstance = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Submitted', 'Not submitted', 'Late', 'Duplicate'],
-      datasets: [{
-        data: [sent, missing, late, duplicate],
-        backgroundColor: ['#0FA968', '#D97706', '#E0263F', '#7C5CFC'],
-        borderWidth: 0,
-      }],
+  donutChartInstance = new Chart(document.getElementById('donutChart'), {
+    type:'doughnut',
+    data:{
+      labels:['Submitted','Not submitted','Late','Duplicate'],
+      datasets:[{ data:[sent,missing,late,dup], backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC'], borderWidth:0 }],
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '72%',
-      plugins: { legend: { display: false } },
-    },
+    options:{ responsive:false, cutout:'72%', plugins:{legend:{display:false}} },
   });
-
-  const pct = (n) => total > 0 ? ((n/total)*100).toFixed(1) : '0.0';
-  document.getElementById('donutLegend').innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#0FA968;"></span>Submitted</span>
-      <b>${sent} (${pct(sent)}%)</b>
-    </div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#D97706;"></span>Not submitted</span>
-      <b>${missing} (${pct(missing)}%)</b>
-    </div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#E0263F;"></span>Late</span>
-      <b>${late} (${pct(late)}%)</b>
-    </div>
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <span style="display:flex; align-items:center; gap:6px;"><span class="dot" style="width:9px;height:9px;border-radius:2px;display:inline-block;background:#7C5CFC;"></span>Duplicate</span>
-      <b>${duplicate} (${pct(duplicate)}%)</b>
-    </div>
-  `;
+  const pct = n => total > 0 ? ((n/total)*100).toFixed(1)+'%' : '0%';
+  document.getElementById('donutLegend').innerHTML = [
+    ['#0FA968','Submitted',sent],
+    ['#D97706','Not submitted',missing],
+    ['#E0263F','Late',late],
+    ['#7C5CFC','Duplicate',dup],
+  ].map(([c,l,n]) => `
+    <div class="donut-legend-row">
+      <div class="leg-left"><span class="dot" style="background:${c};"></span>${l}</div>
+      <b>${n} <span style="font-weight:400;color:var(--ink-soft)">(${pct(n)})</span></b>
+    </div>`).join('');
 }
 
+/* ==================== RENDER ==================== */
 function render(){
   const dateStr = filterDateEl.value || today;
   let stores = allStoresList;
   if (activeZoneFilter) stores = stores.filter(s => s.zone_code === activeZoneFilter);
 
-  const rows = stores.map(s => {
-    const result = getStoreStatus(s.store_code, dateStr);
-    return { store: s, ...result };
-  });
+  const rows = stores.map(s => ({ store:s, ...getStoreStatus(s.store_code, dateStr) }));
 
   renderTrendChart(stores);
-  renderDistrictChart(dateStr);
+  if (!LOCKED_ZONE) renderDistrictChart(dateStr);
 
   const total = rows.length;
-  const sent = rows.filter(r => r.status === 'sent').length;
+  const sent    = rows.filter(r => r.status === 'sent').length;
   const missing = rows.filter(r => r.status === 'missing').length;
-  const duplicate = rows.filter(r => r.status === 'duplicate').length;
-  const late = rows.filter(r => r.status === 'late').length;
+  const dup     = rows.filter(r => r.status === 'duplicate').length;
+  const late    = rows.filter(r => r.status === 'late').length;
 
-  renderDonutChart(total, sent, missing, duplicate, late);
+  renderDonutChart(total, sent, missing, dup, late);
 
-  document.getElementById('navCountMissing').textContent = missing;
-  document.getElementById('navCountDuplicate').textContent = duplicate;
-  document.getElementById('navCountLate').textContent = late;
+  document.getElementById('navCountMissing').textContent  = missing;
+  document.getElementById('navCountDuplicate').textContent = dup;
+  document.getElementById('navCountLate').textContent     = late;
 
-  const pct = (n) => total > 0 ? ((n/total)*100).toFixed(2) + '%' : '—';
+  const pct = n => total > 0 ? ((n/total)*100).toFixed(2)+'%' : '—';
 
+  /* Metric cards */
   document.getElementById('metricsRow').innerHTML = `
-    <div class="metric" data-filter="">
-      <div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total stores</div></div>
-      <div class="metric-value">${total}</div>
-      <div class="metric-pct blue">100%</div>
-    </div>
-    <div class="metric ok" data-filter="sent">
-      <div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div>
-      <div class="metric-value">${sent}</div>
-      <div class="metric-pct ok">${pct(sent)}</div>
-    </div>
-    <div class="metric warn" data-filter="missing">
-      <div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not submitted</div></div>
-      <div class="metric-value">${missing}</div>
-      <div class="metric-pct warn">${pct(missing)}</div>
-    </div>
-    <div class="metric purple" data-filter="duplicate">
-      <div class="metric-top"><div class="metric-icon purple">&#10063;</div><div class="metric-label">Duplicate</div></div>
-      <div class="metric-value">${duplicate}</div>
-      <div class="metric-pct purple">${pct(duplicate)}</div>
-    </div>
-    <div class="metric err" data-filter="late">
-      <div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late submission</div></div>
-      <div class="metric-value">${late}</div>
-      <div class="metric-pct err">${pct(late)}</div>
-    </div>
+    <div class="metric" data-filter=""><div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total stores</div></div><div class="metric-value">${total}</div><div class="metric-pct blue">100%</div></div>
+    <div class="metric" data-filter="sent"><div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div><div class="metric-value">${sent}</div><div class="metric-pct ok">${pct(sent)}</div></div>
+    <div class="metric" data-filter="missing"><div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not submitted</div></div><div class="metric-value">${missing}</div><div class="metric-pct warn">${pct(missing)}</div></div>
+    <div class="metric" data-filter="duplicate"><div class="metric-top"><div class="metric-icon purple">&#10063;</div><div class="metric-label">Duplicate</div></div><div class="metric-value">${dup}</div><div class="metric-pct purple">${pct(dup)}</div></div>
+    <div class="metric" data-filter="late"><div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late submission</div></div><div class="metric-value">${late}</div><div class="metric-pct err">${pct(late)}</div></div>
   `;
-
   document.querySelectorAll('.metric').forEach(el => {
     const f = el.dataset.filter;
     if (f === activeMetricFilter) el.classList.add('active');
     el.addEventListener('click', () => {
-      activeMetricFilter = (activeMetricFilter === f) ? '' : f;
-      currentPage = 1;
-      render();
+      activeMetricFilter = activeMetricFilter === f ? '' : f;
+      currentPage = 1; render();
     });
   });
 
+  /* Zone list (right panel) */
   const zones = Object.keys(ZONE_BRANCHES).sort();
-  document.getElementById('zoneGrid').innerHTML = zones.map(z => {
-    const zoneStores = allStoresList.filter(s => s.zone_code === z);
-    const zoneRows = zoneStores.map(s => getStoreStatus(s.store_code, dateStr));
-    const zSent = zoneRows.filter(r => r.status === 'sent' || r.status === 'late' || r.status === 'duplicate').length;
-    const zMissing = zoneRows.filter(r => r.status === 'missing').length;
-    return `
-      <div class="zone-card ${activeZoneFilter===z?'active':''}" data-zone="${z}">
-        <div class="zone-name">เขต ${z}</div>
-        <div class="zone-stats">
-          <div><b>${zoneStores.length}</b>ทั้งหมด</div>
-          <div><b style="color:var(--ok)">${zSent}</b>ส่งแล้ว</div>
-          <div><b style="color:var(--err)">${zMissing}</b>ยังไม่ส่ง</div>
-        </div>
-      </div>
-    `;
+  document.getElementById('zoneList').innerHTML = zones.map(z => {
+    const zStores = allStoresList.filter(s => s.zone_code === z);
+    const zRows = zStores.map(s => getStoreStatus(s.store_code, dateStr));
+    const zSent = zRows.filter(r => r.status !== 'missing').length;
+    const zMiss = zRows.filter(r => r.status === 'missing').length;
+    return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}">
+      <span class="zone-row-name">เขต ${z}</span>
+      <span class="zone-row-stats">
+        <span class="zs-ok">${zSent}</span>
+        <span class="zs-sep">/</span>
+        <span style="color:var(--ink-soft)">${zStores.length}</span>
+      </span>
+    </div>`;
   }).join('');
 
-  document.querySelectorAll('.zone-card').forEach(el => {
+  document.querySelectorAll('.zone-row').forEach(el => {
     el.addEventListener('click', () => {
-      if (LOCKED_ZONE) return; // District Manager ไม่สามารถเปลี่ยนเขตได้
+      if (LOCKED_ZONE) return;
       const z = el.dataset.zone;
-      activeZoneFilter = (activeZoneFilter === z) ? '' : z;
+      activeZoneFilter = activeZoneFilter === z ? '' : z;
       filterZoneEl.value = activeZoneFilter;
-      currentPage = 1;
-      render();
+      currentPage = 1; render();
     });
   });
 
+  /* Missing list (right panel) */
   const missingRows = rows.filter(r => r.status === 'missing');
-  document.getElementById('missingCardTitle').textContent = `Not submitted stores (${missingRows.length})`;
-  if (missingRows.length === 0) {
-    document.getElementById('missingMiniTable').innerHTML = '<tr><td colspan="3" class="empty-state">ทุกสาขาส่งข้อมูลแล้ว</td></tr>';
-  } else {
-    document.getElementById('missingMiniTable').innerHTML = missingRows.slice(0, 30).map(r => `
-      <tr><td><b>${r.store.store_code}</b></td><td>${r.store.store_name || '—'}</td><td>เขต ${r.store.zone_code}</td></tr>
-    `).join('');
-  }
+  document.getElementById('missingCardTitle').textContent = `Not submitted (${missingRows.length})`;
+  document.getElementById('missingListBody').innerHTML = missingRows.length === 0
+    ? '<div style="padding:12px 8px;font-size:12px;color:var(--ok);">✓ ทุกสาขาส่งแล้ว</div>'
+    : missingRows.slice(0, 50).map(r => `
+        <div class="missing-item">
+          <span class="missing-code">${r.store.store_code}</span>
+          <span class="missing-name" title="${r.store.store_name||''}">${r.store.store_name||'—'}</span>
+          <span class="missing-zone">${r.store.zone_code}</span>
+        </div>`).join('');
 
-
+  /* Table */
   let filteredRows = rows;
   if (activeMetricFilter) filteredRows = filteredRows.filter(r => r.status === activeMetricFilter);
+  if (searchQuery) filteredRows = filteredRows.filter(r =>
+    r.store.store_code.toLowerCase().includes(searchQuery) ||
+    (r.store.store_name && r.store.store_name.toLowerCase().includes(searchQuery))
+  );
 
-  // filter ตามคำค้นหา (รหัสสาขา หรือ ชื่อสาขา)
-  if (searchQuery) {
-    filteredRows = filteredRows.filter(r =>
-      r.store.store_code.toLowerCase().includes(searchQuery) ||
-      (r.store.store_name && r.store.store_name.toLowerCase().includes(searchQuery))
-    );
-  }
+  filteredRows = filteredRows.map(r => ({...r, missedDays: countMissedDays(r.store.store_code, activeRange)}));
 
-  filteredRows = filteredRows.map(r => ({
-    ...r,
-    missedDays: countMissedDays(r.store.store_code, activeRange),
-  })).sort((a, b) => b.missedDays - a.missedDays);
-
-  document.getElementById('tableTitle').textContent = `All submissions (${filteredRows.length})`;
-
-  // --- Sort ---
+  /* Sort */
   filteredRows = [...filteredRows].sort((a, b) => {
     let va, vb;
-    if(sortCol === 'store_code'){ va = a.store.store_code; vb = b.store.store_code; }
-    else if(sortCol === 'zone'){ va = a.store.zone_code; vb = b.store.zone_code; }
-    else if(sortCol === 'status'){ va = a.status; vb = b.status; }
-    else if(sortCol === 'time'){ va = a.rec ? a.rec.submitted_at : ''; vb = b.rec ? b.rec.submitted_at : ''; }
-    else if(sortCol === 'amount'){ va = a.rec ? Number(a.rec.amount) : -1; vb = b.rec ? Number(b.rec.amount) : -1; }
-    else if(sortCol === 'slip'){ va = a.rec && a.rec.slip_url ? 1 : 0; vb = b.rec && b.rec.slip_url ? 1 : 0; }
-    else if(sortCol === 'missed'){ va = a.missed7d || 0; vb = b.missed7d || 0; }
-    else { va = a.store.store_code; vb = b.store.store_code; }
-    if(va < vb) return sortDir === 'asc' ? -1 : 1;
-    if(va > vb) return sortDir === 'asc' ? 1 : -1;
+    if(sortCol==='store_code'){va=a.store.store_code; vb=b.store.store_code;}
+    else if(sortCol==='zone'){va=a.store.zone_code; vb=b.store.zone_code;}
+    else if(sortCol==='status'){va=a.status; vb=b.status;}
+    else if(sortCol==='time'){va=a.latest?a.latest.submitted_at:''; vb=b.latest?b.latest.submitted_at:'';}
+    else if(sortCol==='amount'){va=a.latest?Number(a.latest.amount):-1; vb=b.latest?Number(b.latest.amount):-1;}
+    else if(sortCol==='slip'){va=a.latest&&a.latest.slip_url?1:0; vb=b.latest&&b.latest.slip_url?1:0;}
+    else if(sortCol==='missed'){va=a.missedDays||0; vb=b.missedDays||0;}
+    else{va=a.store.store_code; vb=b.store.store_code;}
+    if(va<vb) return sortDir==='asc'?-1:1;
+    if(va>vb) return sortDir==='asc'?1:-1;
     return 0;
   });
 
-  // อัปเดต th indicator
   ['store_code','zone','status','time','amount','slip','missed'].forEach(col => {
-    const th = document.getElementById('th_' + col);
+    const th = document.getElementById('th_'+col);
     if(!th) return;
-    const base = { store_code:'Store code', zone:'District', status:'Status', time:'Time', amount:'Deposit amount', slip:'Slip', missed:'Missed (7d)' }[col];
-    th.textContent = base + (sortCol === col ? (sortDir === 'asc' ? ' ▲' : ' ▼') : ' ↕');
+    const base = {store_code:'Store code',zone:'District',status:'Status',time:'Time',amount:'Deposit amount',slip:'Slip',missed:`Missed (${activeRange}d)`}[col];
+    th.textContent = base + (sortCol===col ? (sortDir==='asc'?' ▲':' ▼'):' ↕');
   });
+
+  document.getElementById('tableTitle').textContent = `All submissions (${filteredRows.length})`;
 
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
   if (currentPage > totalPages) currentPage = totalPages;
-  const pageStart = (currentPage - 1) * PAGE_SIZE;
-  const pageRows = filteredRows.slice(pageStart, pageStart + PAGE_SIZE);
+  const pageRows = filteredRows.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
 
-  if (filteredRows.length === 0) {
+  if (filteredRows.length === 0){
     document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">ไม่พบข้อมูลตามตัวกรองที่เลือก</td></tr>';
     document.getElementById('pager').innerHTML = '';
     return;
   }
 
+  const badgeMap = {
+    sent:'<span class="badge ok">Submitted</span>',
+    missing:'<span class="badge warn">Not submitted</span>',
+    late:'<span class="badge err">Late</span>',
+  };
+
   document.getElementById('tableBody').innerHTML = pageRows.map(r => {
-    const badgeMap = {
-      sent: '<span class="badge ok">Submitted</span>',
-      missing: '<span class="badge warn">Not submitted</span>',
-      duplicate: '<span class="badge purple">Duplicate (' + r.records.length + ')</span>',
-      late: '<span class="badge err">Late</span>',
-    };
     const rec = r.latest;
-    const timeStr = rec ? new Date(rec.submitted_at).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) : '—';
-    const amountStr = rec ? Number(rec.amount).toLocaleString('th-TH', {minimumFractionDigits:2}) : '—';
+    const timeStr = rec ? new Date(rec.submitted_at).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}) : '—';
+    const amountStr = rec ? Number(rec.amount).toLocaleString('th-TH',{minimumFractionDigits:2}) : '—';
     const slipLink = rec && rec.slip_url ? `<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>` : '—';
-
+    const statusBadge = r.status === 'duplicate'
+      ? `<span class="badge purple">Duplicate (${r.records.length})</span>`
+      : (badgeMap[r.status] || '');
     let missClass = 'zero';
-    if (r.missedDays > 0 && r.missedDays <= Math.ceil(activeRange * 0.3)) missClass = 'some';
-    else if (r.missedDays > Math.ceil(activeRange * 0.3)) missClass = 'many';
-
-    return `
-      <tr>
-        <td><b>${r.store.store_code}</b></td>
-        <td>${r.store.zone_code}</td>
-        <td>${badgeMap[r.status]}</td>
-        <td>${timeStr}</td>
-        <td>${amountStr}</td>
-        <td>${slipLink}</td>
-        <td><span class="miss-count ${missClass}">${r.missedDays}d</span></td>
-      </tr>
-    `;
+    if (r.missedDays > 0 && r.missedDays <= Math.ceil(activeRange*.3)) missClass = 'some';
+    else if (r.missedDays > Math.ceil(activeRange*.3)) missClass = 'many';
+    return `<tr>
+      <td><b>${r.store.store_code}</b></td>
+      <td>${r.store.zone_code}</td>
+      <td>${statusBadge}</td>
+      <td>${timeStr}</td>
+      <td>${amountStr}</td>
+      <td>${slipLink}</td>
+      <td><span class="miss-count ${missClass}">${r.missedDays}d</span></td>
+    </tr>`;
   }).join('');
 
-  const pagerEl = document.getElementById('pager');
+  /* Pager */
   let pagerHtml = `<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
-  for (let p = 1; p <= totalPages; p++) {
-    if (totalPages > 7 && p > 2 && p < totalPages - 1 && Math.abs(p - currentPage) > 1) {
-      if (p === 3 || p === totalPages - 2) pagerHtml += `<span style="padding:0 4px; color:var(--ink-faint);">…</span>`;
+  for (let p=1; p<=totalPages; p++){
+    if (totalPages>7 && p>2 && p<totalPages-1 && Math.abs(p-currentPage)>1){
+      if(p===3||p===totalPages-2) pagerHtml+=`<span style="padding:0 4px;color:var(--ink-faint);">…</span>`;
       continue;
     }
-    pagerHtml += `<button class="${p===currentPage?'active':''}" data-page="${p}">${p}</button>`;
+    pagerHtml+=`<button class="${p===currentPage?'active':''}" data-page="${p}">${p}</button>`;
   }
-  pagerHtml += `<button ${currentPage===totalPages?'disabled':''} data-page="${currentPage+1}">&#8250;</button>`;
-  pagerEl.innerHTML = pagerHtml;
-
-  pagerEl.querySelectorAll('button[data-page]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentPage = Number(btn.dataset.page);
-      render();
-    });
+  pagerHtml+=`<button ${currentPage===totalPages?'disabled':''} data-page="${currentPage+1}">&#8250;</button>`;
+  document.getElementById('pager').innerHTML = pagerHtml;
+  document.querySelectorAll('#pager button[data-page]').forEach(btn => {
+    btn.addEventListener('click', () => { currentPage=Number(btn.dataset.page); render(); });
   });
 }
 
-/* ==================== URL-BASED ZONE LOCK ====================
-   ถ้า URL มี ?zone=511 → District Manager mode: lock เขต 511 เท่านั้น
-   ถ้าไม่มี ?zone= → Accounting mode: เห็นทุกเขต (default)
-
-   ตัวอย่าง URL:
-   dashboard.html            → บัญชี เห็นทั้งหมด
-   dashboard.html?zone=511   → District Manager เขต 511
-   dashboard.html?zone=530   → District Manager เขต 530
-*/
+/* ==================== URL-BASED ZONE LOCK ==================== */
 const urlParams = new URLSearchParams(window.location.search);
-const LOCKED_ZONE = urlParams.get('zone'); // เช่น '511' หรือ null
+const LOCKED_ZONE = urlParams.get('zone');
 
 if (LOCKED_ZONE) {
-  // District Manager mode — ซ่อน zone dropdown และ lock เขต
   activeZoneFilter = LOCKED_ZONE;
-
-  // อัปเดต title ให้แสดงว่าดูเฉพาะเขตไหน
-  document.getElementById('updatedAt').textContent = `เขต ${LOCKED_ZONE} — District Manager View`;
-
-  // อัปเดต sidebar footer ให้แสดง District Team และ email ตามเขต
   document.getElementById('sidebarAvatar').textContent = 'DM';
   document.getElementById('sidebarName').textContent = 'District Team';
   document.getElementById('sidebarEmail').textContent = `DM${LOCKED_ZONE}@bata.co.th`;
-
-  // ซ่อนเมนู By District (DM เห็นแค่เขตตัวเอง ไม่จำเป็นต้องดู by district)
-  const navByDistrict = document.getElementById('navByDistrict');
-  if (navByDistrict) navByDistrict.style.display = 'none';
-
-  // ซ่อน District chart section (กราฟเปรียบเทียบทุกเขต ไม่เกี่ยวกับ DM)
-  const districtSection = document.getElementById('districtSection');
-  if (districtSection) districtSection.style.display = 'none';
-
-  // ซ่อน filterZone dropdown (DM ไม่ควรเปลี่ยนเขตได้)
-  const zoneSelectEl = document.getElementById('filterZone');
-  if (zoneSelectEl) zoneSelectEl.style.display = 'none';
-
-  // ซ่อน zone grid (ไม่จำเป็นถ้าเห็นแค่เขตเดียว)
-  const zoneGridSection = document.querySelector('.section-title');
-  if (zoneGridSection && zoneGridSection.textContent.includes('ภาพรวมรายเขต')) {
-    zoneGridSection.style.display = 'none';
-    document.getElementById('zoneGrid').style.display = 'none';
-  }
+  document.getElementById('navByDistrict').style.display = 'none';
+  document.getElementById('districtNavGroup').style.display = 'none';
+  document.getElementById('districtSection').style.display = 'none';
+  /* ซ่อนกราฟ district แต่ให้ trend chart กว้างขึ้น */
+  document.getElementById('chartsRow').style.gridTemplateColumns = '1fr';
+  document.getElementById('filterZone').style.display = 'none';
+  document.getElementById('zoneListSection').style.display = 'none';
 }
 
 /* ==================== START ==================== */
@@ -1189,6 +939,5 @@ allStoresList = buildStoreList();
 setupAutoRefresh();
 loadData();
 </script>
-
 </body>
 </html>
