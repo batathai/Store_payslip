@@ -124,7 +124,6 @@
     border-left:1px solid var(--line);
     background:var(--card);
     overflow-y:auto;
-    position:sticky; top:57px; height:calc(100vh - 57px);
   }
 
   /* ===================== COMPONENTS ===================== */
@@ -251,7 +250,7 @@
   .donut-legend-row b{font-weight:700; color:var(--ink);}
 
   /* District overview list */
-  .zone-list{display:flex; flex-direction:column; gap:0;}
+  .zone-list{display:flex; flex-direction:column; gap:0; overflow-y:auto;}
   .zone-row{
     display:flex; align-items:center; justify-content:space-between;
     padding:7px 10px; border-radius:8px; cursor:pointer;
@@ -266,7 +265,7 @@
   .zs-sep{color:var(--ink-faint);}
 
   /* Missing stores list */
-  .missing-list{max-height:280px; overflow-y:auto;}
+  .missing-list{max-height:400px; overflow-y:auto;}
   .missing-item{
     display:flex; align-items:center; justify-content:space-between;
     padding:6px 8px; border-radius:7px; font-size:12px;
@@ -312,12 +311,12 @@
     </div>
 
     <div class="sidebar-nav" id="sidebarNav">
-      <div class="nav-group-label">ภาพรวม</div>
+      <div class="nav-group-label">Overview</div>
       <button class="nav-item active" data-view="dashboard">
         <span class="nav-icon">&#9632;</span>Dashboard
       </button>
 
-      <div class="nav-group-label">รายการส่ง</div>
+      <div class="nav-group-label">Submissions</div>
       <button class="nav-item" data-view="all">
         <span class="nav-icon">&#9776;</span>All Submissions
       </button>
@@ -334,7 +333,7 @@
         <span class="nav-count warn-count" id="navCountLate">—</span>
       </button>
 
-      <div class="nav-group-label" id="districtNavGroup">วิเคราะห์</div>
+      <div class="nav-group-label" id="districtNavGroup">Analytics</div>
       <button class="nav-item" id="navByDistrict" data-view="district">
         <span class="nav-icon">&#9776;</span>By District
       </button>
@@ -357,12 +356,12 @@
       <div class="topbar-left">
         <div>
           <div class="page-title" id="pageTitle">Daily Payslip Dashboard</div>
-          <div class="topbar-sub" id="updatedAt">กำลังโหลด...</div>
+          <div class="topbar-sub" id="updatedAt">Loading...</div>
         </div>
       </div>
       <div class="topbar-controls">
         <input type="date" id="filterDate">
-        <select id="filterZone"><option value="">ทุกเขต</option></select>
+        <select id="filterZone"><option value="">All Districts</option></select>
       </div>
     </div>
 
@@ -374,7 +373,7 @@
 
         <!-- Metric cards -->
         <div class="metrics" id="metricsRow">
-          <div class="metric"><div class="metric-label">สาขาทั้งหมด</div><div class="metric-value">—</div></div>
+          <div class="metric"><div class="metric-label">Total Stores</div><div class="metric-value">—</div></div>
         </div>
 
         <!-- Charts row: Trend (wide) + District (Accounting only) -->
@@ -382,16 +381,16 @@
           <!-- Trend chart -->
           <div>
             <div class="section-head">
-              <div class="section-title" id="trendTitle">แนวโน้มการส่งข้อมูล</div>
+              <div class="section-title" id="trendTitle">Submission Trend</div>
               <div class="range-toggle" id="rangeToggle">
-                <button data-range="7" class="active">7 DAY</button>
-                <button data-range="30">30 DAY</button>
+                <button data-range="7" class="active">7 วัน</button>
+                <button data-range="30">30 วัน</button>
               </div>
             </div>
             <div class="card">
               <div class="chart-legend">
-                <span><span class="dot" style="background:#E11D2E;"></span>ส่งภายในวัน</span>
-                <span><span class="dot" style="background:#D8D4CF;"></span>สาขาทั้งหมด</span>
+                <span><span class="dot" style="background:#E11D2E;"></span>Submitted on time</span>
+                <span><span class="dot" style="background:#D8D4CF;"></span>Total stores</span>
               </div>
               <div style="position:relative; width:100%; height:200px;">
                 <canvas id="trendChart"></canvas>
@@ -425,7 +424,7 @@
               class="search-input"
               type="text"
               id="storeSearch"
-              placeholder="🔍 ค้นหารหัสหรือชื่อสาขา..."
+              placeholder="🔍 Search store code or name..."
               oninput="onSearchInput()"
             >
           </div>
@@ -443,7 +442,7 @@
                 </tr>
               </thead>
               <tbody id="tableBody">
-                <tr><td colspan="7" class="empty-state">กำลังโหลดข้อมูล...</td></tr>
+                <tr><td colspan="7" class="empty-state">Loading data...</td></tr>
               </tbody>
             </table>
           </div>
@@ -466,9 +465,9 @@
 
         <!-- District overview list -->
         <div class="rp-section" id="zoneListSection">
-          <div class="rp-title">ภาพรวมรายเขต</div>
+          <div class="rp-title">District Overview</div>
           <div class="zone-list" id="zoneList">
-            <div class="loading">กำลังโหลด...</div>
+            <div class="loading">Loading...</div>
           </div>
         </div>
 
@@ -476,14 +475,14 @@
         <div class="rp-section">
           <div class="rp-title" id="missingCardTitle">Not submitted</div>
           <div class="missing-list">
-            <div id="missingListBody"><div class="loading">กำลังโหลด...</div></div>
+            <div id="missingListBody"><div class="loading">Loading...</div></div>
           </div>
         </div>
 
         <!-- Auto refresh -->
         <div class="toggle-row">
           <div>
-            <div class="toggle-label">Auto refresh</div>
+            <div class="toggle-label">Auto Refresh</div>
             <div class="toggle-sub">Every 5 minutes</div>
           </div>
           <div class="switch" id="autoRefreshToggle"></div>
@@ -643,9 +642,9 @@ async function loadData(){
   allRecords = records || [];
 
   const zones = Object.keys(ZONE_BRANCHES).sort();
-  filterZoneEl.innerHTML = '<option value="">ทุกเขต</option>' + zones.map(z => `<option value="${z}">เขต ${z}</option>`).join('');
+  filterZoneEl.innerHTML = '<option value="">All Districts</option>' + zones.map(z => `<option value="${z}">Zone ${z}</option>`).join('');
 
-  document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('th-TH');
+  document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('en-GB');
   render();
 }
 
@@ -683,13 +682,13 @@ function renderTrendChart(stores){
     }).length);
   }
   document.getElementById('trendTitle').textContent =
-    activeZoneFilter ? `แนวโน้ม — เขต ${activeZoneFilter}` : 'แนวโน้มการส่งข้อมูล — ทุกเขต';
+    activeZoneFilter ? `Trend — Zone ${activeZoneFilter}` : 'Submission Trend — All Districts';
   if (trendChartInstance) trendChartInstance.destroy();
   trendChartInstance = new Chart(document.getElementById('trendChart'), {
     type:'bar',
     data:{ labels, datasets:[
-      { label:'สาขาทั้งหมด', data:labels.map(()=>totalCount), type:'line', borderColor:'#D8D4CF', backgroundColor:'#D8D4CF', borderWidth:2, pointRadius:0, borderDash:[4,4], fill:false, order:1 },
-      { label:'ส่งภายในวัน', data:sentCounts, backgroundColor:'#E11D2E', borderRadius:4, order:2 },
+      { label:'Total stores', data:labels.map(()=>totalCount), type:'line', borderColor:'#D8D4CF', backgroundColor:'#D8D4CF', borderWidth:2, pointRadius:0, borderDash:[4,4], fill:false, order:1 },
+      { label:'Submitted on time', data:sentCounts, backgroundColor:'#E11D2E', borderRadius:4, order:2 },
     ]},
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true, ticks:{precision:0}}, x:{ticks:{autoSkip:activeRange>14, maxRotation:45}} }},
   });
@@ -710,11 +709,11 @@ function renderDistrictChart(dateStr){
     submittedData.push(sub); notSubmittedData.push(notSub); lateData.push(late);
   });
   document.getElementById('districtTitle').textContent =
-    `By District — ${new Date(dateStr).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'})}`;
+    `By District — ${new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;
   if (districtChartInstance) districtChartInstance.destroy();
   districtChartInstance = new Chart(document.getElementById('districtChart'), {
     type:'bar',
-    data:{ labels:zones.map(z=>`เขต ${z}`), datasets:[
+    data:{ labels:zones.map(z=>`Zone ${z}`), datasets:[
       { label:'Submitted', data:submittedData, backgroundColor:'#0FA968', borderRadius:3 },
       { label:'Not submitted', data:notSubmittedData, backgroundColor:'#D97706', borderRadius:3 },
       { label:'Late', data:lateData, backgroundColor:'#E0263F', borderRadius:3 },
@@ -773,11 +772,11 @@ function render(){
 
   /* Metric cards */
   document.getElementById('metricsRow').innerHTML = `
-    <div class="metric" data-filter=""><div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total stores</div></div><div class="metric-value">${total}</div><div class="metric-pct blue">100%</div></div>
+    <div class="metric" data-filter=""><div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total Stores</div></div><div class="metric-value">${total}</div><div class="metric-pct blue">100%</div></div>
     <div class="metric" data-filter="sent"><div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div><div class="metric-value">${sent}</div><div class="metric-pct ok">${pct(sent)}</div></div>
-    <div class="metric" data-filter="missing"><div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not submitted</div></div><div class="metric-value">${missing}</div><div class="metric-pct warn">${pct(missing)}</div></div>
+    <div class="metric" data-filter="missing"><div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not Submitted</div></div><div class="metric-value">${missing}</div><div class="metric-pct warn">${pct(missing)}</div></div>
     <div class="metric" data-filter="duplicate"><div class="metric-top"><div class="metric-icon purple">&#10063;</div><div class="metric-label">Duplicate</div></div><div class="metric-value">${dup}</div><div class="metric-pct purple">${pct(dup)}</div></div>
-    <div class="metric" data-filter="late"><div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late submission</div></div><div class="metric-value">${late}</div><div class="metric-pct err">${pct(late)}</div></div>
+    <div class="metric" data-filter="late"><div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late Submission</div></div><div class="metric-value">${late}</div><div class="metric-pct err">${pct(late)}</div></div>
   `;
   document.querySelectorAll('.metric').forEach(el => {
     const f = el.dataset.filter;
@@ -795,13 +794,23 @@ function render(){
     const zRows = zStores.map(s => getStoreStatus(s.store_code, dateStr));
     const zSent = zRows.filter(r => r.status !== 'missing').length;
     const zMiss = zRows.filter(r => r.status === 'missing').length;
-    return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}">
-      <span class="zone-row-name">เขต ${z}</span>
-      <span class="zone-row-stats">
-        <span class="zs-ok">${zSent}</span>
-        <span class="zs-sep">/</span>
-        <span style="color:var(--ink-soft)">${zStores.length}</span>
-      </span>
+    const storeItems = zStores.map(s => {
+      const sr = getStoreStatus(s.store_code, dateStr);
+      const dot = sr.status === 'missing' ? '#D97706' : sr.status === 'late' ? '#E0263F' : sr.status === 'duplicate' ? '#7C5CFC' : '#0FA968';
+      return `<div style="display:flex;align-items:center;gap:6px;padding:3px 10px 3px 22px;font-size:11px;color:var(--ink-soft);">
+        <span style="width:6px;height:6px;border-radius:50%;background:${dot};flex:0 0 auto;"></span>
+        <span style="font-weight:600;color:var(--ink);min-width:44px;">${s.store_code}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.store_name||'—'}</span>
+      </div>`;
+    }).join('');
+    return `<div style="border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:4px;">
+      <div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}">
+        <span class="zone-row-name">Zone ${z}</span>
+        <span class="zone-row-stats">
+          <span class="zs-ok">${zSent}</span><span class="zs-sep">/</span><span style="color:var(--ink-soft)">${zStores.length}</span>
+        </span>
+      </div>
+      ${storeItems}
     </div>`;
   }).join('');
 
@@ -817,9 +826,9 @@ function render(){
 
   /* Missing list (right panel) */
   const missingRows = rows.filter(r => r.status === 'missing');
-  document.getElementById('missingCardTitle').textContent = `Not submitted (${missingRows.length})`;
+  document.getElementById('missingCardTitle').textContent = `Not Submitted (${missingRows.length})`;
   document.getElementById('missingListBody').innerHTML = missingRows.length === 0
-    ? '<div style="padding:12px 8px;font-size:12px;color:var(--ok);">✓ ทุกสาขาส่งแล้ว</div>'
+    ? '<div style="padding:12px 8px;font-size:12px;color:var(--ok);">✓ All stores have submitted</div>'
     : missingRows.slice(0, 50).map(r => `
         <div class="missing-item">
           <span class="missing-code">${r.store.store_code}</span>
@@ -856,7 +865,7 @@ function render(){
   ['store_code','zone','status','time','amount','slip','missed'].forEach(col => {
     const th = document.getElementById('th_'+col);
     if(!th) return;
-    const base = {store_code:'Store code',zone:'District',status:'Status',time:'Time',amount:'Deposit amount',slip:'Slip',missed:`Missed (${activeRange}d)`}[col];
+    const base = {store_code:'Store Code',zone:'District',status:'Status',time:'Time',amount:'Deposit Amount',slip:'Slip',missed:`Missed (${activeRange}d)`}[col];
     th.textContent = base + (sortCol===col ? (sortDir==='asc'?' ▲':' ▼'):' ↕');
   });
 
@@ -867,21 +876,21 @@ function render(){
   const pageRows = filteredRows.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
 
   if (filteredRows.length === 0){
-    document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">ไม่พบข้อมูลตามตัวกรองที่เลือก</td></tr>';
+    document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">No data found for the selected filters.</td></tr>';
     document.getElementById('pager').innerHTML = '';
     return;
   }
 
   const badgeMap = {
     sent:'<span class="badge ok">Submitted</span>',
-    missing:'<span class="badge warn">Not submitted</span>',
+    missing:'<span class="badge warn">Not Submitted</span>',
     late:'<span class="badge err">Late</span>',
   };
 
   document.getElementById('tableBody').innerHTML = pageRows.map(r => {
     const rec = r.latest;
-    const timeStr = rec ? new Date(rec.submitted_at).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}) : '—';
-    const amountStr = rec ? Number(rec.amount).toLocaleString('th-TH',{minimumFractionDigits:2}) : '—';
+    const timeStr = rec ? new Date(rec.submitted_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
+    const amountStr = rec ? Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
     const slipLink = rec && rec.slip_url ? `<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>` : '—';
     const statusBadge = r.status === 'duplicate'
       ? `<span class="badge purple">Duplicate (${r.records.length})</span>`
@@ -926,8 +935,7 @@ if (LOCKED_ZONE) {
   document.getElementById('sidebarName').textContent = 'District Team';
   document.getElementById('sidebarEmail').textContent = `DM${LOCKED_ZONE}@bata.co.th`;
   document.getElementById('navByDistrict').style.display = 'none';
-  document.getElementById('districtNavGroup').style.display = 'none';
-  document.getElementById('districtSection').style.display = 'none';
+  document.getElementById('districtNavGroup').style.display = 'none';  document.getElementById('districtSection').style.display = 'none';
   /* ซ่อนกราฟ district แต่ให้ trend chart กว้างขึ้น */
   document.getElementById('chartsRow').style.gridTemplateColumns = '1fr';
   document.getElementById('filterZone').style.display = 'none';
