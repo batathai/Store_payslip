@@ -361,7 +361,7 @@
       </div>
       <div class="topbar-controls">
         <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:9px;padding:3px 10px;">
-          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
+          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Date</label>
           <input type="date" id="filterDate" style="border:none;background:transparent;padding:3px 0;font-size:12.5px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
         </div>
         <select id="filterZone"><option value="">All Districts</option></select>
@@ -383,11 +383,11 @@
         <div class="charts-row" id="chartsRow">
           <!-- Trend chart -->
           <div>
-            <div class="section-head">
+            <div class="section-head" style="min-height:36px;">
               <div class="section-title" id="trendTitle">Submission Trend</div>
               <div class="range-toggle" id="rangeToggle">
-                <button data-range="7" class="active">7 วัน</button>
-                <button data-range="30">30 วัน</button>
+                <button data-range="7" class="active">7 days</button>
+                <button data-range="30">30 days</button>
               </div>
             </div>
             <div class="card">
@@ -403,7 +403,7 @@
 
           <!-- District chart (Accounting only) -->
           <div id="districtSection">
-            <div class="section-head">
+            <div class="section-head" style="min-height:36px;">
               <div class="section-title" id="districtTitle">By District</div>
             </div>
             <div class="card">
