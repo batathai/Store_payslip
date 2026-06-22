@@ -865,8 +865,8 @@ function render(){
     if(sortCol==='store_code'){va=a.store.store_code; vb=b.store.store_code;}
     else if(sortCol==='zone'){va=a.store.zone_code; vb=b.store.zone_code;}
     else if(sortCol==='status'){va=a.status; vb=b.status;}
-    else if(sortCol==='sales_date'){va=a.latest?a.latest.sales_date||'':''; vb=b.latest?b.latest.sales_date||':'';}
-    else if(sortCol==='deposit_date'){va=a.latest?a.latest.deposit_date||'':''; vb=b.latest?b.latest.deposit_date||'';}
+    else if(sortCol==='sales_date'){va=a.latest?a.latest.sales_date||'':''; vb=b.latest?b.latest.sales_date||'':'';}
+    else if(sortCol==='deposit_date'){va=a.latest?a.latest.deposit_date||'':''; vb=b.latest?b.latest.deposit_date||'':'';}  
     else if(sortCol==='time'){va=a.latest?a.latest.submitted_at:''; vb=b.latest?b.latest.submitted_at:'';}
     else if(sortCol==='amount'){va=a.latest?Number(a.latest.amount):-1; vb=b.latest?Number(b.latest.amount):-1;}
     else if(sortCol==='slip'){va=a.latest&&a.latest.slip_url?1:0; vb=b.latest&&b.latest.slip_url?1:0;}
