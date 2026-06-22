@@ -559,12 +559,13 @@ function dateNDaysAgo(n){
 }
 
 // init date filters after DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  const sd = getFilterSalesDateEl();
-  const dd = getFilterDepositDateEl();
+// init date filters inline (script is at bottom of body, DOM already ready)
+(function(){
+  const sd = document.getElementById('filterSalesDate');
+  const dd = document.getElementById('filterDepositDate');
   if (sd) { sd.value = today; sd.max = today; sd.addEventListener('change', () => { currentPage = 1; render(); }); }
   if (dd) { dd.max = today; dd.addEventListener('change', () => { currentPage = 1; render(); }); }
-});
+})();
 
 filterZoneEl.addEventListener('change', () => {
   if (LOCKED_ZONE) return;
@@ -769,8 +770,8 @@ function renderDonutChart(total, sent, missing, dup, late){
 
 /* ==================== RENDER ==================== */
 function render(){
-  const salesDateFilter   = (getFilterSalesDateEl()   && getFilterSalesDateEl().value)   || '';
-  const depositDateFilter = (getFilterDepositDateEl() && getFilterDepositDateEl().value) || '';
+  const salesDateFilter   = (document.getElementById('filterSalesDate')   && document.getElementById('filterSalesDate').value)   || today;
+  const depositDateFilter = (document.getElementById('filterDepositDate') && document.getElementById('filterDepositDate').value) || '';
   let stores = allStoresList;
   if (activeZoneFilter) stores = stores.filter(s => s.zone_code === activeZoneFilter);
 
