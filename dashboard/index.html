@@ -6,295 +6,189 @@
 <title>BATA Store Dashboard</title>
 <style>
   :root{
-    --bata-red:#E11D2E;
-    --bata-red-dark:#8F0E1F;
-    --ink:#15171C;
-    --ink-soft:#6B7280;
-    --ink-faint:#9CA3AF;
-    --paper:#F4F5F7;
-    --card:#FFFFFF;
-    --line:#ECEDF1;
-    --sidebar-bg:#8F0E1F;
-    --ok:#0FA968;
-    --ok-bg:#E7F8EF;
-    --warn:#D97706;
-    --warn-bg:#FEF3DD;
-    --err:#E0263F;
-    --err-bg:#FDEBED;
-    --purple:#7C5CFC;
-    --purple-bg:#EFEAFE;
-    --blue:#2F7DE1;
-    --blue-bg:#E8F1FD;
-    --radius-lg:16px;
-    --radius-md:10px;
+    --bata-red:#E11D2E;--bata-red-dark:#8F0E1F;--ink:#15171C;--ink-soft:#6B7280;--ink-faint:#9CA3AF;
+    --paper:#F4F5F7;--card:#FFFFFF;--line:#ECEDF1;--sidebar-bg:#8F0E1F;
+    --ok:#0FA968;--ok-bg:#E7F8EF;--warn:#D97706;--warn-bg:#FEF3DD;
+    --err:#E0263F;--err-bg:#FDEBED;--purple:#7C5CFC;--purple-bg:#EFEAFE;
+    --blue:#2F7DE1;--blue-bg:#E8F1FD;--radius-lg:16px;--radius-md:10px;
     --shadow-card:0 1px 4px rgba(21,23,28,.06);
     --font-body:'Inter','Noto Sans Thai','Helvetica Neue',Arial,sans-serif;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  body{
-    background:var(--paper); color:var(--ink);
-    font-family:var(--font-body); -webkit-font-smoothing:antialiased;
-    font-size:14px;
-  }
-
-  .shell{display:flex; min-height:100vh;}
-
-  .sidebar{
-    width:220px; flex:0 0 220px;
-    background:var(--sidebar-bg); color:#fff;
-    display:flex; flex-direction:column;
-    position:sticky; top:0; height:100vh; z-index:10;
-  }
-  .sidebar-brand{
-    display:flex; align-items:center; gap:10px;
-    padding:20px 18px 16px; border-bottom:1px solid rgba(255,255,255,.08);
-  }
-  .sidebar-logo{
-    width:28px; height:28px; border-radius:8px;
-    background:var(--bata-red); display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:13px;
-  }
-  .sidebar-word{font-weight:800; font-size:17px; letter-spacing:.03em;}
-  .sidebar-nav{flex:1; padding:10px 10px; overflow-y:auto;}
-  .nav-group-label{
-    font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-    color:rgba(255,255,255,.35); padding:12px 10px 4px;
-  }
-  .nav-item{
-    display:flex; align-items:center; gap:10px;
-    padding:9px 12px; border-radius:8px;
-    color:rgba(255,255,255,.65); font-size:13px; font-weight:600;
-    cursor:pointer; margin-bottom:1px; transition:background .12s, color .12s;
-    border:none; background:none; width:100%; text-align:left; font-family:var(--font-body);
-  }
-  .nav-item:hover{background:rgba(255,255,255,.07); color:#fff;}
-  .nav-item.active{background:var(--bata-red); color:#fff;}
-  .nav-item .nav-icon{font-size:15px; width:18px; text-align:center; flex:0 0 auto;}
-  .nav-item .nav-count{
-    margin-left:auto; font-size:11px; font-weight:700;
-    background:rgba(255,255,255,.15); border-radius:6px; padding:1px 7px; min-width:24px; text-align:center;
-  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;font-size:14px;}
+  .shell{display:flex;min-height:100vh;}
+  .sidebar{width:220px;flex:0 0 220px;background:var(--sidebar-bg);color:#fff;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:10;}
+  .sidebar-brand{display:flex;align-items:center;gap:10px;padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .sidebar-logo{width:28px;height:28px;border-radius:8px;background:var(--bata-red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .sidebar-word{font-weight:800;font-size:17px;letter-spacing:.03em;}
+  .sidebar-nav{flex:1;padding:10px;overflow-y:auto;}
+  .nav-group-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:12px 10px 4px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:rgba(255,255,255,.65);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:1px;transition:background .12s,color .12s;border:none;background:none;width:100%;text-align:left;font-family:var(--font-body);}
+  .nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+  .nav-item.active{background:var(--bata-red);color:#fff;}
+  .nav-item .nav-icon{font-size:15px;width:18px;text-align:center;flex:0 0 auto;}
+  .nav-item .nav-count{margin-left:auto;font-size:11px;font-weight:700;background:rgba(255,255,255,.15);border-radius:6px;padding:1px 7px;min-width:24px;text-align:center;}
   .nav-item.active .nav-count{background:rgba(255,255,255,.25);}
   .nav-count.warn-count{background:rgba(217,119,6,.35)!important;}
   .nav-count.err-count{background:rgba(224,38,63,.35)!important;}
-  .sidebar-foot{
-    padding:14px 16px; border-top:1px solid rgba(255,255,255,.08);
-    display:flex; align-items:center; gap:10px;
-  }
-  .sidebar-avatar{
-    width:30px; height:30px; border-radius:50%;
-    background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center;
-    font-size:11px; font-weight:700; flex:0 0 auto;
-  }
-  .sidebar-foot-name{font-size:12px; font-weight:700; line-height:1.3;}
-  .sidebar-foot-sub{font-size:11px; color:rgba(255,255,255,.45); line-height:1.3;}
-
-  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
-  .topbar{
-    position:sticky; top:0; z-index:9;
-    background:var(--card); border-bottom:1px solid var(--line);
-    padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-  }
-  .topbar-left{display:flex; align-items:center; gap:10px;}
-  .page-title{font-size:16px; font-weight:800; margin:0;}
-  .topbar-sub{font-size:12px; color:var(--ink-soft); margin-top:1px;}
-  .topbar-controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
-
-  select, input[type=date]{
-    padding:7px 10px; font-size:12.5px; border:1.5px solid var(--line);
-    border-radius:8px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600;
-    cursor:pointer;
-  }
-  select:focus, input:focus{outline:none; border-color:var(--bata-red);}
-
-  .body-split{display:flex; flex:1; align-items:flex-start; min-height:0;}
-  .content-col{flex:1; min-width:0; padding:20px 20px 60px; overflow-y:auto;}
-  .right-panel{
-    width:260px; flex:0 0 260px;
-    padding:20px 16px 60px;
-    border-left:1px solid var(--line);
-    background:var(--card);
-    overflow-y:auto;
-  }
-
-  .metrics{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:10px; margin-bottom:18px;}
-  .metric{
-    background:var(--card); border:1.5px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card); padding:14px 16px; cursor:pointer;
-    transition:border-color .15s, transform .05s;
-  }
+  .sidebar-foot{padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
+  .sidebar-avatar{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:0 0 auto;}
+  .sidebar-foot-name{font-size:12px;font-weight:700;line-height:1.3;}
+  .sidebar-foot-sub{font-size:11px;color:rgba(255,255,255,.45);line-height:1.3;}
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{position:sticky;top:0;z-index:9;background:var(--card);border-bottom:1px solid var(--line);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .topbar-left{display:flex;align-items:center;gap:10px;}
+  .page-title{font-size:16px;font-weight:800;margin:0;}
+  .topbar-sub{font-size:12px;color:var(--ink-soft);margin-top:1px;}
+  .topbar-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  select,input[type=date]{padding:7px 10px;font-size:12.5px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-family:var(--font-body);font-weight:600;cursor:pointer;}
+  select:focus,input:focus{outline:none;border-color:var(--bata-red);}
+  .body-split{display:flex;flex:1;align-items:flex-start;min-height:0;}
+  .content-col{flex:1;min-width:0;padding:20px 20px 60px;overflow-y:auto;}
+  .right-panel{width:260px;flex:0 0 260px;padding:20px 16px 60px;border-left:1px solid var(--line);background:var(--card);overflow-y:auto;}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px;}
+  .metric{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:14px 16px;cursor:pointer;transition:border-color .15s,transform .05s;}
   .metric:hover{border-color:var(--ink-faint);}
   .metric:active{transform:scale(.98);}
   .metric.active{border-color:var(--bata-red);}
-  .metric-top{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
-  .metric-icon{width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex:0 0 auto;}
-  .metric-icon.blue{background:var(--blue-bg); color:var(--blue);}
-  .metric-icon.ok{background:var(--ok-bg); color:var(--ok);}
-  .metric-icon.warn{background:var(--warn-bg); color:var(--warn);}
-  .metric-icon.purple{background:var(--purple-bg); color:var(--purple);}
-  .metric-icon.err{background:var(--err-bg); color:var(--err);}
-  .metric-label{font-size:10.5px; color:var(--ink-soft); font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
-  .metric-value{font-size:24px; font-weight:800; line-height:1;}
-  .metric-pct{font-size:11px; font-weight:700; margin-top:3px;}
+  .metric-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .metric-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto;}
+  .metric-icon.blue{background:var(--blue-bg);color:var(--blue);}
+  .metric-icon.ok{background:var(--ok-bg);color:var(--ok);}
+  .metric-icon.warn{background:var(--warn-bg);color:var(--warn);}
+  .metric-icon.purple{background:var(--purple-bg);color:var(--purple);}
+  .metric-icon.err{background:var(--err-bg);color:var(--err);}
+  .metric-label{font-size:10.5px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .metric-value{font-size:24px;font-weight:800;line-height:1;}
+  .metric-pct{font-size:11px;font-weight:700;margin-top:3px;}
   .metric-pct.blue{color:var(--blue);}
   .metric-pct.ok{color:var(--ok);}
   .metric-pct.warn{color:var(--warn);}
   .metric-pct.purple{color:var(--purple);}
   .metric-pct.err{color:var(--err);}
-
-  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); padding:16px;}
-  .section-head{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;}
-  .section-title{font-size:13px; font-weight:800; color:var(--ink); margin:0;}
-
-  .range-toggle{display:flex; gap:3px; background:#F4F5F7; border:1px solid var(--line); border-radius:8px; padding:2px;}
-  .range-toggle button{border:none; background:none; padding:5px 12px; font-size:12px; font-weight:700; color:var(--ink-soft); border-radius:6px; cursor:pointer; font-family:var(--font-body);}
-  .range-toggle button.active{background:var(--bata-red); color:#fff;}
-
-  .chart-legend{display:flex; gap:14px; margin-bottom:8px; font-size:11.5px; color:var(--ink-soft); flex-wrap:wrap;}
-  .chart-legend span{display:flex; align-items:center; gap:5px;}
-  .chart-legend .dot{width:8px; height:8px; border-radius:2px; flex:0 0 auto;}
-
-  .charts-row{display:grid; grid-template-columns:1.6fr 1fr; gap:14px; margin-bottom:16px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:16px;}
+  .section-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+  .section-title{font-size:13px;font-weight:800;color:var(--ink);margin:0;}
+  .range-toggle{display:flex;gap:3px;background:#F4F5F7;border:1px solid var(--line);border-radius:8px;padding:2px;}
+  .range-toggle button{border:none;background:none;padding:5px 12px;font-size:12px;font-weight:700;color:var(--ink-soft);border-radius:6px;cursor:pointer;font-family:var(--font-body);}
+  .range-toggle button.active{background:var(--bata-red);color:#fff;}
+  .chart-legend{display:flex;gap:14px;margin-bottom:8px;font-size:11.5px;color:var(--ink-soft);flex-wrap:wrap;}
+  .chart-legend span{display:flex;align-items:center;gap:5px;}
+  .chart-legend .dot{width:8px;height:8px;border-radius:2px;flex:0 0 auto;}
+  .charts-row{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:16px;}
   @media(max-width:900px){.charts-row{grid-template-columns:1fr;}}
-
-  .table-wrap{background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); overflow:hidden;}
-  .table-head-bar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
-  .table-title{font-size:13px; font-weight:800; margin:0;}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);overflow:hidden;}
+  .table-head-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .table-title{font-size:13px;font-weight:800;margin:0;}
   .table-scroll{overflow-x:auto;}
-  table{width:100%; border-collapse:collapse; font-size:12.5px;}
-  th{text-align:left; padding:9px 12px; background:#FAFAFB; font-weight:700; color:var(--ink-soft); font-size:10.5px; text-transform:uppercase; letter-spacing:.03em; border-bottom:1px solid var(--line); white-space:nowrap; cursor:pointer; user-select:none;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{text-align:left;padding:9px 12px;background:#FAFAFB;font-weight:700;color:var(--ink-soft);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none;}
   th:hover{color:var(--ink);}
-  td{padding:9px 12px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:#FAFAFB;}
-
-  .badge{display:inline-block; font-size:11px; font-weight:700; padding:2px 9px; border-radius:6px;}
-  .badge.ok{background:var(--ok-bg); color:var(--ok);}
-  .badge.warn{background:var(--warn-bg); color:var(--warn);}
-  .badge.err{background:var(--err-bg); color:var(--err);}
-  .badge.purple{background:var(--purple-bg); color:var(--purple);}
-
-  /* ── Duplicate badge as clickable button ── */
-  .badge-dup-btn{
-    display:inline-flex; align-items:center; gap:4px;
-    font-size:11px; font-weight:700; padding:2px 9px; border-radius:6px;
-    background:var(--purple-bg); color:var(--purple);
-    border:none; cursor:pointer; font-family:var(--font-body); transition:background .12s;
-  }
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:6px;}
+  .badge.ok{background:var(--ok-bg);color:var(--ok);}
+  .badge.warn{background:var(--warn-bg);color:var(--warn);}
+  .badge.err{background:var(--err-bg);color:var(--err);}
+  .badge.purple{background:var(--purple-bg);color:var(--purple);}
+  .badge-dup-btn{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:6px;background:var(--purple-bg);color:var(--purple);border:none;cursor:pointer;font-family:var(--font-body);transition:background .12s;}
   .badge-dup-btn:hover{background:#e0d8fe;}
-
-  .pager{display:flex; justify-content:center; align-items:center; gap:5px; padding:12px;}
-  .pager button{border:1.5px solid var(--line); background:#fff; color:var(--ink-soft); width:28px; height:28px; border-radius:7px; font-size:12px; font-weight:700; cursor:pointer; font-family:var(--font-body);}
-  .pager button.active{background:var(--bata-red); border-color:var(--bata-red); color:#fff;}
-  .pager button:disabled{opacity:.4; cursor:not-allowed;}
-
-  a.imglink{color:var(--bata-red); font-weight:700; text-decoration:none; font-size:12px;}
-  .miss-count{font-weight:700; font-size:12px;}
+  .pager{display:flex;justify-content:center;align-items:center;gap:5px;padding:12px;}
+  .pager button{border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);width:28px;height:28px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-body);}
+  .pager button.active{background:var(--bata-red);border-color:var(--bata-red);color:#fff;}
+  .pager button:disabled{opacity:.4;cursor:not-allowed;}
+  a.imglink{color:var(--bata-red);font-weight:700;text-decoration:none;font-size:12px;}
+  .miss-count{font-weight:700;font-size:12px;}
   .miss-count.zero{color:var(--ok);}
   .miss-count.some{color:var(--warn);}
   .miss-count.many{color:var(--err);}
-
-  .empty-state{padding:32px 16px; text-align:center; color:var(--ink-soft); font-size:13px;}
-  .loading{padding:32px 16px; text-align:center; color:var(--ink-soft); font-size:13px;}
-
+  .empty-state{padding:32px 16px;text-align:center;color:var(--ink-soft);font-size:13px;}
+  .loading{padding:32px 16px;text-align:center;color:var(--ink-soft);font-size:13px;}
   .rp-section{margin-bottom:20px;}
-  .rp-title{font-size:11.5px; font-weight:800; color:var(--ink); margin-bottom:10px; text-transform:uppercase; letter-spacing:.04em;}
-  .donut-wrap{display:flex; justify-content:center; margin-bottom:12px;}
-  .donut-legend-row{display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); font-size:12px;}
+  .rp-title{font-size:11.5px;font-weight:800;color:var(--ink);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em;}
+  .donut-wrap{display:flex;justify-content:center;margin-bottom:12px;}
+  .donut-legend-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-size:12px;}
   .donut-legend-row:last-child{border-bottom:none;}
-  .donut-legend-row .leg-left{display:flex; align-items:center; gap:6px; color:var(--ink-soft);}
-  .donut-legend-row .leg-left .dot{width:8px; height:8px; border-radius:2px; display:inline-block;}
-  .donut-legend-row b{font-weight:700; color:var(--ink);}
-
-  .zone-list{display:flex; flex-direction:column; gap:0; overflow-y:auto;}
-  .zone-row{display:flex; align-items:center; justify-content:space-between; padding:7px 10px; border-radius:8px; cursor:pointer; font-size:12.5px; transition:background .1s;}
+  .donut-legend-row .leg-left{display:flex;align-items:center;gap:6px;color:var(--ink-soft);}
+  .donut-legend-row .leg-left .dot{width:8px;height:8px;border-radius:2px;display:inline-block;}
+  .donut-legend-row b{font-weight:700;color:var(--ink);}
+  .zone-list{display:flex;flex-direction:column;gap:0;overflow-y:auto;}
+  .zone-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;transition:background .1s;}
   .zone-row:hover{background:var(--paper);}
   .zone-row.active{background:#FFF0F0;}
-  .zone-row-name{font-weight:700; color:var(--ink);}
-  .zone-row-stats{display:flex; align-items:center; gap:6px; font-size:11.5px;}
-  .zs-ok{color:var(--ok); font-weight:700;}
+  .zone-row-name{font-weight:700;color:var(--ink);}
+  .zone-row-stats{display:flex;align-items:center;gap:6px;font-size:11.5px;}
+  .zs-ok{color:var(--ok);font-weight:700;}
   .zs-sep{color:var(--ink-faint);}
-
-  .missing-list{max-height:400px; overflow-y:auto;}
-  .missing-item{display:flex; align-items:center; justify-content:space-between; padding:6px 8px; border-radius:7px; font-size:12px;}
+  .missing-list{max-height:400px;overflow-y:auto;}
+  .missing-item{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:7px;font-size:12px;}
   .missing-item:hover{background:var(--paper);}
-  .missing-code{font-weight:700; color:var(--ink); min-width:48px;}
-  .missing-name{color:var(--ink-soft); flex:1; margin:0 8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .missing-zone{font-size:11px; color:var(--ink-faint); background:var(--paper); padding:1px 6px; border-radius:5px;}
-
-  .toggle-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0 0; margin-top:10px; border-top:1px solid var(--line);}
-  .toggle-label{font-size:12px; font-weight:700;}
-  .toggle-sub{font-size:11px; color:var(--ink-soft);}
-  .switch{position:relative; width:36px; height:20px; background:var(--ok); border-radius:99px; cursor:pointer; flex:0 0 auto; transition:background .2s;}
-  .switch::after{content:''; position:absolute; top:2px; right:2px; width:16px; height:16px; background:#fff; border-radius:50%; transition:right .2s;}
+  .missing-code{font-weight:700;color:var(--ink);min-width:48px;}
+  .missing-name{color:var(--ink-soft);flex:1;margin:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .missing-zone{font-size:11px;color:var(--ink-faint);background:var(--paper);padding:1px 6px;border-radius:5px;}
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;margin-top:10px;border-top:1px solid var(--line);}
+  .toggle-label{font-size:12px;font-weight:700;}
+  .toggle-sub{font-size:11px;color:var(--ink-soft);}
+  .switch{position:relative;width:36px;height:20px;background:var(--ok);border-radius:99px;cursor:pointer;flex:0 0 auto;transition:background .2s;}
+  .switch::after{content:'';position:absolute;top:2px;right:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:right .2s;}
   .switch.off{background:#D7D9E0;}
-  .switch.off::after{right:auto; left:2px;}
-
+  .switch.off::after{right:auto;left:2px;}
   #districtSection{margin-bottom:16px;}
-  .search-input{padding:7px 12px; font-size:12.5px; border:1.5px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600; width:200px; outline:none;}
+  .search-input{padding:7px 12px;font-size:12.5px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-family:var(--font-body);font-weight:600;width:200px;outline:none;}
   .search-input:focus{border-color:var(--bata-red);}
 
-  /* ===================== DUPLICATE MODAL ===================== */
-  #dupModalBackdrop{
-    display:none; position:fixed; inset:0;
-    background:rgba(0,0,0,.45); z-index:100;
-    align-items:center; justify-content:center; padding:16px;
-  }
+  /* DM Banner */
+  .dm-banner{background:#FFF8E1;border:1.5px solid #FDE68A;border-radius:10px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#92400e;}
+  .dm-banner span{font-size:18px;}
+
+  /* Duplicate Modal */
+  #dupModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
   #dupModalBackdrop.open{display:flex;}
-  .dup-modal{
-    background:#fff; border-radius:14px;
-    width:100%; max-width:720px; max-height:90vh;
-    overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2);
-    display:flex; flex-direction:column;
-  }
-  .dup-modal-header{
-    padding:16px 20px; border-bottom:1px solid var(--line);
-    display:flex; justify-content:space-between; align-items:flex-start;
-    position:sticky; top:0; background:#fff; z-index:1;
-  }
-  .dup-modal-header h2{font-size:15px; font-weight:800; color:var(--ink);}
-  .dup-modal-header p{font-size:12px; color:var(--ink-soft); margin-top:3px;}
-  .dup-modal-close{background:none; border:none; font-size:20px; color:var(--ink-faint); cursor:pointer; line-height:1; padding:0 4px;}
+  .dup-modal{background:#fff;border-radius:14px;width:100%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column;}
+  .dup-modal-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:1;}
+  .dup-modal-header h2{font-size:15px;font-weight:800;color:var(--ink);}
+  .dup-modal-header p{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+  .dup-modal-close{background:none;border:none;font-size:20px;color:var(--ink-faint);cursor:pointer;line-height:1;padding:0 4px;}
   .dup-modal-close:hover{color:var(--ink);}
-  .dup-modal-body{padding:16px 20px; flex:1;}
-  .dup-reason-banner{background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:12px; color:#92400e; line-height:1.7;}
+  .dup-modal-body{padding:16px 20px;flex:1;}
+  .dup-reason-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#92400e;line-height:1.7;}
   .dup-reason-banner strong{font-weight:700;}
-  .dup-inner-table-wrap{border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:4px;}
-  .dup-inner-table-wrap table th{font-size:10.5px; padding:8px 12px; background:#FAFAFB;}
-  .dup-inner-table-wrap table td{font-size:12px; padding:10px 12px;}
+  .dup-inner-table-wrap{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:4px;}
+  .dup-inner-table-wrap table th{font-size:10.5px;padding:8px 12px;background:#FAFAFB;}
+  .dup-inner-table-wrap table td{font-size:12px;padding:10px 12px;}
   .dup-inner-table-wrap table tr:hover td{background:#FAFAFB;}
-  .dup-row-correct{background:#f0fdf4 !important;}
-  .dup-row-correct td{background:#f0fdf4 !important;}
+  .dup-row-correct{background:#f0fdf4!important;}
+  .dup-row-correct td{background:#f0fdf4!important;}
   .dup-row-rejected{opacity:.45;}
   .tag-correct{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--ok-bg);color:var(--ok);border-radius:5px;font-size:11px;font-weight:700;}
   .tag-rejected{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--err-bg);color:var(--err);border-radius:5px;font-size:11px;font-weight:700;}
   .tag-pending{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--paper);color:var(--ink-soft);border-radius:5px;font-size:11px;}
-  .btn-mark-correct{
-    padding:4px 12px; border-radius:7px; border:1.5px solid var(--line); background:#fff;
-    font-size:11px; font-weight:700; cursor:pointer; color:var(--ink);
-    font-family:var(--font-body); transition:background .12s, border-color .12s;
-  }
-  .btn-mark-correct:hover{background:var(--ok-bg); border-color:var(--ok); color:var(--ok);}
-  .btn-mark-correct:disabled{opacity:.4; cursor:not-allowed;}
-  .dup-modal-footer{
-    padding:12px 20px; border-top:1px solid var(--line);
-    display:flex; justify-content:flex-end; gap:8px; align-items:center;
-    position:sticky; bottom:0; background:#fff;
-  }
-  .dup-save-msg{font-size:12px; color:var(--ok); flex:1; font-weight:600;}
-  .btn-secondary{padding:7px 16px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid var(--line); background:#fff; color:var(--ink); font-family:var(--font-body);}
+  .btn-mark-correct{padding:4px 12px;border-radius:7px;border:1.5px solid var(--line);background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:var(--ink);font-family:var(--font-body);transition:background .12s,border-color .12s;}
+  .btn-mark-correct:hover{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);}
+  .btn-mark-correct:disabled{opacity:.4;cursor:not-allowed;}
+  .dup-modal-footer{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;align-items:center;position:sticky;bottom:0;background:#fff;}
+  .dup-save-msg{font-size:12px;color:var(--ok);flex:1;font-weight:600;}
+  .btn-secondary{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-family:var(--font-body);}
   .btn-secondary:hover{background:var(--paper);}
-  .btn-save{padding:7px 20px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:var(--ink); color:#fff; font-family:var(--font-body); transition:background .12s;}
+  .btn-save{padding:7px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--ink);color:#fff;font-family:var(--font-body);transition:background .12s;}
   .btn-save:hover{background:#2d2d2d;}
-  .btn-save:disabled{opacity:.4; cursor:not-allowed;}
-  .dup-spinner{display:inline-block; width:14px; height:14px; border:2px solid var(--line); border-top-color:var(--ink-soft); border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:4px;}
+  .btn-save:disabled{opacity:.4;cursor:not-allowed;}
+  .dup-spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--ink-soft);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
   @keyframes spin{to{transform:rotate(360deg);}}
-
-  /* Toast */
-  #toastMsg{position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:600; z-index:200; display:none; max-width:340px; line-height:1.5; box-shadow:0 4px 20px rgba(0,0,0,.2);}
+  #toastMsg{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:200;display:none;max-width:340px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,.2);}
   #toastMsg.show{display:block;}
   #toastMsg.ok-toast{background:var(--ok);}
   #toastMsg.err-toast{background:var(--err);}
+  .ch-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;gap:4px;}
+  .ch-bank{background:#EEF2FF;color:#4F46E5;}
+  .ch-counter{background:#FFF7ED;color:#C2410C;}
+  .ch-other{background:var(--paper);color:var(--ink-soft);}
+  .delay-chip{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;}
+  .delay-0{background:var(--ok-bg);color:var(--ok);}
+  .delay-1{background:var(--warn-bg);color:var(--warn);}
+  .delay-2{background:#FEE2E2;color:#B91C1C;}
+  .delay-none{background:var(--paper);color:var(--ink-faint);}
 </style>
 </head>
 <body>
@@ -340,6 +234,12 @@
 
     <div class="body-split">
       <div class="content-col">
+        <!-- DM Banner (hidden by default, shown for DM mode) -->
+        <div class="dm-banner" id="dmBanner" style="display:none">
+          <span>🗺️</span>
+          <div>กำลังดูข้อมูล <strong id="dmBannerZone"></strong> — เห็นเฉพาะสาขาในโซนของคุณเท่านั้น</div>
+        </div>
+
         <div class="metrics" id="metricsRow">
           <div class="metric"><div class="metric-label">Total Stores</div><div class="metric-value">—</div></div>
         </div>
@@ -358,7 +258,7 @@
                 <span><span class="dot" style="background:#E11D2E;"></span>Submitted on time</span>
                 <span><span class="dot" style="background:#D8D4CF;"></span>Total stores</span>
               </div>
-              <div style="position:relative; width:100%; height:200px;"><canvas id="trendChart"></canvas></div>
+              <div style="position:relative;width:100%;height:200px;"><canvas id="trendChart"></canvas></div>
             </div>
           </div>
           <div id="districtSection">
@@ -371,7 +271,7 @@
                 <span><span class="dot" style="background:#D97706;"></span>Not submitted</span>
                 <span><span class="dot" style="background:#E0263F;"></span>Late</span>
               </div>
-              <div style="position:relative; width:100%; height:200px;"><canvas id="districtChart"></canvas></div>
+              <div style="position:relative;width:100%;height:200px;"><canvas id="districtChart"></canvas></div>
             </div>
           </div>
         </div>
@@ -396,6 +296,7 @@
               <thead>
                 <tr>
                   <th onclick="sortBy('store_code')" id="th_store_code">Store Code ↕</th>
+                  <th onclick="sortBy('store_name')" id="th_store_name">Store Name ↕</th>
                   <th onclick="sortBy('zone')" id="th_zone">District ↕</th>
                   <th onclick="sortBy('status')" id="th_status">Status ↕</th>
                   <th onclick="sortBy('sales_date')" id="th_sales_date">Sales Date ↕</th>
@@ -403,11 +304,13 @@
                   <th onclick="sortBy('time')" id="th_time">Submitted At ↕</th>
                   <th onclick="sortBy('amount')" id="th_amount">Deposit Amount ↕</th>
                   <th onclick="sortBy('slip')" id="th_slip">Slip ↕</th>
-                  <th onclick="sortBy('missed')" id="th_missed">Missed (7d) ↕</th>
+                  <th onclick="sortBy('channel')" id="th_channel">Channel ↕</th>
+                  <th onclick="sortBy('channel_detail')" id="th_channel_detail">Channel Detail ↕</th>
+                  <th onclick="sortBy('delay')" id="th_delay">Deposit Delay ↕</th>
                 </tr>
               </thead>
               <tbody id="tableBody">
-                <tr><td colspan="9" class="empty-state">Loading data...</td></tr>
+                <tr><td colspan="10" class="empty-state">Loading data...</td></tr>
               </tbody>
             </table>
           </div>
@@ -441,7 +344,7 @@
   </div>
 </div>
 
-<!-- ===================== DUPLICATE MODAL ===================== -->
+<!-- Duplicate Modal -->
 <div id="dupModalBackdrop">
   <div class="dup-modal">
     <div class="dup-modal-header">
@@ -478,12 +381,18 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
 const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 const LATE_CUTOFF_HOUR = 22;
 const PAGE_SIZE = 25;
+
+/* ── READ ?zone= FIRST before anything else ── */
+const urlParams = new URLSearchParams(window.location.search);
+const LOCKED_ZONE = urlParams.get('zone'); // null = Accounting, '530' = DM
 
 const ZONE_BRANCHES = {
   '511': ['51002','51426','51428','51436','51438','51450','51508','51510','51511','51514','51518','51521','51524','51530','51534','51542','51546','51549','51550','51905','51906','51944','51960','51968'],
@@ -499,33 +408,55 @@ const STORE_NAMES = {
   '51002':'เซ็นทรัลวิจเลจ','51091':'เทอร์มินอล 21 โคราชแฟร์','51132':'บิ๊กซี ลพบุรี','51403':'ฟิวเจอร์พาร์ค','51404':'แฟชั่นไอส์แลนด์','51407':'มอลล์ 6','51409':'ไอทีสแควร์ หลักสี่','51410':'เซนทรัลบางนา','51415':'เซ็นทรัล รามอินทรา','51416':'มอลล์ 8','51418':'โลตัส รังสิต คลอง 7','51419':'โลตัส นวนคร','51425':'เซ็นทรัล แจ้งวัฒนะ','51426':'บิ๊กซี ราชดำริ','51427':'พาราไดซ์พาร์ค','51428':'มาบุญครอง 2','51430':'เซ็นทรัล พระราม 9','51431':'เมกาบางนา','51433':'เซ็นทรัล ศาลายา','51434':'สุขุมวิท 15','51435':'โฮมโปร สุวรรณภูมิ','51436':'เซ็นทรัล เวสท์เกต','51438':'เซ็นทรัลปิ่นเกล้า','51439':'โรบินสัน ลาดกระบัง','51446':'โลตัส รังสิตคลอง 4','51450':'เซ็นทรัลเวสต์วิลล์','51498':'มีนบุรีเอาท์เล็ท','51506':'อิมพีเรียลเวิลด์ สำโรง','51508':'ท่าพระจันทร์','51510':'เยาวราช','51511':'มอลล์ 7','51512':'ซีคอนสแควร์','51514':'บิ๊กซี พระราม 4','51517':'โลตัส ศาลายา','51518':'เซ็นทรัล พระราม 3','51520':'โรบินสัน ศรีสมาน','51521':'โลตัส บางประกอก','51524':'โลตัส จรัญสนิทวงศ์','51530':'บิ๊กซี เพชรเกษม 2','51532':'บิ๊กซี อ้อมใหญ่','51533':'โลตัส ลำลูกกา','51534':'บิ๊กซี บางปะกอก','51535':'บิ๊กซี สุวินทวงศ์','51540':'บิ๊กซี รามอินทรา','51542':'สุพรีม สามเสน','51545':'โรบินสัน สมุทรปราการ','51546':'โลตัส บางใหญ่','51548':'บิ๊กซีบางพลี','51549':'บิ๊กซี บางใหญ่','51550':'บิ๊กซี สุขสวัสดิ์','51903':'อิมพีเรียล ลาดพร้าว','51905':'เซ็นทรัล พระราม 2','51906':'ซีคอน บางแค','51938':'โลตัส ลาดพร้าว','51939':'โลตัส แจ้งวัฒนะ','51944':'มาบุญครอง','51946':'บิ๊กซี รังสิต','51948':'โลตัส หลักสี่','51960':'บิ๊กซี พระราม 2','51965':'โลตัส บางกะปิ','51968':'โลตัส พระราม 4','52002':'เซ็นทรัล เชียงราย','52003':'อยุธยาพาร์ค','52005':'บิ๊กซี เชียงใหม่','52007':'โลตัส เชียงใหม่คำเที่ยง','52008':'เซ็นทรัล แอร์พอร์ต','52010':'เซ็นทรัล พิษณุโลก','52017':'โลตัส แม่สอด','52018':'โรบินสัน กำแพงเพชร','52019':'โลตัสพะเยา','52023':'แพร่','52025':'เมญ่า เชียงใหม่','52026':'เซ็นทรัล นครสวรรค์','52031':'เซ็นทรัล ลำปาง','52032':'โลตัส พิษณุโลก 2','52033':'แฮปปี้พลาซ่า','52036':'โลตัส รวมโชค','52037':'เซ็นทรัล เชียงใหม่','52040':'บิ๊กซี พิษณุโลก','52042':'อุตรดิตถ์','52043':'บิ๊กซี เพชรบูรณ์','52048':'โลตัส น่าน','52098':'เชียงใหม่ เอาท์เล็ท','52901':'บิ๊กซี กำแพงเพชร','52902':'บิ๊กซี เชียงใหม่ 2','52942':'บิ๊กซี เชียงราย','52943':'บิ๊กซี ลำปาง','53002':'บิ๊กซี อุดร','53003':'ทวีกิจ บุรีรัมย์ 2','53006':'โลตัส ท่าบ่อ หนองคาย','53008':'โลตัส เดชอุดม','53009':'มอลล์ โคราช','53010':'สุรินทร์พลาซ่า','53011':'กาฬสินธุ์พลาซ่า','53012':'เซ็นทรัล อุดร','53018':'บิ๊กซี วารินชำราบ','53020':'บิ๊กซี ศรีสะเกษ','53021':'โลตัส อุดร','53022':'เซ็นทรัล ขอนแก่น','53023':'ท็อปส์ พลาซ่า พล','53024':'บิ๊กซี ปากช่อง','53026':'แฟรี่ขอนแก่น','53029':'เสริมไทย คอมเพล็กซ์','53030':'บิ๊กซี ร้อยเอ็ด','53031':'เซ็นทรัล อุบล','53032':'โรบินสัน สกลนคร','53035':'โรบินสัน ร้อยเอ็ด','53036':'โรบินสัน มุกดาหาร','53037':'อัศวรรณ 2 หนองคาย','53038':'โลตัส ขอนแก่น','53040':'บิ๊กชี โคราช 2','53041':'เซ็นทรัล โคราช','53043':'บิ๊กชี อำนาจเจริญ','53045':'โลตัส นางรอง','53046':'โลตัส ขอนแก่น 2','53047':'โลตัส อุบล','53048':'โลตัส ชุมแพ','53049':'โรบินสัน ชัยภูมิ','53905':'บิ๊กซี เลย','53947':'บิ๊กซี ระยอง','53948':'บิ๊กซี โคราช','53953':'บิ๊กซี อุบล','53955':'โลตัส หนองคาย','53958':'บิ๊กซี ขอนแก่น','54001':'เพชรบุรี','54004':'บิ๊กซี พัทยา','54005':'เซ็นทรัลศรีราชา','54007':'โลตัส พัทยาเหนือ','54011':'เซ็นทรัล อยุธยา','54012':'บิ๊กซี เพชรบุรี','54013':'บิ๊กซี ฉะเชิงเทรา 2','54014':'โลตัส บ้านโป่ง','54016':'บิ๊กซี ชลบุรี 2','54017':'โรบินสัน กาญจนบุรี','54018':'บิ๊กซี อยุธยา','54019':'บิ๊กซี สระแก้ว','54021':'เซ็นทรัล พัทยาบีช','54022':'เซ็นทรัล มหาชัย','54023':'เซ็นทรัล ชลบุรี','54026':'บิ๊กซี พัทยา 2','54027':'บิ๊กซี มหาชัย','54029':'ฮาเบอร์มอลล์','54030':'บิ๊กซี ชลบุรี','54032':'สุขอนันต์ปาร์ค','54035':'โรบินสัน สระบุรี','54038':'บิ๊กซี ศรีมหาโพธิ์','54039':'โลตัส นครนายก','54040':'โรบินสัน สุพรรณบุรี','54042':'นครปฐม','54044':'โรบินสัน ฉะเชิงเทรา','54045':'โรบินสัน ปราจีนบุรี','54046':'เซ็นทรัล ระยอง','54048':'เซ็นทรัล มารีนา พัทยา','54094':'เซ็นทรัลนครปฐม','54095':'โลตัสสระบุรี','54945':'โลตัส สุพรรณบุรี','54960':'โลตัส ราชบุรี','55001':'หัวหินมาร์เก็ต','55005':'โลตัส สุราษฎร์','55008':'จังซีลอน','55009':'บิ๊กซี หาดใหญ่ 2','55010':'โลตัส กระบี่','55012':'เซ็นทรัล ภูเก็ต','55018':'โลตัส พัทลุง','55019':'โลตัส สมุย ละไม','55023':'ปัตตานี','55024':'โลตัส หาดใหญ่ 2','55030':'เซ็นทรัล สุราษฎร์','55031':'บิ๊กซี ภูเก็ต','55033':'โลตัสเวียงสระ','55035':'เซ็นทรัล หาดใหญ่','55036':'บิ๊กซี ตรัง','55038':'เซ็นทรัล สมุย','55040':'โลตัส จะนะ','55041':'โลตัส หาดใหญ่ 1','55042':'โลตัสสงขลา','55043':'เซ็นทรัล นครศรีธรรมราช','55044':'บูลพอร์ต','55046':'บิ๊กซี พังงา','55049':'Lotus Yala','55901':'โรบินสัน ตรัง','55902':'บิ๊กซี นครศรี','55906':'บิ๊กซี สตูล','55949':'บิ๊กซี สุราษฎร์','55950':'โลตัส ภูเก็ต','55951':'บิ๊กซี หาดใหญ่','71205':'อินฟินิท ปากน้ำ','72007':'ชัยพงษ์ พิจิตร','72011':'เจริญภัณฑ์ พะเยา','73005':'ร้อยเอ็ดพลาซ่า','73015':'ซุ่นเฮง ศรีสะเกษ','74023':'กนกกาญจน์','75011':'สิริบรรณ ตรัง','75012':'โวค กระบี่','75014':'โอเชียน ชุมพร',
 };
 
+/* ============================================================
+   STATE — initialise activeZoneFilter from URL immediately
+   ============================================================ */
 let allStoresList = [];
-let allRecords = [];
-let activeZoneFilter = '';
+let allRecords    = [];
+let storeNameMap  = {};  // store_code -> store_name (from Supabase)
+let activeZoneFilter  = LOCKED_ZONE || '';   // ← set HERE, before any render
 let activeMetricFilter = '';
-let searchQuery = '';
-let sortCol = 'store_code';
-let sortDir = 'asc';
-let activeRange = 7;
-let currentPage = 1;
+let searchQuery   = '';
+let sortCol = 'store_code', sortDir = 'asc';
+let activeRange   = 7;
+let currentPage   = 1;
 let autoRefreshOn = true;
 let autoRefreshTimer = null;
-let trendChartInstance = null;
-let districtChartInstance = null;
-let donutChartInstance = null;
+let trendChartInstance = null, districtChartInstance = null, donutChartInstance = null;
+let dupSelectedId = null, dupCurrentGroupId = null, dupCurrentRecords = [];
 
-/* ── Duplicate modal state ── */
-let dupSelectedId = null;
-let dupCurrentGroupId = null;
-let dupCurrentRecords = [];
-
-function getFilterSalesDateEl()   { return document.getElementById('filterSalesDate'); }
-function getFilterDepositDateEl() { return document.getElementById('filterDepositDate'); }
-const filterZoneEl = document.getElementById('filterZone');
 const today = new Date().toISOString().slice(0,10);
+function dateNDaysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
 
-function dateNDaysAgo(n){ const d = new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+/* ============================================================
+   APPLY DM MODE (UI changes) — runs before data loads
+   ============================================================ */
+if (LOCKED_ZONE) {
+  // Validate: zone must exist in ZONE_BRANCHES
+  if (!ZONE_BRANCHES[LOCKED_ZONE]) {
+    document.getElementById('updatedAt').textContent = '⚠️ Zone ไม่ถูกต้อง: ' + LOCKED_ZONE;
+  }
+  // Sidebar identity
+  document.getElementById('sidebarAvatar').textContent = 'DM';
+  document.getElementById('sidebarName').textContent   = 'District Manager';
+  document.getElementById('sidebarEmail').textContent  = `zone${LOCKED_ZONE}@bata.co.th`;
+  // Hide accounting-only elements
+  document.getElementById('navByDistrict').style.display   = 'none';
+  document.getElementById('districtNavGroup').style.display = 'none';
+  document.getElementById('districtSection').style.display  = 'none';
+  document.getElementById('chartsRow').style.gridTemplateColumns = '1fr';
+  document.getElementById('filterZone').style.display  = 'none';
+  document.getElementById('zoneListSection').style.display = 'none';
+  // Show DM banner
+  document.getElementById('dmBanner').style.display = 'flex';
+  document.getElementById('dmBannerZone').textContent = `Zone ${LOCKED_ZONE}`;
+  // Page title
+  document.getElementById('pageTitle').textContent = `Dashboard — Zone ${LOCKED_ZONE}`;
+}
 
+/* ============================================================
+   INIT date pickers
+   ============================================================ */
 (function(){
   const sd = document.getElementById('filterSalesDate');
   const dd = document.getElementById('filterDepositDate');
@@ -533,14 +464,19 @@ function dateNDaysAgo(n){ const d = new Date(); d.setDate(d.getDate()-n); return
   if(dd){ dd.max=today; dd.addEventListener('change',()=>{ currentPage=1; render(); }); }
 })();
 
-filterZoneEl.addEventListener('change',()=>{ if(LOCKED_ZONE) return; activeZoneFilter=filterZoneEl.value; currentPage=1; render(); });
+/* filterZone dropdown — only active in Accounting mode */
+document.getElementById('filterZone').addEventListener('change',()=>{
+  if(LOCKED_ZONE) return;   // DM cannot change zone
+  activeZoneFilter = document.getElementById('filterZone').value;
+  currentPage=1; render();
+});
 
 document.getElementById('rangeToggle').querySelectorAll('button').forEach(btn=>{
   btn.addEventListener('click',()=>{
     activeRange=Number(btn.dataset.range);
     document.getElementById('rangeToggle').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('th_missed').textContent=`Missed (${activeRange}d) ↕`;
+    // th_missed removed
     currentPage=1; render();
   });
 });
@@ -574,31 +510,66 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
 function onSearchInput(){ searchQuery=document.getElementById('storeSearch').value.trim().toLowerCase(); currentPage=1; render(); }
 function sortBy(col){ if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc'; else{ sortCol=col; sortDir='asc'; } currentPage=1; render(); }
 
+function getStoreName(code){
+  return storeNameMap[code] || STORE_NAMES[code] || '';
+}
+
 function buildStoreList(){
   const list=[];
-  Object.keys(ZONE_BRANCHES).sort().forEach(zone=>{ ZONE_BRANCHES[zone].forEach(code=>{ list.push({store_code:code,zone_code:zone,store_name:STORE_NAMES[code]||null}); }); });
+  const zones = LOCKED_ZONE ? [LOCKED_ZONE] : Object.keys(ZONE_BRANCHES).sort();
+  zones.forEach(zone=>{ ZONE_BRANCHES[zone].forEach(code=>{ list.push({store_code:code,zone_code:zone,store_name:getStoreName(code)}); }); });
   return list;
 }
 
+/* ============================================================
+   LOAD DATA — filter by zone at Supabase level for DM
+   ============================================================ */
 async function loadData(){
-  const sinceDate=dateNDaysAgo(90)+'T00:00:00';
-  const {data:records,error}=await sb.from('payin_records').select('*').gte('submitted_at',sinceDate).order('submitted_at',{ascending:false});
-  if(error){ document.getElementById('tableBody').innerHTML=`<tr><td colspan="9" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`; return; }
-  allRecords=records||[];
-  const zones=Object.keys(ZONE_BRANCHES).sort();
-  filterZoneEl.innerHTML='<option value="">All Districts</option>'+zones.map(z=>`<option value="${z}">Zone ${z}</option>`).join('');
-  document.getElementById('updatedAt').textContent='Last updated '+new Date().toLocaleString('en-GB');
+  document.getElementById('updatedAt').textContent = 'กำลังโหลด...';
+  const sinceDate = dateNDaysAgo(90)+'T00:00:00';
+
+  // โหลด store names จาก Supabase
+  const {data:storeRows} = await sb.from('stores').select('store_code,store_name');
+  if(storeRows){ storeRows.forEach(s=>{ storeNameMap[s.store_code]=s.store_name||''; }); }
+
+  let query = sb.from('payin_records').select('id,zone_code,store_code,sales_date,deposit_date,amount,channel,channel_detail,slip_url,submitted_at,duplicate_status,duplicate_group_id,duplicate_reason').gte('submitted_at', sinceDate).order('submitted_at',{ascending:false});
+
+  // For DM: filter at DB level — only fetch store codes in their zone
+  if (LOCKED_ZONE && ZONE_BRANCHES[LOCKED_ZONE]) {
+    query = query.in('store_code', ZONE_BRANCHES[LOCKED_ZONE]);
+  }
+
+  const {data:records, error} = await query;
+  if(error){
+    document.getElementById('tableBody').innerHTML=`<tr><td colspan="10" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
+    document.getElementById('updatedAt').textContent = '⚠️ โหลดไม่สำเร็จ';
+    return;
+  }
+
+  allRecords = records||[];
+
+  // Populate zone dropdown (Accounting only)
+  if (!LOCKED_ZONE) {
+    const zones = Object.keys(ZONE_BRANCHES).sort();
+    document.getElementById('filterZone').innerHTML = '<option value="">All Districts</option>' +
+      zones.map(z=>`<option value="${z}">Zone ${z}</option>`).join('');
+  }
+
+  document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('th-TH');
   render();
 }
 
-function getStoreStatus(storeCode,salesDate,depositDate){
-  let recs=allRecords.filter(r=>r.store_code===storeCode);
-  const sd=salesDate||today;
-  recs=recs.filter(r=>(r.sales_date||'').slice(0,10)===sd);
-  if(depositDate) recs=recs.filter(r=>(r.deposit_date||'').slice(0,10)===depositDate);
+/* ============================================================
+   STATUS HELPERS
+   ============================================================ */
+function getStoreStatus(storeCode, salesDate, depositDate){
+  let recs = allRecords.filter(r=>r.store_code===storeCode);
+  const sd = salesDate||today;
+  recs = recs.filter(r=>(r.sales_date||'').slice(0,10)===sd);
+  if(depositDate) recs = recs.filter(r=>(r.deposit_date||'').slice(0,10)===depositDate);
   if(recs.length===0) return {status:'missing',records:[]};
-  const latest=recs.reduce((a,b)=>new Date(a.submitted_at)>new Date(b.submitted_at)?a:b);
-  const isLate=new Date(latest.submitted_at).getHours()>=LATE_CUTOFF_HOUR;
+  const latest = recs.reduce((a,b)=>new Date(a.submitted_at)>new Date(b.submitted_at)?a:b);
+  const isLate = new Date(latest.submitted_at).getHours()>=LATE_CUTOFF_HOUR;
   if(recs.length>1) return {status:'duplicate',records:recs,latest,isLate};
   if(isLate) return {status:'late',records:recs,latest};
   return {status:'sent',records:recs,latest};
@@ -610,16 +581,18 @@ function countMissedDays(storeCode,days){
   return missed;
 }
 
-/* ── Toast ── */
+/* ============================================================
+   TOAST
+   ============================================================ */
 function showToast(msg,type=''){
   const el=document.getElementById('toastMsg');
-  el.textContent=msg;
-  el.className='show'+(type?' '+type+'-toast':'');
-  clearTimeout(el._t);
-  el._t=setTimeout(()=>el.className='',3500);
+  el.textContent=msg; el.className='show'+(type?' '+type+'-toast':'');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.className='',3500);
 }
 
-/* ── Duplicate Modal ── */
+/* ============================================================
+   DUPLICATE MODAL
+   ============================================================ */
 async function openDupModal(storeCode,salesDate){
   dupSelectedId=null; dupCurrentGroupId=null; dupCurrentRecords=[];
   const storeName=STORE_NAMES[storeCode]||storeCode;
@@ -630,61 +603,28 @@ async function openDupModal(storeCode,salesDate){
   document.getElementById('dupSaveBtn').disabled=true;
   document.getElementById('dupSaveMsg').style.display='none';
   document.getElementById('dupModalBackdrop').classList.add('open');
-
-  const {data,error}=await sb.from('payin_records')
-    .select('id,store_code,sales_date,deposit_date,submitted_at,amount,slip_url,duplicate_status,duplicate_group_id,duplicate_reason')
-    .eq('store_code',storeCode).eq('sales_date',salesDate).order('submitted_at',{ascending:true});
-
-  if(error||!data||data.length===0){
-    document.getElementById('dupModalReason').textContent=error?error.message:'ไม่พบข้อมูล';
-    return;
-  }
-
-  dupCurrentRecords=data;
-  dupCurrentGroupId=data.find(r=>r.duplicate_group_id)?.duplicate_group_id||null;
-
+  const {data,error}=await sb.from('payin_records').select('id,store_code,sales_date,deposit_date,submitted_at,amount,slip_url,duplicate_status,duplicate_group_id,duplicate_reason').eq('store_code',storeCode).eq('sales_date',salesDate).order('submitted_at',{ascending:true});
+  if(error||!data||data.length===0){ document.getElementById('dupModalReason').textContent=error?error.message:'ไม่พบข้อมูล'; return; }
+  dupCurrentRecords=data; dupCurrentGroupId=data.find(r=>r.duplicate_group_id)?.duplicate_group_id||null;
   const reasons=data[0]?.duplicate_reason||[];
-  const reasonLabel=reasons.includes('same_slip_hash')
-    ?'Store Code + Sales Date ซ้ำ และ Slip รูปเดียวกัน'
-    :'Store Code + Sales Date ซ้ำกัน';
-
-  document.getElementById('dupModalReason').innerHTML=
-    `<strong>สาเหตุที่ detect ว่าซ้ำ:</strong> ${reasonLabel}<br>
-     เลือกรายการที่ <strong>ถูกต้อง</strong> แล้วกด <strong>บันทึก</strong> — รายการที่เหลือจะถูก Rejected อัตโนมัติ`;
-
+  const reasonLabel=reasons.includes('same_slip_hash')?'Store Code + Sales Date ซ้ำ และ Slip รูปเดียวกัน':'Store Code + Sales Date ซ้ำกัน';
+  document.getElementById('dupModalReason').innerHTML=`<strong>สาเหตุ:</strong> ${reasonLabel}<br>เลือกรายการที่ <strong>ถูกต้อง</strong> แล้วกด <strong>บันทึก</strong>`;
   document.getElementById('dupModalTbody').innerHTML=data.map((r,i)=>{
     const timeStr=new Date(r.submitted_at).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
     const amtStr=r.amount!=null?Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
     const slipHtml=r.slip_url?`<a class="imglink" href="${r.slip_url}" target="_blank" rel="noopener">View</a>`:'—';
     const statusBadge=r.duplicate_status==='correct'?'<span class="tag-correct">✓ Correct</span>':r.duplicate_status==='rejected'?'<span class="tag-rejected">✕ Rejected</span>':'<span class="tag-pending">Pending</span>';
     const canMark=r.duplicate_status==='pending'||!r.duplicate_status;
-    return `<tr id="duprow-${r.id}">
-      <td>${i+1}</td><td>${timeStr}</td>
-      <td>${(r.sales_date||'').slice(0,10)||'—'}</td>
-      <td>${(r.deposit_date||'').slice(0,10)||'—'}</td>
-      <td style="font-weight:700;color:var(--warn)">${amtStr}</td>
-      <td>${slipHtml}</td>
-      <td id="dupstatus-${r.id}">${statusBadge}</td>
-      <td><button class="btn-mark-correct" id="dupbtn-${r.id}" onclick="selectDupCorrect('${r.id}')" ${canMark?'':'disabled'}>✓ Mark as Correct</button></td>
-    </tr>`;
+    return `<tr id="duprow-${r.id}"><td>${i+1}</td><td>${timeStr}</td><td>${(r.sales_date||'').slice(0,10)||'—'}</td><td>${(r.deposit_date||'').slice(0,10)||'—'}</td><td style="font-weight:700;color:var(--warn)">${amtStr}</td><td>${slipHtml}</td><td id="dupstatus-${r.id}">${statusBadge}</td><td><button class="btn-mark-correct" id="dupbtn-${r.id}" onclick="selectDupCorrect('${r.id}')" ${canMark?'':'disabled'}>✓ Mark as Correct</button></td></tr>`;
   }).join('');
 }
 
 function selectDupCorrect(id){
   dupSelectedId=id;
-  dupCurrentRecords.forEach(r=>{
-    const row=document.getElementById('duprow-'+r.id); if(!row) return;
-    row.className='';
-    document.getElementById('dupstatus-'+r.id).innerHTML='<span class="tag-pending">Pending</span>';
-  });
+  dupCurrentRecords.forEach(r=>{ const row=document.getElementById('duprow-'+r.id); if(!row) return; row.className=''; document.getElementById('dupstatus-'+r.id).innerHTML='<span class="tag-pending">Pending</span>'; });
   document.getElementById('duprow-'+id).className='dup-row-correct';
   document.getElementById('dupstatus-'+id).innerHTML='<span class="tag-correct">✓ Correct</span>';
-  dupCurrentRecords.forEach(r=>{
-    if(r.id!==id){
-      const row=document.getElementById('duprow-'+r.id); if(row) row.className='dup-row-rejected';
-      document.getElementById('dupstatus-'+r.id).innerHTML='<span class="tag-rejected">✕ Rejected</span>';
-    }
-  });
+  dupCurrentRecords.forEach(r=>{ if(r.id!==id){ const row=document.getElementById('duprow-'+r.id); if(row) row.className='dup-row-rejected'; document.getElementById('dupstatus-'+r.id).innerHTML='<span class="tag-rejected">✕ Rejected</span>'; } });
   document.getElementById('dupSaveBtn').disabled=false;
   document.getElementById('dupSaveMsg').style.display='none';
 }
@@ -694,12 +634,7 @@ async function saveDupResolve(){
   const saveBtn=document.getElementById('dupSaveBtn');
   saveBtn.disabled=true; saveBtn.innerHTML='<span class="dup-spinner"></span>บันทึก...';
   try{
-    if(!dupCurrentGroupId){
-      const {error:detectErr}=await sb.rpc('detect_and_group_duplicates');
-      if(detectErr) throw detectErr;
-      const {data:refreshed}=await sb.from('payin_records').select('id,duplicate_group_id').eq('id',dupSelectedId).single();
-      dupCurrentGroupId=refreshed?.duplicate_group_id||null;
-    }
+    if(!dupCurrentGroupId){ const {error:detectErr}=await sb.rpc('detect_and_group_duplicates'); if(detectErr) throw detectErr; const {data:refreshed}=await sb.from('payin_records').select('id,duplicate_group_id').eq('id',dupSelectedId).single(); dupCurrentGroupId=refreshed?.duplicate_group_id||null; }
     const {data:{user}}=await sb.auth.getUser();
     const {error}=await sb.rpc('resolve_duplicate',{p_correct_id:dupSelectedId,p_resolved_by:user?.id||null});
     if(error) throw error;
@@ -708,20 +643,18 @@ async function saveDupResolve(){
     document.querySelectorAll('[id^="dupbtn-"]').forEach(b=>b.disabled=true);
     showToast('✓ บันทึกสำเร็จ','ok');
     setTimeout(()=>{ closeDupModal(); loadData(); },1200);
-  }catch(e){
-    showToast('บันทึกไม่สำเร็จ: '+e.message,'err');
-    saveBtn.disabled=false; saveBtn.innerHTML='บันทึก';
-  }
+  }catch(e){ showToast('บันทึกไม่สำเร็จ: '+e.message,'err'); saveBtn.disabled=false; saveBtn.innerHTML='บันทึก'; }
 }
 
 function closeDupModal(){
   document.getElementById('dupModalBackdrop').classList.remove('open');
   dupSelectedId=null; dupCurrentGroupId=null; dupCurrentRecords=[];
 }
-
 document.getElementById('dupModalBackdrop').addEventListener('click',function(e){ if(e.target===this) closeDupModal(); });
 
-/* ── Charts ── */
+/* ============================================================
+   CHARTS
+   ============================================================ */
 function renderTrendChart(stores){
   const labels=[],sentCounts=[];
   const totalCount=stores.length;
@@ -731,14 +664,12 @@ function renderTrendChart(stores){
     labels.push(d.toLocaleDateString('th-TH',{day:'numeric',month:'short'}));
     sentCounts.push(stores.filter(s=>{ const r=getStoreStatus(s.store_code,dStr,''); return r.status==='sent'||r.status==='duplicate'; }).length);
   }
-  document.getElementById('trendTitle').textContent=activeZoneFilter?`Trend — Zone ${activeZoneFilter}`:'Submission Trend — All Districts';
+  const label = LOCKED_ZONE ? `Trend — Zone ${LOCKED_ZONE}` : (activeZoneFilter ? `Trend — Zone ${activeZoneFilter}` : 'Submission Trend — All Districts');
+  document.getElementById('trendTitle').textContent = label;
   if(trendChartInstance) trendChartInstance.destroy();
   trendChartInstance=new Chart(document.getElementById('trendChart'),{
     type:'bar',
-    data:{labels,datasets:[
-      {label:'Total stores',data:labels.map(()=>totalCount),type:'line',borderColor:'#D8D4CF',backgroundColor:'#D8D4CF',borderWidth:2,pointRadius:0,borderDash:[4,4],fill:false,order:1},
-      {label:'Submitted on time',data:sentCounts,backgroundColor:'#E11D2E',borderRadius:4,order:2},
-    ]},
+    data:{labels,datasets:[{label:'Total stores',data:labels.map(()=>totalCount),type:'line',borderColor:'#D8D4CF',backgroundColor:'#D8D4CF',borderWidth:2,pointRadius:0,borderDash:[4,4],fill:false,order:1},{label:'Submitted on time',data:sentCounts,backgroundColor:'#E11D2E',borderRadius:4,order:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:activeRange>14,maxRotation:45}}}},
   });
 }
@@ -756,11 +687,7 @@ function renderDistrictChart(dateStr){
   if(districtChartInstance) districtChartInstance.destroy();
   districtChartInstance=new Chart(document.getElementById('districtChart'),{
     type:'bar',
-    data:{labels:zones.map(z=>`Zone ${z}`),datasets:[
-      {label:'Submitted',data:submittedData,backgroundColor:'#0FA968',borderRadius:3},
-      {label:'Not submitted',data:notSubmittedData,backgroundColor:'#D97706',borderRadius:3},
-      {label:'Late',data:lateData,backgroundColor:'#E0263F',borderRadius:3},
-    ]},
+    data:{labels:zones.map(z=>`Zone ${z}`),datasets:[{label:'Submitted',data:submittedData,backgroundColor:'#0FA968',borderRadius:3},{label:'Not submitted',data:notSubmittedData,backgroundColor:'#D97706',borderRadius:3},{label:'Late',data:lateData,backgroundColor:'#E0263F',borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:false,maxRotation:0,font:{size:10}}}}},
   });
 }
@@ -777,29 +704,35 @@ function renderDonutChart(total,sent,missing,dup,late){
     .map(([c,l,n])=>`<div class="donut-legend-row"><div class="leg-left"><span class="dot" style="background:${c};"></span>${l}</div><b>${n} <span style="font-weight:400;color:var(--ink-soft)">(${pct(n)})</span></b></div>`).join('');
 }
 
-/* ── Render ── */
+/* ============================================================
+   MAIN RENDER
+   ============================================================ */
 function render(){
-  const salesDateFilter=(document.getElementById('filterSalesDate')&&document.getElementById('filterSalesDate').value)||today;
-  const depositDateFilter=(document.getElementById('filterDepositDate')&&document.getElementById('filterDepositDate').value)||'';
-  let stores=allStoresList;
-  if(activeZoneFilter) stores=stores.filter(s=>s.zone_code===activeZoneFilter);
-  const rows=stores.map(s=>({store:s,...getStoreStatus(s.store_code,salesDateFilter,depositDateFilter)}));
+  const salesDateFilter = (document.getElementById('filterSalesDate')&&document.getElementById('filterSalesDate').value)||today;
+  const depositDateFilter = (document.getElementById('filterDepositDate')&&document.getElementById('filterDepositDate').value)||'';
+
+  // allStoresList is already filtered to zone for DM — no extra filter needed
+  const stores = activeZoneFilter && !LOCKED_ZONE
+    ? allStoresList.filter(s=>s.zone_code===activeZoneFilter)
+    : allStoresList;
+
+  const rows = stores.map(s=>({store:s,...getStoreStatus(s.store_code,salesDateFilter,depositDateFilter)}));
 
   renderTrendChart(stores);
   if(!LOCKED_ZONE) renderDistrictChart(salesDateFilter||today);
 
-  const total=rows.length;
-  const sent=rows.filter(r=>r.status==='sent').length;
-  const missing=rows.filter(r=>r.status==='missing').length;
-  const dup=rows.filter(r=>r.status==='duplicate').length;
-  const late=rows.filter(r=>r.status==='late').length;
+  const total   = rows.length;
+  const sent    = rows.filter(r=>r.status==='sent').length;
+  const missing = rows.filter(r=>r.status==='missing').length;
+  const dup     = rows.filter(r=>r.status==='duplicate').length;
+  const late    = rows.filter(r=>r.status==='late').length;
 
   renderDonutChart(total,sent,missing,dup,late);
-  document.getElementById('navCountMissing').textContent=missing;
-  document.getElementById('navCountDuplicate').textContent=dup;
-  document.getElementById('navCountLate').textContent=late;
+  document.getElementById('navCountMissing').textContent   = missing;
+  document.getElementById('navCountDuplicate').textContent = dup;
+  document.getElementById('navCountLate').textContent      = late;
 
-  const pct=n=>total>0?((n/total)*100).toFixed(2)+'%':'—';
+  const pct = n => total>0?((n/total)*100).toFixed(2)+'%':'—';
   document.getElementById('metricsRow').innerHTML=`
     <div class="metric" data-filter=""><div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total Stores</div></div><div class="metric-value">${total}</div><div class="metric-pct blue">100%</div></div>
     <div class="metric" data-filter="sent"><div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div><div class="metric-value">${sent}</div><div class="metric-pct ok">${pct(sent)}</div></div>
@@ -813,30 +746,44 @@ function render(){
     el.addEventListener('click',()=>{ activeMetricFilter=activeMetricFilter===f?'':f; currentPage=1; render(); });
   });
 
-  const zones=Object.keys(ZONE_BRANCHES).sort();
-  document.getElementById('zoneList').innerHTML=zones.map(z=>{
-    const zStores=allStoresList.filter(s=>s.zone_code===z);
-    const zRows=zStores.map(s=>getStoreStatus(s.store_code,salesDateFilter,depositDateFilter));
-    const zSent=zRows.filter(r=>r.status!=='missing').length;
-    return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}"><span class="zone-row-name">Zone ${z}</span><span class="zone-row-stats"><span class="zs-ok">${zSent}</span><span class="zs-sep">/</span><span style="color:var(--ink-soft)">${zStores.length}</span></span></div>`;
-  }).join('');
-  document.querySelectorAll('.zone-row').forEach(el=>{
-    el.addEventListener('click',()=>{ if(LOCKED_ZONE) return; const z=el.dataset.zone; activeZoneFilter=activeZoneFilter===z?'':z; filterZoneEl.value=activeZoneFilter; currentPage=1; render(); });
-  });
+  // Zone list (Accounting only)
+  if (!LOCKED_ZONE) {
+    const zones=Object.keys(ZONE_BRANCHES).sort();
+    document.getElementById('zoneList').innerHTML=zones.map(z=>{
+      const zStores=allStoresList.filter(s=>s.zone_code===z);
+      const zRows=zStores.map(s=>getStoreStatus(s.store_code,salesDateFilter,depositDateFilter));
+      const zSent=zRows.filter(r=>r.status!=='missing').length;
+      return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}"><span class="zone-row-name">Zone ${z}</span><span class="zone-row-stats"><span class="zs-ok">${zSent}</span><span class="zs-sep">/</span><span style="color:var(--ink-soft)">${zStores.length}</span></span></div>`;
+    }).join('');
+    document.querySelectorAll('.zone-row').forEach(el=>{
+      el.addEventListener('click',()=>{ const z=el.dataset.zone; activeZoneFilter=activeZoneFilter===z?'':z; document.getElementById('filterZone').value=activeZoneFilter; currentPage=1; render(); });
+    });
+  }
 
+  // Missing list
   const missingRows=rows.filter(r=>r.status==='missing');
   document.getElementById('missingCardTitle').textContent=`Not Submitted (${missingRows.length})`;
   document.getElementById('missingListBody').innerHTML=missingRows.length===0
-    ?'<div style="padding:12px 8px;font-size:12px;color:var(--ok);">✓ All stores have submitted</div>'
-    :missingRows.slice(0,50).map(r=>`<div class="missing-item"><span class="missing-code">${r.store.store_code}</span><span class="missing-name" title="${r.store.store_name||''}">${r.store.store_name||'—'}</span><span class="missing-zone">${r.store.zone_code}</span></div>`).join('');
+    ?'<div style="padding:12px 8px;font-size:12px;color:var(--ok);">✓ ทุกสาขาส่งแล้ว</div>'
+    :missingRows.slice(0,50).map(r=>`<div class="missing-item"><span class="missing-code">${r.store.store_code}</span><span class="missing-name" title="${getStoreName(r.store.store_code)}">${getStoreName(r.store.store_code)||'—'}</span><span class="missing-zone">${r.store.zone_code}</span></div>`).join('');
 
+  // Table
   let filteredRows=rows;
   if(activeMetricFilter) filteredRows=filteredRows.filter(r=>r.status===activeMetricFilter);
   if(searchQuery) filteredRows=filteredRows.filter(r=>r.store.store_code.toLowerCase().includes(searchQuery)||(r.store.store_name&&r.store.store_name.toLowerCase().includes(searchQuery)));
-  filteredRows=filteredRows.map(r=>({...r,missedDays:countMissedDays(r.store.store_code,activeRange)}));
+  filteredRows=filteredRows.map(r=>{
+    let depositDelay=null;
+    if(r.latest&&r.latest.deposit_date&&r.latest.sales_date){
+      const dep=new Date(r.latest.deposit_date);
+      const sal=new Date(r.latest.sales_date);
+      depositDelay=Math.round((dep-sal)/(1000*60*60*24));
+    }
+    return {...r,depositDelay};
+  });
   filteredRows=[...filteredRows].sort((a,b)=>{
     let va,vb;
     if(sortCol==='store_code'){va=a.store.store_code;vb=b.store.store_code;}
+    else if(sortCol==='store_name'){va=a.store.store_name||'';vb=b.store.store_name||'';}
     else if(sortCol==='zone'){va=a.store.zone_code;vb=b.store.zone_code;}
     else if(sortCol==='status'){va=a.status;vb=b.status;}
     else if(sortCol==='sales_date'){va=a.latest?a.latest.sales_date||'':'';vb=b.latest?b.latest.sales_date||'':'';}
@@ -844,16 +791,18 @@ function render(){
     else if(sortCol==='time'){va=a.latest?a.latest.submitted_at:'';vb=b.latest?b.latest.submitted_at:'';}
     else if(sortCol==='amount'){va=a.latest?Number(a.latest.amount):-1;vb=b.latest?Number(b.latest.amount):-1;}
     else if(sortCol==='slip'){va=a.latest&&a.latest.slip_url?1:0;vb=b.latest&&b.latest.slip_url?1:0;}
-    else if(sortCol==='missed'){va=a.missedDays||0;vb=b.missedDays||0;}
+    else if(sortCol==='channel'){va=a.latest&&a.latest.channel?a.latest.channel:'';vb=b.latest&&b.latest.channel?b.latest.channel:'';}
+    else if(sortCol==='channel_detail'){va=a.latest&&a.latest.channel_detail?a.latest.channel_detail:'';vb=b.latest&&b.latest.channel_detail?b.latest.channel_detail:'';}
+    else if(sortCol==='delay'){va=a.depositDelay!=null?a.depositDelay:999;vb=b.depositDelay!=null?b.depositDelay:999;}
     else{va=a.store.store_code;vb=b.store.store_code;}
     if(va<vb) return sortDir==='asc'?-1:1;
     if(va>vb) return sortDir==='asc'?1:-1;
     return 0;
   });
 
-  ['store_code','zone','status','sales_date','deposit_date','time','amount','slip','missed'].forEach(col=>{
+  ['store_code','store_name','zone','status','sales_date','deposit_date','time','amount','slip','channel','channel_detail','delay'].forEach(col=>{
     const th=document.getElementById('th_'+col); if(!th) return;
-    const base={store_code:'Store Code',zone:'District',status:'Status',sales_date:'Sales Date',deposit_date:'Deposit Date',time:'Submitted At',amount:'Deposit Amount',slip:'Slip',missed:`Missed (${activeRange}d)`}[col];
+    const base={store_code:'Store Code',store_name:'Store Name',zone:'District',status:'Status',sales_date:'Sales Date',deposit_date:'Deposit Date',time:'Submitted At',amount:'Deposit Amount',slip:'Slip',channel:'Channel',channel_detail:'Channel Detail',delay:'Deposit Delay'}[col];
     th.textContent=base+(sortCol===col?(sortDir==='asc'?' ▲':' ▼'):' ↕');
   });
 
@@ -863,7 +812,7 @@ function render(){
   const pageRows=filteredRows.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
 
   if(filteredRows.length===0){
-    document.getElementById('tableBody').innerHTML='<tr><td colspan="9" class="empty-state">No data found for the selected filters.</td></tr>';
+    document.getElementById('tableBody').innerHTML='<tr><td colspan="10" class="empty-state">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>';
     document.getElementById('pager').innerHTML=''; return;
   }
 
@@ -877,16 +826,28 @@ function render(){
     const rec=r.latest;
     const salesDateStr=rec&&rec.sales_date?rec.sales_date.slice(0,10):'—';
     const depositDateStr=rec&&rec.deposit_date?rec.deposit_date.slice(0,10):'—';
-    const timeStr=rec?new Date(rec.submitted_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'—';
+    const timeStr=rec?new Date(rec.submitted_at).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'—';
     const amountStr=rec?Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
     const slipLink=rec&&rec.slip_url?`<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>`:'—';
     const statusBadge=r.status==='duplicate'
       ?`<button class="badge-dup-btn" onclick="openDupModal('${r.store.store_code}','${salesDateStr}')">⚠ Duplicate (${r.records.length})</button>`
       :(badgeMap[r.status]||'');
-    let missClass='zero';
-    if(r.missedDays>0&&r.missedDays<=Math.ceil(activeRange*.3)) missClass='some';
-    else if(r.missedDays>Math.ceil(activeRange*.3)) missClass='many';
-    return `<tr><td><b>${r.store.store_code}</b></td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${slipLink}</td><td><span class="miss-count ${missClass}">${r.missedDays}d</span></td></tr>`;
+    // Channel badge
+    const ch=rec&&rec.channel?rec.channel:'';
+    const chDetail=rec&&rec.channel_detail?rec.channel_detail:'—';
+    const chLower=ch.toLowerCase();
+    let chClass='ch-other';
+    if(chLower.includes('bank')||chLower.includes('ธนาคาร')||chLower.includes('scb')||chLower.includes('bbl')||chLower.includes('bay')||chLower.includes('kbank')) chClass='ch-bank';
+    else if(chLower.includes('7')||chLower.includes('counter')||chLower.includes('lotus')||chLower.includes('big')||chLower.includes('เคาน์')) chClass='ch-counter';
+    const chBadge=ch?`<span class="ch-badge ${chClass}">${ch}</span>`:'<span style="color:var(--ink-faint);font-size:11px;">—</span>';
+    // Deposit delay
+    let delayHtml='<span class="delay-chip delay-none">—</span>';
+    if(r.depositDelay!=null){
+      const dc=r.depositDelay===0?'delay-0':r.depositDelay===1?'delay-1':'delay-2';
+      const label=r.depositDelay===0?'วันเดียวกัน':`+${r.depositDelay} วัน`;
+      delayHtml=`<span class="delay-chip ${dc}">${label}</span>`;
+    }
+    return `<tr><td><b>${r.store.store_code}</b></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td></tr>`;
   }).join('');
 
   let pagerHtml=`<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
@@ -899,23 +860,10 @@ function render(){
   document.querySelectorAll('#pager button[data-page]').forEach(btn=>{ btn.addEventListener('click',()=>{ currentPage=Number(btn.dataset.page); render(); }); });
 }
 
-/* ── Zone lock ── */
-const urlParams=new URLSearchParams(window.location.search);
-const LOCKED_ZONE=urlParams.get('zone');
-if(LOCKED_ZONE){
-  activeZoneFilter=LOCKED_ZONE;
-  document.getElementById('sidebarAvatar').textContent='DM';
-  document.getElementById('sidebarName').textContent='District Team';
-  document.getElementById('sidebarEmail').textContent=`DM${LOCKED_ZONE}@bata.co.th`;
-  document.getElementById('navByDistrict').style.display='none';
-  document.getElementById('districtNavGroup').style.display='none';
-  document.getElementById('districtSection').style.display='none';
-  document.getElementById('chartsRow').style.gridTemplateColumns='1fr';
-  document.getElementById('filterZone').style.display='none';
-  document.getElementById('zoneListSection').style.display='none';
-}
-
-allStoresList=buildStoreList();
+/* ============================================================
+   START
+   ============================================================ */
+allStoresList = buildStoreList();
 setupAutoRefresh();
 loadData();
 </script>
