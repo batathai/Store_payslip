@@ -55,9 +55,7 @@
     font-weight:800; font-size:13px;
   }
   .sidebar-word{font-weight:800; font-size:17px; letter-spacing:.03em;}
-
   .sidebar-nav{flex:1; padding:10px 10px; overflow-y:auto;}
-
   .nav-group-label{
     font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
     color:rgba(255,255,255,.35); padding:12px 10px 4px;
@@ -79,7 +77,6 @@
   .nav-item.active .nav-count{background:rgba(255,255,255,.25);}
   .nav-count.warn-count{background:rgba(217,119,6,.35)!important;}
   .nav-count.err-count{background:rgba(224,38,63,.35)!important;}
-
   .sidebar-foot{
     padding:14px 16px; border-top:1px solid rgba(255,255,255,.08);
     display:flex; align-items:center; gap:10px;
@@ -93,7 +90,6 @@
   .sidebar-foot-sub{font-size:11px; color:rgba(255,255,255,.45); line-height:1.3;}
 
   .main{flex:1; min-width:0; display:flex; flex-direction:column;}
-
   .topbar{
     position:sticky; top:0; z-index:9;
     background:var(--card); border-bottom:1px solid var(--line);
@@ -121,10 +117,7 @@
     overflow-y:auto;
   }
 
-  .metrics{
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr));
-    gap:10px; margin-bottom:18px;
-  }
+  .metrics{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:10px; margin-bottom:18px;}
   .metric{
     background:var(--card); border:1.5px solid var(--line); border-radius:var(--radius-lg);
     box-shadow:var(--shadow-card); padding:14px 16px; cursor:pointer;
@@ -134,10 +127,7 @@
   .metric:active{transform:scale(.98);}
   .metric.active{border-color:var(--bata-red);}
   .metric-top{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
-  .metric-icon{
-    width:28px; height:28px; border-radius:8px;
-    display:flex; align-items:center; justify-content:center; font-size:13px; flex:0 0 auto;
-  }
+  .metric-icon{width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex:0 0 auto;}
   .metric-icon.blue{background:var(--blue-bg); color:var(--blue);}
   .metric-icon.ok{background:var(--ok-bg); color:var(--ok);}
   .metric-icon.warn{background:var(--warn-bg); color:var(--warn);}
@@ -152,21 +142,12 @@
   .metric-pct.purple{color:var(--purple);}
   .metric-pct.err{color:var(--err);}
 
-  .card{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card); padding:16px;
-  }
-  .section-head{
-    display:flex; justify-content:space-between; align-items:center;
-    flex-wrap:wrap; gap:8px; margin-bottom:12px;
-  }
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); padding:16px;}
+  .section-head{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;}
   .section-title{font-size:13px; font-weight:800; color:var(--ink); margin:0;}
 
   .range-toggle{display:flex; gap:3px; background:#F4F5F7; border:1px solid var(--line); border-radius:8px; padding:2px;}
-  .range-toggle button{
-    border:none; background:none; padding:5px 12px; font-size:12px; font-weight:700;
-    color:var(--ink-soft); border-radius:6px; cursor:pointer; font-family:var(--font-body);
-  }
+  .range-toggle button{border:none; background:none; padding:5px 12px; font-size:12px; font-weight:700; color:var(--ink-soft); border-radius:6px; cursor:pointer; font-family:var(--font-body);}
   .range-toggle button.active{background:var(--bata-red); color:#fff;}
 
   .chart-legend{display:flex; gap:14px; margin-bottom:8px; font-size:11.5px; color:var(--ink-soft); flex-wrap:wrap;}
@@ -176,59 +157,38 @@
   .charts-row{display:grid; grid-template-columns:1.6fr 1fr; gap:14px; margin-bottom:16px;}
   @media(max-width:900px){.charts-row{grid-template-columns:1fr;}}
 
-  .table-wrap{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card); overflow:hidden;
-  }
-  .table-head-bar{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:12px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap;
-  }
+  .table-wrap{background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); overflow:hidden;}
+  .table-head-bar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
   .table-title{font-size:13px; font-weight:800; margin:0;}
   .table-scroll{overflow-x:auto;}
   table{width:100%; border-collapse:collapse; font-size:12.5px;}
-  th{
-    text-align:left; padding:9px 12px; background:#FAFAFB;
-    font-weight:700; color:var(--ink-soft); font-size:10.5px;
-    text-transform:uppercase; letter-spacing:.03em;
-    border-bottom:1px solid var(--line); white-space:nowrap; cursor:pointer; user-select:none;
-  }
+  th{text-align:left; padding:9px 12px; background:#FAFAFB; font-weight:700; color:var(--ink-soft); font-size:10.5px; text-transform:uppercase; letter-spacing:.03em; border-bottom:1px solid var(--line); white-space:nowrap; cursor:pointer; user-select:none;}
   th:hover{color:var(--ink);}
   td{padding:9px 12px; border-bottom:1px solid var(--line); white-space:nowrap;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:#FAFAFB;}
 
-  .badge{
-    display:inline-block; font-size:11px; font-weight:700;
-    padding:2px 9px; border-radius:6px;
-  }
+  .badge{display:inline-block; font-size:11px; font-weight:700; padding:2px 9px; border-radius:6px;}
   .badge.ok{background:var(--ok-bg); color:var(--ok);}
   .badge.warn{background:var(--warn-bg); color:var(--warn);}
   .badge.err{background:var(--err-bg); color:var(--err);}
   .badge.purple{background:var(--purple-bg); color:var(--purple);}
 
-  /* Duplicate badge as button */
+  /* ── Duplicate badge as clickable button ── */
   .badge-dup-btn{
     display:inline-flex; align-items:center; gap:4px;
-    font-size:11px; font-weight:700;
-    padding:2px 9px; border-radius:6px;
+    font-size:11px; font-weight:700; padding:2px 9px; border-radius:6px;
     background:var(--purple-bg); color:var(--purple);
-    border:none; cursor:pointer; font-family:var(--font-body);
-    transition:background .12s;
+    border:none; cursor:pointer; font-family:var(--font-body); transition:background .12s;
   }
   .badge-dup-btn:hover{background:#e0d8fe;}
 
   .pager{display:flex; justify-content:center; align-items:center; gap:5px; padding:12px;}
-  .pager button{
-    border:1.5px solid var(--line); background:#fff; color:var(--ink-soft);
-    width:28px; height:28px; border-radius:7px; font-size:12px; font-weight:700; cursor:pointer;
-    font-family:var(--font-body);
-  }
+  .pager button{border:1.5px solid var(--line); background:#fff; color:var(--ink-soft); width:28px; height:28px; border-radius:7px; font-size:12px; font-weight:700; cursor:pointer; font-family:var(--font-body);}
   .pager button.active{background:var(--bata-red); border-color:var(--bata-red); color:#fff;}
   .pager button:disabled{opacity:.4; cursor:not-allowed;}
 
   a.imglink{color:var(--bata-red); font-weight:700; text-decoration:none; font-size:12px;}
-
   .miss-count{font-weight:700; font-size:12px;}
   .miss-count.zero{color:var(--ok);}
   .miss-count.some{color:var(--warn);}
@@ -239,45 +199,30 @@
 
   .rp-section{margin-bottom:20px;}
   .rp-title{font-size:11.5px; font-weight:800; color:var(--ink); margin-bottom:10px; text-transform:uppercase; letter-spacing:.04em;}
-
   .donut-wrap{display:flex; justify-content:center; margin-bottom:12px;}
-  .donut-legend-row{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:5px 0; border-bottom:1px solid var(--line); font-size:12px;
-  }
+  .donut-legend-row{display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); font-size:12px;}
   .donut-legend-row:last-child{border-bottom:none;}
   .donut-legend-row .leg-left{display:flex; align-items:center; gap:6px; color:var(--ink-soft);}
   .donut-legend-row .leg-left .dot{width:8px; height:8px; border-radius:2px; display:inline-block;}
   .donut-legend-row b{font-weight:700; color:var(--ink);}
 
   .zone-list{display:flex; flex-direction:column; gap:0; overflow-y:auto;}
-  .zone-row{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:7px 10px; border-radius:8px; cursor:pointer;
-    font-size:12.5px; transition:background .1s;
-  }
+  .zone-row{display:flex; align-items:center; justify-content:space-between; padding:7px 10px; border-radius:8px; cursor:pointer; font-size:12.5px; transition:background .1s;}
   .zone-row:hover{background:var(--paper);}
   .zone-row.active{background:#FFF0F0;}
   .zone-row-name{font-weight:700; color:var(--ink);}
   .zone-row-stats{display:flex; align-items:center; gap:6px; font-size:11.5px;}
   .zs-ok{color:var(--ok); font-weight:700;}
-  .zs-err{color:var(--err); font-weight:700;}
   .zs-sep{color:var(--ink-faint);}
 
   .missing-list{max-height:400px; overflow-y:auto;}
-  .missing-item{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:6px 8px; border-radius:7px; font-size:12px;
-  }
+  .missing-item{display:flex; align-items:center; justify-content:space-between; padding:6px 8px; border-radius:7px; font-size:12px;}
   .missing-item:hover{background:var(--paper);}
   .missing-code{font-weight:700; color:var(--ink); min-width:48px;}
   .missing-name{color:var(--ink-soft); flex:1; margin:0 8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .missing-zone{font-size:11px; color:var(--ink-faint); background:var(--paper); padding:1px 6px; border-radius:5px;}
 
-  .toggle-row{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:10px 0 0; margin-top:10px; border-top:1px solid var(--line);
-  }
+  .toggle-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0 0; margin-top:10px; border-top:1px solid var(--line);}
   .toggle-label{font-size:12px; font-weight:700;}
   .toggle-sub{font-size:11px; color:var(--ink-soft);}
   .switch{position:relative; width:36px; height:20px; background:var(--ok); border-radius:99px; cursor:pointer; flex:0 0 auto; transition:background .2s;}
@@ -286,12 +231,7 @@
   .switch.off::after{right:auto; left:2px;}
 
   #districtSection{margin-bottom:16px;}
-
-  .search-input{
-    padding:7px 12px; font-size:12.5px; border:1.5px solid var(--line);
-    border-radius:8px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600;
-    width:200px; outline:none;
-  }
+  .search-input{padding:7px 12px; font-size:12.5px; border:1.5px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600; width:200px; outline:none;}
   .search-input:focus{border-color:var(--bata-red);}
 
   /* ===================== DUPLICATE MODAL ===================== */
@@ -301,7 +241,6 @@
     align-items:center; justify-content:center; padding:16px;
   }
   #dupModalBackdrop.open{display:flex;}
-
   .dup-modal{
     background:#fff; border-radius:14px;
     width:100%; max-width:720px; max-height:90vh;
@@ -315,190 +254,68 @@
   }
   .dup-modal-header h2{font-size:15px; font-weight:800; color:var(--ink);}
   .dup-modal-header p{font-size:12px; color:var(--ink-soft); margin-top:3px;}
-  .dup-modal-close{
-    background:none; border:none; font-size:20px;
-    color:var(--ink-faint); cursor:pointer; line-height:1; padding:0 4px;
-  }
+  .dup-modal-close{background:none; border:none; font-size:20px; color:var(--ink-faint); cursor:pointer; line-height:1; padding:0 4px;}
   .dup-modal-close:hover{color:var(--ink);}
-
   .dup-modal-body{padding:16px 20px; flex:1;}
-
-  .dup-reason-banner{
-    background:#fffbeb; border:1px solid #fde68a; border-radius:8px;
-    padding:10px 14px; margin-bottom:14px; font-size:12px; color:#92400e; line-height:1.7;
-  }
+  .dup-reason-banner{background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:12px; color:#92400e; line-height:1.7;}
   .dup-reason-banner strong{font-weight:700;}
-
   .dup-inner-table-wrap{border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:4px;}
   .dup-inner-table-wrap table th{font-size:10.5px; padding:8px 12px; background:#FAFAFB;}
   .dup-inner-table-wrap table td{font-size:12px; padding:10px 12px;}
   .dup-inner-table-wrap table tr:hover td{background:#FAFAFB;}
-
   .dup-row-correct{background:#f0fdf4 !important;}
   .dup-row-correct td{background:#f0fdf4 !important;}
   .dup-row-rejected{opacity:.45;}
-
   .tag-correct{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--ok-bg);color:var(--ok);border-radius:5px;font-size:11px;font-weight:700;}
   .tag-rejected{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--err-bg);color:var(--err);border-radius:5px;font-size:11px;font-weight:700;}
   .tag-pending{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--paper);color:var(--ink-soft);border-radius:5px;font-size:11px;}
-
   .btn-mark-correct{
-    padding:4px 12px; border-radius:7px;
-    border:1.5px solid var(--line); background:#fff;
+    padding:4px 12px; border-radius:7px; border:1.5px solid var(--line); background:#fff;
     font-size:11px; font-weight:700; cursor:pointer; color:var(--ink);
     font-family:var(--font-body); transition:background .12s, border-color .12s;
   }
   .btn-mark-correct:hover{background:var(--ok-bg); border-color:var(--ok); color:var(--ok);}
   .btn-mark-correct:disabled{opacity:.4; cursor:not-allowed;}
-
   .dup-modal-footer{
     padding:12px 20px; border-top:1px solid var(--line);
     display:flex; justify-content:flex-end; gap:8px; align-items:center;
     position:sticky; bottom:0; background:#fff;
   }
   .dup-save-msg{font-size:12px; color:var(--ok); flex:1; font-weight:600;}
-
-  .btn-secondary{
-    padding:7px 16px; border-radius:8px; font-size:13px; font-weight:700;
-    cursor:pointer; border:1.5px solid var(--line); background:#fff; color:var(--ink);
-    font-family:var(--font-body);
-  }
+  .btn-secondary{padding:7px 16px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid var(--line); background:#fff; color:var(--ink); font-family:var(--font-body);}
   .btn-secondary:hover{background:var(--paper);}
-  .btn-save{
-    padding:7px 20px; border-radius:8px; font-size:13px; font-weight:700;
-    cursor:pointer; border:none; background:var(--ink); color:#fff;
-    font-family:var(--font-body); transition:background .12s;
-  }
+  .btn-save{padding:7px 20px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:var(--ink); color:#fff; font-family:var(--font-body); transition:background .12s;}
   .btn-save:hover{background:#2d2d2d;}
   .btn-save:disabled{opacity:.4; cursor:not-allowed;}
-
-  .dup-spinner{
-    display:inline-block; width:14px; height:14px;
-    border:2px solid var(--line); border-top-color:var(--ink-soft);
-    border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:4px;
-  }
+  .dup-spinner{display:inline-block; width:14px; height:14px; border:2px solid var(--line); border-top-color:var(--ink-soft); border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:4px;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
-  /* Toast notification */
-  #toastMsg{
-    position:fixed; bottom:24px; right:24px;
-    background:var(--ink); color:#fff;
-    padding:10px 18px; border-radius:10px; font-size:13px; font-weight:600;
-    z-index:200; display:none; max-width:340px; line-height:1.5;
-    box-shadow:0 4px 20px rgba(0,0,0,.2);
-  }
+  /* Toast */
+  #toastMsg{position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:600; z-index:200; display:none; max-width:340px; line-height:1.5; box-shadow:0 4px 20px rgba(0,0,0,.2);}
   #toastMsg.show{display:block;}
   #toastMsg.ok-toast{background:var(--ok);}
   #toastMsg.err-toast{background:var(--err);}
-  /* ===================== PAYMENT CHANNEL MODAL ===================== */
-  #payModalBackdrop{
-    display:none; position:fixed; inset:0;
-    background:rgba(0,0,0,.45); z-index:100;
-    align-items:center; justify-content:center; padding:16px;
-  }
-  #payModalBackdrop.open{display:flex;}
-  .pay-modal{
-    background:#fff; border-radius:16px;
-    width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
-    box-shadow:0 20px 60px rgba(0,0,0,.2);
-  }
-  .pay-modal-header{
-    padding:16px 20px; border-bottom:1px solid var(--line);
-    display:flex; justify-content:space-between; align-items:center;
-    position:sticky; top:0; background:#fff; z-index:1;
-  }
-  .pay-modal-header h2{font-size:15px; font-weight:800;}
-  .pay-modal-close{background:none;border:none;font-size:20px;color:var(--ink-faint);cursor:pointer;line-height:1;padding:0 4px;}
-  .pay-modal-close:hover{color:var(--ink);}
-  .pay-modal-body{padding:20px;}
-
-  .pay-group-label{
-    font-size:10px; font-weight:800; letter-spacing:.07em; text-transform:uppercase;
-    color:var(--ink-faint); margin-bottom:8px; margin-top:20px;
-  }
-  .pay-group-label:first-child{margin-top:0;}
-
-  .pay-option{
-    display:flex; align-items:flex-start; gap:12px;
-    padding:12px 14px; border:1.5px solid var(--line); border-radius:12px;
-    margin-bottom:8px; cursor:pointer; transition:border-color .12s, background .12s;
-    position:relative;
-  }
-  .pay-option:hover{border-color:var(--bata-red); background:#FFF8F8;}
-  .pay-option.selected{border-color:var(--bata-red); background:#FFF0F0;}
-  .pay-option input[type=radio]{
-    accent-color:var(--bata-red); width:17px; height:17px; margin-top:1px; flex:0 0 auto; cursor:pointer;
-  }
-  .pay-option-body{flex:1;}
-  .pay-option-name{font-size:13px; font-weight:700; color:var(--ink); line-height:1.3;}
-  .pay-option-sub{font-size:11.5px; color:var(--ink-soft); margin-top:2px; line-height:1.4;}
-
-  /* sub-bank picker inside counter service */
-  .sub-bank-wrap{
-    margin-top:10px; padding:10px 12px;
-    background:var(--paper); border-radius:8px;
-    display:none; flex-direction:column; gap:6px;
-  }
-  .sub-bank-wrap.open{display:flex;}
-  .sub-bank-label{font-size:10.5px;font-weight:700;color:var(--ink-soft);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em;}
-  .sub-bank-option{
-    display:flex; align-items:center; gap:8px;
-    padding:7px 10px; border:1.5px solid var(--line); border-radius:8px;
-    background:#fff; cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink);
-    transition:border-color .1s, background .1s;
-  }
-  .sub-bank-option:hover{border-color:var(--bata-red); background:#FFF8F8;}
-  .sub-bank-option.selected{border-color:var(--bata-red); background:#FFF0F0;}
-  .sub-bank-option input[type=radio]{accent-color:var(--bata-red); width:15px; height:15px; flex:0 0 auto; cursor:pointer;}
-  .sub-bank-acc{font-size:11px; color:var(--ink-faint); font-weight:400; margin-left:auto;}
-
-  .pay-modal-footer{
-    padding:12px 20px; border-top:1px solid var(--line);
-    display:flex; justify-content:flex-end; gap:8px;
-    position:sticky; bottom:0; background:#fff;
-  }
 </style>
 </head>
 <body>
 
 <div class="shell">
-
-  <!-- ===================== SIDEBAR ===================== -->
   <div class="sidebar">
     <div class="sidebar-brand">
       <div class="sidebar-logo">B</div>
       <div class="sidebar-word">BATA</div>
     </div>
-
     <div class="sidebar-nav" id="sidebarNav">
       <div class="nav-group-label">Overview</div>
-      <button class="nav-item active" data-view="dashboard">
-        <span class="nav-icon">&#9632;</span>Dashboard
-      </button>
-
+      <button class="nav-item active" data-view="dashboard"><span class="nav-icon">&#9632;</span>Dashboard</button>
       <div class="nav-group-label">Submissions</div>
-      <button class="nav-item" data-view="all">
-        <span class="nav-icon">&#9776;</span>All Submissions
-      </button>
-      <button class="nav-item" data-view="missing">
-        <span class="nav-icon">&#9888;</span>Not Submitted
-        <span class="nav-count err-count" id="navCountMissing">—</span>
-      </button>
-      <button class="nav-item" data-view="duplicate">
-        <span class="nav-icon">&#10063;</span>Duplicate
-        <span class="nav-count warn-count" id="navCountDuplicate">—</span>
-      </button>
-      <button class="nav-item" data-view="late">
-        <span class="nav-icon">&#9201;</span>Late Submission
-        <span class="nav-count warn-count" id="navCountLate">—</span>
-      </button>
-
+      <button class="nav-item" data-view="all"><span class="nav-icon">&#9776;</span>All Submissions</button>
+      <button class="nav-item" data-view="missing"><span class="nav-icon">&#9888;</span>Not Submitted<span class="nav-count err-count" id="navCountMissing">—</span></button>
+      <button class="nav-item" data-view="duplicate"><span class="nav-icon">&#10063;</span>Duplicate<span class="nav-count warn-count" id="navCountDuplicate">—</span></button>
+      <button class="nav-item" data-view="late"><span class="nav-icon">&#9201;</span>Late Submission<span class="nav-count warn-count" id="navCountLate">—</span></button>
       <div class="nav-group-label" id="districtNavGroup">Analytics</div>
-      <button class="nav-item" id="navByDistrict" data-view="district">
-        <span class="nav-icon">&#9776;</span>By District
-      </button>
+      <button class="nav-item" id="navByDistrict" data-view="district"><span class="nav-icon">&#9776;</span>By District</button>
     </div>
-
     <div class="sidebar-foot">
       <div class="sidebar-avatar" id="sidebarAvatar">AC</div>
       <div>
@@ -508,9 +325,7 @@
     </div>
   </div>
 
-  <!-- ===================== MAIN ===================== -->
   <div class="main">
-
     <div class="topbar">
       <div class="topbar-left">
         <div>
@@ -518,27 +333,13 @@
           <div class="topbar-sub" id="updatedAt">Loading...</div>
         </div>
       </div>
-      <div class="topbar-controls" id="topbarControls">
-        <!-- date filters — แสดงในทุก view (ย้ายขึ้นมาจาก table-head-bar) -->
-        <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:4px 10px;">
-          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
-          <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:4px 10px;">
-          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Deposit Date</label>
-          <input type="date" id="filterDepositDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
-        </div>
-        <!-- zone select — ซ่อนเมื่อ LOCKED_ZONE -->
+      <div class="topbar-controls">
         <select id="filterZone"><option value="">All Districts</option></select>
-        <!-- ปุ่มทดสอบ payment channel form -->
-        <button onclick="openPayModal()" style="padding:7px 14px;background:var(--bata-red);color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--font-body);">+ ฝากเงิน</button>
       </div>
     </div>
 
     <div class="body-split">
-
       <div class="content-col">
-
         <div class="metrics" id="metricsRow">
           <div class="metric"><div class="metric-label">Total Stores</div><div class="metric-value">—</div></div>
         </div>
@@ -557,12 +358,9 @@
                 <span><span class="dot" style="background:#E11D2E;"></span>Submitted on time</span>
                 <span><span class="dot" style="background:#D8D4CF;"></span>Total stores</span>
               </div>
-              <div style="position:relative; width:100%; height:200px;">
-                <canvas id="trendChart"></canvas>
-              </div>
+              <div style="position:relative; width:100%; height:200px;"><canvas id="trendChart"></canvas></div>
             </div>
           </div>
-
           <div id="districtSection">
             <div class="section-head" style="min-height:36px;">
               <div class="section-title" id="districtTitle">By District</div>
@@ -573,9 +371,7 @@
                 <span><span class="dot" style="background:#D97706;"></span>Not submitted</span>
                 <span><span class="dot" style="background:#E0263F;"></span>Late</span>
               </div>
-              <div style="position:relative; width:100%; height:200px;">
-                <canvas id="districtChart"></canvas>
-              </div>
+              <div style="position:relative; width:100%; height:200px;"><canvas id="districtChart"></canvas></div>
             </div>
           </div>
         </div>
@@ -584,13 +380,15 @@
           <div class="table-head-bar">
             <div class="table-title" id="tableTitle">All submissions</div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <input
-                class="search-input"
-                type="text"
-                id="storeSearch"
-                placeholder="🔍 Search store code or name..."
-                oninput="onSearchInput()"
-              >
+              <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
+                <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
+                <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
+                <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Deposit Date</label>
+                <input type="date" id="filterDepositDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+              </div>
+              <input class="search-input" type="text" id="storeSearch" placeholder="🔍 Search store code or name..." oninput="onSearchInput()">
             </div>
           </div>
           <div class="table-scroll">
@@ -615,33 +413,22 @@
           </div>
           <div class="pager" id="pager"></div>
         </div>
-
       </div>
 
       <div class="right-panel" id="rightPanel">
-
         <div class="rp-section">
           <div class="rp-title">Quick summary</div>
-          <div class="donut-wrap">
-            <canvas id="donutChart" width="140" height="140"></canvas>
-          </div>
+          <div class="donut-wrap"><canvas id="donutChart" width="140" height="140"></canvas></div>
           <div id="donutLegend"></div>
         </div>
-
         <div class="rp-section" id="zoneListSection">
           <div class="rp-title">District Overview</div>
-          <div class="zone-list" id="zoneList">
-            <div class="loading">Loading...</div>
-          </div>
+          <div class="zone-list" id="zoneList"><div class="loading">Loading...</div></div>
         </div>
-
         <div class="rp-section">
           <div class="rp-title" id="missingCardTitle">Not submitted</div>
-          <div class="missing-list">
-            <div id="missingListBody"><div class="loading">Loading...</div></div>
-          </div>
+          <div class="missing-list"><div id="missingListBody"><div class="loading">Loading...</div></div></div>
         </div>
-
         <div class="toggle-row">
           <div>
             <div class="toggle-label">Auto Refresh</div>
@@ -649,17 +436,14 @@
           </div>
           <div class="switch" id="autoRefreshToggle"></div>
         </div>
-
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- ===================== DUPLICATE REVIEW MODAL ===================== -->
+<!-- ===================== DUPLICATE MODAL ===================== -->
 <div id="dupModalBackdrop">
   <div class="dup-modal">
-
     <div class="dup-modal-header">
       <div>
         <h2 id="dupModalTitle">รายการ Duplicate</h2>
@@ -667,170 +451,33 @@
       </div>
       <button class="dup-modal-close" onclick="closeDupModal()">✕</button>
     </div>
-
     <div class="dup-modal-body">
       <div class="dup-reason-banner" id="dupModalReason"></div>
       <div class="dup-inner-table-wrap">
         <table>
           <thead>
             <tr>
-              <th>#</th>
-              <th>Submitted At</th>
-              <th>Sales Date</th>
-              <th>Deposit Date</th>
-              <th>Amount</th>
-              <th>Slip</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th>#</th><th>Submitted At</th><th>Sales Date</th><th>Deposit Date</th>
+              <th>Amount</th><th>Slip</th><th>Status</th><th>Action</th>
             </tr>
           </thead>
           <tbody id="dupModalTbody"></tbody>
         </table>
       </div>
     </div>
-
     <div class="dup-modal-footer">
       <span class="dup-save-msg" id="dupSaveMsg" style="display:none">✓ บันทึกแล้ว รายการที่เหลือถูก Rejected</span>
       <button class="btn-secondary" onclick="closeDupModal()">ปิด</button>
       <button class="btn-save" id="dupSaveBtn" onclick="saveDupResolve()" disabled>บันทึก</button>
     </div>
-
   </div>
 </div>
 
-<!-- ===================== PAYMENT CHANNEL MODAL ===================== -->
-<div id="payModalBackdrop">
-  <div class="pay-modal">
-    <div class="pay-modal-header">
-      <h2>ช่องทางที่ทำการฝากเงิน</h2>
-      <button class="pay-modal-close" onclick="closePayModal()">✕</button>
-    </div>
-    <div class="pay-modal-body">
-
-      <!-- กลุ่ม 1: ธนาคาร -->
-      <div class="pay-group-label">ธนาคาร</div>
-
-      <label class="pay-option" id="payopt-scb" onclick="selectPayOption('scb',this)">
-        <input type="radio" name="payChannel" value="scb">
-        <div class="pay-option-body">
-          <div class="pay-option-name">ธ.ไทยพาณิชย์ (Saving)</div>
-          <div class="pay-option-sub">เลขบัญชี: 347-301-3949</div>
-        </div>
-      </label>
-
-      <label class="pay-option" id="payopt-bbl" onclick="selectPayOption('bbl',this)">
-        <input type="radio" name="payChannel" value="bbl">
-        <div class="pay-option-body">
-          <div class="pay-option-name">ธ.กรุงเทพ (Current)</div>
-          <div class="pay-option-sub">เลขบัญชี: 106-315-6325</div>
-        </div>
-      </label>
-
-      <label class="pay-option" id="payopt-bay" onclick="selectPayOption('bay',this)">
-        <input type="radio" name="payChannel" value="bay">
-        <div class="pay-option-body">
-          <div class="pay-option-name">ธ.กรุงศรีอยุธยา (Saving)</div>
-          <div class="pay-option-sub">เลขบัญชี: 333-171-6277</div>
-        </div>
-      </label>
-
-      <!-- กลุ่ม 2: Counter Service -->
-      <div class="pay-group-label" style="margin-top:20px;">เคาน์เตอร์เซอร์วิส</div>
-
-      <label class="pay-option" id="payopt-7eleven" onclick="selectPayOption('7eleven',this)">
-        <input type="radio" name="payChannel" value="7eleven">
-        <div class="pay-option-body">
-          <div class="pay-option-name">7-Eleven</div>
-          <div class="pay-option-sub">ฝากผ่านเคาน์เตอร์เซเว่น</div>
-          <!-- sub: เลือกธนาคารปลายทาง -->
-          <div class="sub-bank-wrap" id="sub-7eleven">
-            <div class="sub-bank-label">ฝากเข้าธนาคาร</div>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'7eleven','bbl')">
-              <input type="radio" name="subbank-7eleven" value="bbl">
-              ธ.กรุงเทพ
-              <span class="sub-bank-acc">106-315-6325</span>
-            </label>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'7eleven','scb')">
-              <input type="radio" name="subbank-7eleven" value="scb">
-              ธ.ไทยพาณิชย์
-              <span class="sub-bank-acc">347-301-3949</span>
-            </label>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'7eleven','bay')">
-              <input type="radio" name="subbank-7eleven" value="bay">
-              ธ.กรุงศรีอยุธยา
-              <span class="sub-bank-acc">333-171-6277</span>
-            </label>
-          </div>
-        </div>
-      </label>
-
-      <label class="pay-option" id="payopt-lotus" onclick="selectPayOption('lotus',this)">
-        <input type="radio" name="payChannel" value="lotus">
-        <div class="pay-option-body">
-          <div class="pay-option-name">Lotus</div>
-          <div class="pay-option-sub">ฝากผ่านเคาน์เตอร์โลตัส</div>
-          <div class="sub-bank-wrap" id="sub-lotus">
-            <div class="sub-bank-label">ฝากเข้าธนาคาร</div>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'lotus','bbl')">
-              <input type="radio" name="subbank-lotus" value="bbl">
-              ธ.กรุงเทพ
-              <span class="sub-bank-acc">106-315-6325</span>
-            </label>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'lotus','scb')">
-              <input type="radio" name="subbank-lotus" value="scb">
-              ธ.ไทยพาณิชย์
-              <span class="sub-bank-acc">347-301-3949</span>
-            </label>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'lotus','bay')">
-              <input type="radio" name="subbank-lotus" value="bay">
-              ธ.กรุงศรีอยุธยา
-              <span class="sub-bank-acc">333-171-6277</span>
-            </label>
-          </div>
-        </div>
-      </label>
-
-      <label class="pay-option" id="payopt-bigc" onclick="selectPayOption('bigc',this)">
-        <input type="radio" name="payChannel" value="bigc">
-        <div class="pay-option-body">
-          <div class="pay-option-name">Big C</div>
-          <div class="pay-option-sub">ฝากผ่านเคาน์เตอร์บิ๊กซี</div>
-          <div class="sub-bank-wrap" id="sub-bigc">
-            <div class="sub-bank-label">ฝากเข้าธนาคาร</div>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'bigc','bbl')">
-              <input type="radio" name="subbank-bigc" value="bbl">
-              ธ.กรุงเทพ
-              <span class="sub-bank-acc">106-315-6325</span>
-            </label>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'bigc','scb')">
-              <input type="radio" name="subbank-bigc" value="scb">
-              ธ.ไทยพาณิชย์
-              <span class="sub-bank-acc">347-301-3949</span>
-            </label>
-            <label class="sub-bank-option" onclick="selectSubBank(event,'bigc','bay')">
-              <input type="radio" name="subbank-bigc" value="bay">
-              ธ.กรุงศรีอยุธยา
-              <span class="sub-bank-acc">333-171-6277</span>
-            </label>
-          </div>
-        </div>
-      </label>
-
-    </div>
-    <div class="pay-modal-footer">
-      <button class="btn-secondary" onclick="closePayModal()">ยกเลิก</button>
-      <button class="btn-save" onclick="confirmPayChannel()">ยืนยัน</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
 <div id="toastMsg"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-/* ==================== CONFIG ==================== */
 const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -838,7 +485,6 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const LATE_CUTOFF_HOUR = 22;
 const PAGE_SIZE = 25;
 
-/* ==================== ZONE / STORE DATA ==================== */
 const ZONE_BRANCHES = {
   '511': ['51002','51426','51428','51436','51438','51450','51508','51510','51511','51514','51518','51521','51524','51530','51534','51542','51546','51549','51550','51905','51906','51944','51960','51968'],
   '512': ['51403','51404','51407','51409','51415','51416','51418','51419','51425','51430','51446','51498','51520','51533','51535','51540','51903','51938','51939','51946','51948','51965'],
@@ -853,7 +499,6 @@ const STORE_NAMES = {
   '51002':'เซ็นทรัลวิจเลจ','51091':'เทอร์มินอล 21 โคราชแฟร์','51132':'บิ๊กซี ลพบุรี','51403':'ฟิวเจอร์พาร์ค','51404':'แฟชั่นไอส์แลนด์','51407':'มอลล์ 6','51409':'ไอทีสแควร์ หลักสี่','51410':'เซนทรัลบางนา','51415':'เซ็นทรัล รามอินทรา','51416':'มอลล์ 8','51418':'โลตัส รังสิต คลอง 7','51419':'โลตัส นวนคร','51425':'เซ็นทรัล แจ้งวัฒนะ','51426':'บิ๊กซี ราชดำริ','51427':'พาราไดซ์พาร์ค','51428':'มาบุญครอง 2','51430':'เซ็นทรัล พระราม 9','51431':'เมกาบางนา','51433':'เซ็นทรัล ศาลายา','51434':'สุขุมวิท 15','51435':'โฮมโปร สุวรรณภูมิ','51436':'เซ็นทรัล เวสท์เกต','51438':'เซ็นทรัลปิ่นเกล้า','51439':'โรบินสัน ลาดกระบัง','51446':'โลตัส รังสิตคลอง 4','51450':'เซ็นทรัลเวสต์วิลล์','51498':'มีนบุรีเอาท์เล็ท','51506':'อิมพีเรียลเวิลด์ สำโรง','51508':'ท่าพระจันทร์','51510':'เยาวราช','51511':'มอลล์ 7','51512':'ซีคอนสแควร์','51514':'บิ๊กซี พระราม 4','51517':'โลตัส ศาลายา','51518':'เซ็นทรัล พระราม 3','51520':'โรบินสัน ศรีสมาน','51521':'โลตัส บางประกอก','51524':'โลตัส จรัญสนิทวงศ์','51530':'บิ๊กซี เพชรเกษม 2','51532':'บิ๊กซี อ้อมใหญ่','51533':'โลตัส ลำลูกกา','51534':'บิ๊กซี บางปะกอก','51535':'บิ๊กซี สุวินทวงศ์','51540':'บิ๊กซี รามอินทรา','51542':'สุพรีม สามเสน','51545':'โรบินสัน สมุทรปราการ','51546':'โลตัส บางใหญ่','51548':'บิ๊กซีบางพลี','51549':'บิ๊กซี บางใหญ่','51550':'บิ๊กซี สุขสวัสดิ์','51903':'อิมพีเรียล ลาดพร้าว','51905':'เซ็นทรัล พระราม 2','51906':'ซีคอน บางแค','51938':'โลตัส ลาดพร้าว','51939':'โลตัส แจ้งวัฒนะ','51944':'มาบุญครอง','51946':'บิ๊กซี รังสิต','51948':'โลตัส หลักสี่','51960':'บิ๊กซี พระราม 2','51965':'โลตัส บางกะปิ','51968':'โลตัส พระราม 4','52002':'เซ็นทรัล เชียงราย','52003':'อยุธยาพาร์ค','52005':'บิ๊กซี เชียงใหม่','52007':'โลตัส เชียงใหม่คำเที่ยง','52008':'เซ็นทรัล แอร์พอร์ต','52010':'เซ็นทรัล พิษณุโลก','52017':'โลตัส แม่สอด','52018':'โรบินสัน กำแพงเพชร','52019':'โลตัสพะเยา','52023':'แพร่','52025':'เมญ่า เชียงใหม่','52026':'เซ็นทรัล นครสวรรค์','52031':'เซ็นทรัล ลำปาง','52032':'โลตัส พิษณุโลก 2','52033':'แฮปปี้พลาซ่า','52036':'โลตัส รวมโชค','52037':'เซ็นทรัล เชียงใหม่','52040':'บิ๊กซี พิษณุโลก','52042':'อุตรดิตถ์','52043':'บิ๊กซี เพชรบูรณ์','52048':'โลตัส น่าน','52098':'เชียงใหม่ เอาท์เล็ท','52901':'บิ๊กซี กำแพงเพชร','52902':'บิ๊กซี เชียงใหม่ 2','52942':'บิ๊กซี เชียงราย','52943':'บิ๊กซี ลำปาง','53002':'บิ๊กซี อุดร','53003':'ทวีกิจ บุรีรัมย์ 2','53006':'โลตัส ท่าบ่อ หนองคาย','53008':'โลตัส เดชอุดม','53009':'มอลล์ โคราช','53010':'สุรินทร์พลาซ่า','53011':'กาฬสินธุ์พลาซ่า','53012':'เซ็นทรัล อุดร','53018':'บิ๊กซี วารินชำราบ','53020':'บิ๊กซี ศรีสะเกษ','53021':'โลตัส อุดร','53022':'เซ็นทรัล ขอนแก่น','53023':'ท็อปส์ พลาซ่า พล','53024':'บิ๊กซี ปากช่อง','53026':'แฟรี่ขอนแก่น','53029':'เสริมไทย คอมเพล็กซ์','53030':'บิ๊กซี ร้อยเอ็ด','53031':'เซ็นทรัล อุบล','53032':'โรบินสัน สกลนคร','53035':'โรบินสัน ร้อยเอ็ด','53036':'โรบินสัน มุกดาหาร','53037':'อัศวรรณ 2 หนองคาย','53038':'โลตัส ขอนแก่น','53040':'บิ๊กชี โคราช 2','53041':'เซ็นทรัล โคราช','53043':'บิ๊กชี อำนาจเจริญ','53045':'โลตัส นางรอง','53046':'โลตัส ขอนแก่น 2','53047':'โลตัส อุบล','53048':'โลตัส ชุมแพ','53049':'โรบินสัน ชัยภูมิ','53905':'บิ๊กซี เลย','53947':'บิ๊กซี ระยอง','53948':'บิ๊กซี โคราช','53953':'บิ๊กซี อุบล','53955':'โลตัส หนองคาย','53958':'บิ๊กซี ขอนแก่น','54001':'เพชรบุรี','54004':'บิ๊กซี พัทยา','54005':'เซ็นทรัลศรีราชา','54007':'โลตัส พัทยาเหนือ','54011':'เซ็นทรัล อยุธยา','54012':'บิ๊กซี เพชรบุรี','54013':'บิ๊กซี ฉะเชิงเทรา 2','54014':'โลตัส บ้านโป่ง','54016':'บิ๊กซี ชลบุรี 2','54017':'โรบินสัน กาญจนบุรี','54018':'บิ๊กซี อยุธยา','54019':'บิ๊กซี สระแก้ว','54021':'เซ็นทรัล พัทยาบีช','54022':'เซ็นทรัล มหาชัย','54023':'เซ็นทรัล ชลบุรี','54026':'บิ๊กซี พัทยา 2','54027':'บิ๊กซี มหาชัย','54029':'ฮาเบอร์มอลล์','54030':'บิ๊กซี ชลบุรี','54032':'สุขอนันต์ปาร์ค','54035':'โรบินสัน สระบุรี','54038':'บิ๊กซี ศรีมหาโพธิ์','54039':'โลตัส นครนายก','54040':'โรบินสัน สุพรรณบุรี','54042':'นครปฐม','54044':'โรบินสัน ฉะเชิงเทรา','54045':'โรบินสัน ปราจีนบุรี','54046':'เซ็นทรัล ระยอง','54048':'เซ็นทรัล มารีนา พัทยา','54094':'เซ็นทรัลนครปฐม','54095':'โลตัสสระบุรี','54945':'โลตัส สุพรรณบุรี','54960':'โลตัส ราชบุรี','55001':'หัวหินมาร์เก็ต','55005':'โลตัส สุราษฎร์','55008':'จังซีลอน','55009':'บิ๊กซี หาดใหญ่ 2','55010':'โลตัส กระบี่','55012':'เซ็นทรัล ภูเก็ต','55018':'โลตัส พัทลุง','55019':'โลตัส สมุย ละไม','55023':'ปัตตานี','55024':'โลตัส หาดใหญ่ 2','55030':'เซ็นทรัล สุราษฎร์','55031':'บิ๊กซี ภูเก็ต','55033':'โลตัสเวียงสระ','55035':'เซ็นทรัล หาดใหญ่','55036':'บิ๊กซี ตรัง','55038':'เซ็นทรัล สมุย','55040':'โลตัส จะนะ','55041':'โลตัส หาดใหญ่ 1','55042':'โลตัสสงขลา','55043':'เซ็นทรัล นครศรีธรรมราช','55044':'บูลพอร์ต','55046':'บิ๊กซี พังงา','55049':'Lotus Yala','55901':'โรบินสัน ตรัง','55902':'บิ๊กซี นครศรี','55906':'บิ๊กซี สตูล','55949':'บิ๊กซี สุราษฎร์','55950':'โลตัส ภูเก็ต','55951':'บิ๊กซี หาดใหญ่','71205':'อินฟินิท ปากน้ำ','72007':'ชัยพงษ์ พิจิตร','72011':'เจริญภัณฑ์ พะเยา','73005':'ร้อยเอ็ดพลาซ่า','73015':'ซุ่นเฮง ศรีสะเกษ','74023':'กนกกาญจน์','75011':'สิริบรรณ ตรัง','75012':'โวค กระบี่','75014':'โอเชียน ชุมพร',
 };
 
-/* ==================== STATE ==================== */
 let allStoresList = [];
 let allRecords = [];
 let activeZoneFilter = '';
@@ -869,7 +514,7 @@ let trendChartInstance = null;
 let districtChartInstance = null;
 let donutChartInstance = null;
 
-// Duplicate modal state
+/* ── Duplicate modal state ── */
 let dupSelectedId = null;
 let dupCurrentGroupId = null;
 let dupCurrentRecords = [];
@@ -877,662 +522,400 @@ let dupCurrentRecords = [];
 function getFilterSalesDateEl()   { return document.getElementById('filterSalesDate'); }
 function getFilterDepositDateEl() { return document.getElementById('filterDepositDate'); }
 const filterZoneEl = document.getElementById('filterZone');
-
 const today = new Date().toISOString().slice(0,10);
 
-function dateNDaysAgo(n){
-  const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0,10);
-}
+function dateNDaysAgo(n){ const d = new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
 
 (function(){
   const sd = document.getElementById('filterSalesDate');
   const dd = document.getElementById('filterDepositDate');
-  if (sd) { sd.value = today; sd.max = today; sd.addEventListener('change', () => { currentPage = 1; render(); }); }
-  if (dd) { dd.max = today; dd.addEventListener('change', () => { currentPage = 1; render(); }); }
+  if(sd){ sd.value=today; sd.max=today; sd.addEventListener('change',()=>{ currentPage=1; render(); }); }
+  if(dd){ dd.max=today; dd.addEventListener('change',()=>{ currentPage=1; render(); }); }
 })();
 
-filterZoneEl.addEventListener('change', () => {
-  if (LOCKED_ZONE) return;
-  activeZoneFilter = filterZoneEl.value; currentPage = 1; render();
-});
+filterZoneEl.addEventListener('change',()=>{ if(LOCKED_ZONE) return; activeZoneFilter=filterZoneEl.value; currentPage=1; render(); });
 
-document.getElementById('rangeToggle').querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    activeRange = Number(btn.dataset.range);
-    document.getElementById('rangeToggle').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+document.getElementById('rangeToggle').querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    activeRange=Number(btn.dataset.range);
+    document.getElementById('rangeToggle').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('th_missed').textContent = `Missed (${activeRange}d) ↕`;
-    currentPage = 1; render();
+    document.getElementById('th_missed').textContent=`Missed (${activeRange}d) ↕`;
+    currentPage=1; render();
   });
 });
 
-document.getElementById('autoRefreshToggle').addEventListener('click', () => {
-  autoRefreshOn = !autoRefreshOn;
-  const el = document.getElementById('autoRefreshToggle');
-  el.classList.toggle('off', !autoRefreshOn);
+document.getElementById('autoRefreshToggle').addEventListener('click',()=>{
+  autoRefreshOn=!autoRefreshOn;
+  document.getElementById('autoRefreshToggle').classList.toggle('off',!autoRefreshOn);
   setupAutoRefresh();
 });
 
 function setupAutoRefresh(){
-  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
-  if (autoRefreshOn) autoRefreshTimer = setInterval(loadData, 5 * 60 * 1000);
+  if(autoRefreshTimer) clearInterval(autoRefreshTimer);
+  if(autoRefreshOn) autoRefreshTimer=setInterval(loadData,5*60*1000);
 }
 
-document.querySelectorAll('.nav-item').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const view = btn.dataset.view;
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const view=btn.dataset.view;
+    document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    if (view === 'dashboard') {
-      activeMetricFilter = '';
-      window.scrollTo({top:0, behavior:'smooth'});
-    } else if (view === 'all') {
-      activeMetricFilter = '';
-      document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
-    } else if (view === 'missing') {
-      activeMetricFilter = 'missing';
-      document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
-    } else if (view === 'duplicate') {
-      activeMetricFilter = 'duplicate';
-      document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
-    } else if (view === 'late') {
-      activeMetricFilter = 'late';
-      document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth', block:'start'});
-    } else if (view === 'district') {
-      document.getElementById('districtSection').scrollIntoView({behavior:'smooth', block:'start'});
-    }
-    currentPage = 1; render();
+    if(view==='dashboard'){ activeMetricFilter=''; window.scrollTo({top:0,behavior:'smooth'}); }
+    else if(view==='all'){ activeMetricFilter=''; document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'}); }
+    else if(view==='missing'){ activeMetricFilter='missing'; document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'}); }
+    else if(view==='duplicate'){ activeMetricFilter='duplicate'; document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'}); }
+    else if(view==='late'){ activeMetricFilter='late'; document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'}); }
+    else if(view==='district'){ document.getElementById('districtSection').scrollIntoView({behavior:'smooth',block:'start'}); }
+    currentPage=1; render();
   });
 });
 
-function onSearchInput(){
-  searchQuery = document.getElementById('storeSearch').value.trim().toLowerCase();
-  currentPage = 1; render();
-}
+function onSearchInput(){ searchQuery=document.getElementById('storeSearch').value.trim().toLowerCase(); currentPage=1; render(); }
+function sortBy(col){ if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc'; else{ sortCol=col; sortDir='asc'; } currentPage=1; render(); }
 
-function sortBy(col){
-  if(sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-  else { sortCol = col; sortDir = 'asc'; }
-  currentPage = 1; render();
-}
-
-/* ==================== BUILD STORE LIST ==================== */
 function buildStoreList(){
-  const list = [];
-  Object.keys(ZONE_BRANCHES).sort().forEach(zone => {
-    ZONE_BRANCHES[zone].forEach(code => {
-      list.push({ store_code: code, zone_code: zone, store_name: STORE_NAMES[code] || null });
-    });
-  });
+  const list=[];
+  Object.keys(ZONE_BRANCHES).sort().forEach(zone=>{ ZONE_BRANCHES[zone].forEach(code=>{ list.push({store_code:code,zone_code:zone,store_name:STORE_NAMES[code]||null}); }); });
   return list;
 }
 
-/* ==================== DATA LOADING ==================== */
 async function loadData(){
-  const sinceDate = dateNDaysAgo(90) + 'T00:00:00';
-  const { data: records, error } = await sb
-    .from('payin_records').select('*')
-    .gte('submitted_at', sinceDate)
-    .order('submitted_at', { ascending: false });
-
-  if (error) {
-    document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
-    return;
-  }
-  allRecords = records || [];
-
-  const zones = Object.keys(ZONE_BRANCHES).sort();
-  filterZoneEl.innerHTML = '<option value="">All Districts</option>' + zones.map(z => `<option value="${z}">Zone ${z}</option>`).join('');
-
-  document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('en-GB');
+  const sinceDate=dateNDaysAgo(90)+'T00:00:00';
+  const {data:records,error}=await sb.from('payin_records').select('*').gte('submitted_at',sinceDate).order('submitted_at',{ascending:false});
+  if(error){ document.getElementById('tableBody').innerHTML=`<tr><td colspan="9" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`; return; }
+  allRecords=records||[];
+  const zones=Object.keys(ZONE_BRANCHES).sort();
+  filterZoneEl.innerHTML='<option value="">All Districts</option>'+zones.map(z=>`<option value="${z}">Zone ${z}</option>`).join('');
+  document.getElementById('updatedAt').textContent='Last updated '+new Date().toLocaleString('en-GB');
   render();
 }
 
-/* ==================== STATUS LOGIC ==================== */
-function getStoreStatus(storeCode, salesDate, depositDate){
-  let recs = allRecords.filter(r => r.store_code === storeCode);
-  const sd = salesDate || today;
-  recs = recs.filter(r => (r.sales_date || '').slice(0,10) === sd);
-  if (depositDate) recs = recs.filter(r => (r.deposit_date || '').slice(0,10) === depositDate);
-  if (recs.length === 0) return { status:'missing', records:[] };
-  const latest = recs.reduce((a,b) => new Date(a.submitted_at) > new Date(b.submitted_at) ? a : b);
-  const isLate = new Date(latest.submitted_at).getHours() >= LATE_CUTOFF_HOUR;
-  if (recs.length > 1) return { status:'duplicate', records:recs, latest, isLate };
-  if (isLate) return { status:'late', records:recs, latest };
-  return { status:'sent', records:recs, latest };
+function getStoreStatus(storeCode,salesDate,depositDate){
+  let recs=allRecords.filter(r=>r.store_code===storeCode);
+  const sd=salesDate||today;
+  recs=recs.filter(r=>(r.sales_date||'').slice(0,10)===sd);
+  if(depositDate) recs=recs.filter(r=>(r.deposit_date||'').slice(0,10)===depositDate);
+  if(recs.length===0) return {status:'missing',records:[]};
+  const latest=recs.reduce((a,b)=>new Date(a.submitted_at)>new Date(b.submitted_at)?a:b);
+  const isLate=new Date(latest.submitted_at).getHours()>=LATE_CUTOFF_HOUR;
+  if(recs.length>1) return {status:'duplicate',records:recs,latest,isLate};
+  if(isLate) return {status:'late',records:recs,latest};
+  return {status:'sent',records:recs,latest};
 }
 
-function countMissedDays(storeCode, days){
-  let missed = 0;
-  for (let i = 0; i < days; i++){
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const dStr = d.toISOString().slice(0,10);
-    if (getStoreStatus(storeCode, dStr, '').status === 'missing') missed++;
-  }
+function countMissedDays(storeCode,days){
+  let missed=0;
+  for(let i=0;i<days;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(getStoreStatus(storeCode,d.toISOString().slice(0,10),'').status==='missing') missed++; }
   return missed;
 }
 
-/* ==================== TOAST ==================== */
-function showToast(msg, type = ''){
-  const el = document.getElementById('toastMsg');
-  el.textContent = msg;
-  el.className = 'show' + (type ? ' ' + type + '-toast' : '');
+/* ── Toast ── */
+function showToast(msg,type=''){
+  const el=document.getElementById('toastMsg');
+  el.textContent=msg;
+  el.className='show'+(type?' '+type+'-toast':'');
   clearTimeout(el._t);
-  el._t = setTimeout(() => el.className = '', 3500);
+  el._t=setTimeout(()=>el.className='',3500);
 }
 
-/* ==================== DUPLICATE MODAL ==================== */
-
-// เปิด modal — ดึง records จากใน allRecords ที่โหลดไว้แล้ว
-async function openDupModal(storeCode, salesDate) {
-  dupSelectedId      = null;
-  dupCurrentGroupId  = null;
-  dupCurrentRecords  = [];
-
-  const storeName = STORE_NAMES[storeCode] || storeCode;
-  document.getElementById('dupModalTitle').textContent = `Duplicate — Store ${storeCode}`;
-  document.getElementById('dupModalSub').textContent   = `${storeName} · Sales Date ${salesDate}`;
-  document.getElementById('dupModalReason').innerHTML  = '<span class="dup-spinner"></span> กำลังโหลด...';
-  document.getElementById('dupModalTbody').innerHTML   = '';
-  document.getElementById('dupSaveBtn').disabled       = true;
-  document.getElementById('dupSaveMsg').style.display  = 'none';
+/* ── Duplicate Modal ── */
+async function openDupModal(storeCode,salesDate){
+  dupSelectedId=null; dupCurrentGroupId=null; dupCurrentRecords=[];
+  const storeName=STORE_NAMES[storeCode]||storeCode;
+  document.getElementById('dupModalTitle').textContent=`Duplicate — Store ${storeCode}`;
+  document.getElementById('dupModalSub').textContent=`${storeName} · Sales Date ${salesDate}`;
+  document.getElementById('dupModalReason').innerHTML='<span class="dup-spinner"></span> กำลังโหลด...';
+  document.getElementById('dupModalTbody').innerHTML='';
+  document.getElementById('dupSaveBtn').disabled=true;
+  document.getElementById('dupSaveMsg').style.display='none';
   document.getElementById('dupModalBackdrop').classList.add('open');
 
-  // ดึง records ของ store + sales_date นี้จาก Supabase (ให้ได้ id และ duplicate_group_id ที่ถูกต้อง)
-  const { data, error } = await sb
-    .from('payin_records')
-    .select('id, store_code, sales_date, deposit_date, submitted_at, amount, slip_url, duplicate_status, duplicate_group_id, duplicate_reason')
-    .eq('store_code', storeCode)
-    .eq('sales_date', salesDate)
-    .order('submitted_at', { ascending: true });
+  const {data,error}=await sb.from('payin_records')
+    .select('id,store_code,sales_date,deposit_date,submitted_at,amount,slip_url,duplicate_status,duplicate_group_id,duplicate_reason')
+    .eq('store_code',storeCode).eq('sales_date',salesDate).order('submitted_at',{ascending:true});
 
-  if (error || !data || data.length === 0) {
-    document.getElementById('dupModalReason').textContent = error ? error.message : 'ไม่พบข้อมูล';
+  if(error||!data||data.length===0){
+    document.getElementById('dupModalReason').textContent=error?error.message:'ไม่พบข้อมูล';
     return;
   }
 
-  dupCurrentRecords = data;
-  dupCurrentGroupId = data.find(r => r.duplicate_group_id)?.duplicate_group_id || null;
+  dupCurrentRecords=data;
+  dupCurrentGroupId=data.find(r=>r.duplicate_group_id)?.duplicate_group_id||null;
 
-  const reasons = data[0]?.duplicate_reason || [];
-  const reasonLabel = reasons.includes('same_slip_hash')
-    ? 'Store Code + Sales Date ซ้ำ และ Slip รูปเดียวกัน'
-    : 'Store Code + Sales Date ซ้ำกัน';
+  const reasons=data[0]?.duplicate_reason||[];
+  const reasonLabel=reasons.includes('same_slip_hash')
+    ?'Store Code + Sales Date ซ้ำ และ Slip รูปเดียวกัน'
+    :'Store Code + Sales Date ซ้ำกัน';
 
-  document.getElementById('dupModalReason').innerHTML =
+  document.getElementById('dupModalReason').innerHTML=
     `<strong>สาเหตุที่ detect ว่าซ้ำ:</strong> ${reasonLabel}<br>
      เลือกรายการที่ <strong>ถูกต้อง</strong> แล้วกด <strong>บันทึก</strong> — รายการที่เหลือจะถูก Rejected อัตโนมัติ`;
 
-  renderDupRows(data);
-}
-
-function renderDupRows(rows) {
-  document.getElementById('dupModalTbody').innerHTML = rows.map((r, i) => {
-    const timeStr = new Date(r.submitted_at).toLocaleString('th-TH', { dateStyle:'short', timeStyle:'short' });
-    const amtStr  = r.amount != null ? Number(r.amount).toLocaleString('en-US', { minimumFractionDigits:2 }) : '—';
-    const slipHtml = r.slip_url
-      ? `<a class="imglink" href="${r.slip_url}" target="_blank" rel="noopener">View</a>`
-      : '—';
-    const statusBadge = r.duplicate_status === 'correct'
-      ? '<span class="tag-correct">✓ Correct</span>'
-      : r.duplicate_status === 'rejected'
-      ? '<span class="tag-rejected">✕ Rejected</span>'
-      : '<span class="tag-pending">Pending</span>';
-    const canMark = r.duplicate_status === 'pending' || !r.duplicate_status;
+  document.getElementById('dupModalTbody').innerHTML=data.map((r,i)=>{
+    const timeStr=new Date(r.submitted_at).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
+    const amtStr=r.amount!=null?Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
+    const slipHtml=r.slip_url?`<a class="imglink" href="${r.slip_url}" target="_blank" rel="noopener">View</a>`:'—';
+    const statusBadge=r.duplicate_status==='correct'?'<span class="tag-correct">✓ Correct</span>':r.duplicate_status==='rejected'?'<span class="tag-rejected">✕ Rejected</span>':'<span class="tag-pending">Pending</span>';
+    const canMark=r.duplicate_status==='pending'||!r.duplicate_status;
     return `<tr id="duprow-${r.id}">
-      <td>${i + 1}</td>
-      <td>${timeStr}</td>
-      <td>${(r.sales_date || '').slice(0,10) || '—'}</td>
-      <td>${(r.deposit_date || '').slice(0,10) || '—'}</td>
+      <td>${i+1}</td><td>${timeStr}</td>
+      <td>${(r.sales_date||'').slice(0,10)||'—'}</td>
+      <td>${(r.deposit_date||'').slice(0,10)||'—'}</td>
       <td style="font-weight:700;color:var(--warn)">${amtStr}</td>
       <td>${slipHtml}</td>
       <td id="dupstatus-${r.id}">${statusBadge}</td>
-      <td>
-        <button class="btn-mark-correct" id="dupbtn-${r.id}"
-          onclick="selectDupCorrect('${r.id}')"
-          ${canMark ? '' : 'disabled'}>
-          ✓ Mark as Correct
-        </button>
-      </td>
+      <td><button class="btn-mark-correct" id="dupbtn-${r.id}" onclick="selectDupCorrect('${r.id}')" ${canMark?'':'disabled'}>✓ Mark as Correct</button></td>
     </tr>`;
   }).join('');
 }
 
-function selectDupCorrect(id) {
-  dupSelectedId = id;
-
-  // reset ทุก row
-  dupCurrentRecords.forEach(r => {
-    const row = document.getElementById('duprow-' + r.id);
-    if (!row) return;
-    row.className = '';
-    document.getElementById('dupstatus-' + r.id).innerHTML = '<span class="tag-pending">Pending</span>';
+function selectDupCorrect(id){
+  dupSelectedId=id;
+  dupCurrentRecords.forEach(r=>{
+    const row=document.getElementById('duprow-'+r.id); if(!row) return;
+    row.className='';
+    document.getElementById('dupstatus-'+r.id).innerHTML='<span class="tag-pending">Pending</span>';
   });
-
-  // row ที่เลือก = correct
-  const selRow = document.getElementById('duprow-' + id);
-  if (selRow) selRow.className = 'dup-row-correct';
-  document.getElementById('dupstatus-' + id).innerHTML = '<span class="tag-correct">✓ Correct</span>';
-
-  // ที่เหลือ = rejected (preview)
-  dupCurrentRecords.forEach(r => {
-    if (r.id !== id) {
-      const row = document.getElementById('duprow-' + r.id);
-      if (row) row.className = 'dup-row-rejected';
-      document.getElementById('dupstatus-' + r.id).innerHTML = '<span class="tag-rejected">✕ Rejected</span>';
+  document.getElementById('duprow-'+id).className='dup-row-correct';
+  document.getElementById('dupstatus-'+id).innerHTML='<span class="tag-correct">✓ Correct</span>';
+  dupCurrentRecords.forEach(r=>{
+    if(r.id!==id){
+      const row=document.getElementById('duprow-'+r.id); if(row) row.className='dup-row-rejected';
+      document.getElementById('dupstatus-'+r.id).innerHTML='<span class="tag-rejected">✕ Rejected</span>';
     }
   });
-
-  document.getElementById('dupSaveBtn').disabled = false;
-  document.getElementById('dupSaveMsg').style.display = 'none';
+  document.getElementById('dupSaveBtn').disabled=false;
+  document.getElementById('dupSaveMsg').style.display='none';
 }
 
-async function saveDupResolve() {
-  if (!dupSelectedId) return;
-
-  const saveBtn = document.getElementById('dupSaveBtn');
-  saveBtn.disabled  = true;
-  saveBtn.innerHTML = '<span class="dup-spinner"></span>บันทึก...';
-
-  try {
-    // ถ้า records ยังไม่มี duplicate_group_id (ข้อมูลเก่าก่อน migration)
-    // ให้เรียก detect ก่อน แล้วค่อย resolve
-    if (!dupCurrentGroupId) {
-      const { error: detectErr } = await sb.rpc('detect_and_group_duplicates');
-      if (detectErr) throw detectErr;
-      // ดึง group_id ที่ถูก detect ใหม่
-      const { data: refreshed } = await sb
-        .from('payin_records')
-        .select('id, duplicate_group_id')
-        .eq('id', dupSelectedId)
-        .single();
-      dupCurrentGroupId = refreshed?.duplicate_group_id || null;
+async function saveDupResolve(){
+  if(!dupSelectedId) return;
+  const saveBtn=document.getElementById('dupSaveBtn');
+  saveBtn.disabled=true; saveBtn.innerHTML='<span class="dup-spinner"></span>บันทึก...';
+  try{
+    if(!dupCurrentGroupId){
+      const {error:detectErr}=await sb.rpc('detect_and_group_duplicates');
+      if(detectErr) throw detectErr;
+      const {data:refreshed}=await sb.from('payin_records').select('id,duplicate_group_id').eq('id',dupSelectedId).single();
+      dupCurrentGroupId=refreshed?.duplicate_group_id||null;
     }
-
-    const { data: { user } } = await sb.auth.getUser();
-    const userId = user?.id || null;
-
-    const { error } = await sb.rpc('resolve_duplicate', {
-      p_correct_id:  dupSelectedId,
-      p_resolved_by: userId,
-    });
-    if (error) throw error;
-
-    document.getElementById('dupSaveMsg').style.display = 'block';
-    saveBtn.innerHTML = 'บันทึก';
-    document.querySelectorAll('[id^="dupbtn-"]').forEach(b => b.disabled = true);
-
-    showToast('✓ บันทึกสำเร็จ', 'ok');
-
-    // ปิด modal และ reload ข้อมูล
-    setTimeout(() => {
-      closeDupModal();
-      loadData();
-    }, 1200);
-
-  } catch (e) {
-    showToast('บันทึกไม่สำเร็จ: ' + e.message, 'err');
-    saveBtn.disabled  = false;
-    saveBtn.innerHTML = 'บันทึก';
+    const {data:{user}}=await sb.auth.getUser();
+    const {error}=await sb.rpc('resolve_duplicate',{p_correct_id:dupSelectedId,p_resolved_by:user?.id||null});
+    if(error) throw error;
+    document.getElementById('dupSaveMsg').style.display='block';
+    saveBtn.innerHTML='บันทึก';
+    document.querySelectorAll('[id^="dupbtn-"]').forEach(b=>b.disabled=true);
+    showToast('✓ บันทึกสำเร็จ','ok');
+    setTimeout(()=>{ closeDupModal(); loadData(); },1200);
+  }catch(e){
+    showToast('บันทึกไม่สำเร็จ: '+e.message,'err');
+    saveBtn.disabled=false; saveBtn.innerHTML='บันทึก';
   }
 }
 
-function closeDupModal() {
+function closeDupModal(){
   document.getElementById('dupModalBackdrop').classList.remove('open');
-  dupSelectedId     = null;
-  dupCurrentGroupId = null;
-  dupCurrentRecords = [];
+  dupSelectedId=null; dupCurrentGroupId=null; dupCurrentRecords=[];
 }
 
-// ปิด modal เมื่อกด backdrop
-document.getElementById('dupModalBackdrop').addEventListener('click', function(e) {
-  if (e.target === this) closeDupModal();
-});
+document.getElementById('dupModalBackdrop').addEventListener('click',function(e){ if(e.target===this) closeDupModal(); });
 
-/* ==================== CHARTS ==================== */
+/* ── Charts ── */
 function renderTrendChart(stores){
-  const labels = [], sentCounts = [];
-  const totalCount = stores.length;
-  for (let i = activeRange - 1; i >= 0; i--){
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const dStr = d.toISOString().slice(0,10);
-    labels.push(d.toLocaleDateString('th-TH', {day:'numeric', month:'short'}));
-    sentCounts.push(stores.filter(s => {
-      const r = getStoreStatus(s.store_code, dStr, '');
-      return r.status === 'sent' || r.status === 'duplicate';
-    }).length);
+  const labels=[],sentCounts=[];
+  const totalCount=stores.length;
+  for(let i=activeRange-1;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const dStr=d.toISOString().slice(0,10);
+    labels.push(d.toLocaleDateString('th-TH',{day:'numeric',month:'short'}));
+    sentCounts.push(stores.filter(s=>{ const r=getStoreStatus(s.store_code,dStr,''); return r.status==='sent'||r.status==='duplicate'; }).length);
   }
-  document.getElementById('trendTitle').textContent =
-    activeZoneFilter ? `Trend — Zone ${activeZoneFilter}` : 'Submission Trend — All Districts';
-  if (trendChartInstance) trendChartInstance.destroy();
-  trendChartInstance = new Chart(document.getElementById('trendChart'), {
+  document.getElementById('trendTitle').textContent=activeZoneFilter?`Trend — Zone ${activeZoneFilter}`:'Submission Trend — All Districts';
+  if(trendChartInstance) trendChartInstance.destroy();
+  trendChartInstance=new Chart(document.getElementById('trendChart'),{
     type:'bar',
-    data:{ labels, datasets:[
-      { label:'Total stores', data:labels.map(()=>totalCount), type:'line', borderColor:'#D8D4CF', backgroundColor:'#D8D4CF', borderWidth:2, pointRadius:0, borderDash:[4,4], fill:false, order:1 },
-      { label:'Submitted on time', data:sentCounts, backgroundColor:'#E11D2E', borderRadius:4, order:2 },
+    data:{labels,datasets:[
+      {label:'Total stores',data:labels.map(()=>totalCount),type:'line',borderColor:'#D8D4CF',backgroundColor:'#D8D4CF',borderWidth:2,pointRadius:0,borderDash:[4,4],fill:false,order:1},
+      {label:'Submitted on time',data:sentCounts,backgroundColor:'#E11D2E',borderRadius:4,order:2},
     ]},
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true, ticks:{precision:0}}, x:{ticks:{autoSkip:activeRange>14, maxRotation:45}} }},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:activeRange>14,maxRotation:45}}}},
   });
 }
 
 function renderDistrictChart(dateStr){
-  const zones = Object.keys(ZONE_BRANCHES).sort();
-  const submittedData = [], notSubmittedData = [], lateData = [];
-  zones.forEach(z => {
-    const zoneStores = allStoresList.filter(s => s.zone_code === z);
-    let sub=0, notSub=0, late=0;
-    zoneStores.forEach(s => {
-      const r = getStoreStatus(s.store_code, dateStr, '');
-      if (r.status==='sent'||r.status==='duplicate') sub++;
-      else if (r.status==='late') late++;
-      else notSub++;
-    });
+  const zones=Object.keys(ZONE_BRANCHES).sort();
+  const submittedData=[],notSubmittedData=[],lateData=[];
+  zones.forEach(z=>{
+    const zoneStores=allStoresList.filter(s=>s.zone_code===z);
+    let sub=0,notSub=0,late=0;
+    zoneStores.forEach(s=>{ const r=getStoreStatus(s.store_code,dateStr,''); if(r.status==='sent'||r.status==='duplicate') sub++; else if(r.status==='late') late++; else notSub++; });
     submittedData.push(sub); notSubmittedData.push(notSub); lateData.push(late);
   });
-  document.getElementById('districtTitle').textContent =
-    `By District — ${new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;
-  if (districtChartInstance) districtChartInstance.destroy();
-  districtChartInstance = new Chart(document.getElementById('districtChart'), {
+  document.getElementById('districtTitle').textContent=`By District — ${new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;
+  if(districtChartInstance) districtChartInstance.destroy();
+  districtChartInstance=new Chart(document.getElementById('districtChart'),{
     type:'bar',
-    data:{ labels:zones.map(z=>`Zone ${z}`), datasets:[
-      { label:'Submitted', data:submittedData, backgroundColor:'#0FA968', borderRadius:3 },
-      { label:'Not submitted', data:notSubmittedData, backgroundColor:'#D97706', borderRadius:3 },
-      { label:'Late', data:lateData, backgroundColor:'#E0263F', borderRadius:3 },
+    data:{labels:zones.map(z=>`Zone ${z}`),datasets:[
+      {label:'Submitted',data:submittedData,backgroundColor:'#0FA968',borderRadius:3},
+      {label:'Not submitted',data:notSubmittedData,backgroundColor:'#D97706',borderRadius:3},
+      {label:'Late',data:lateData,backgroundColor:'#E0263F',borderRadius:3},
     ]},
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true, ticks:{precision:0}}, x:{ticks:{autoSkip:false, maxRotation:0, font:{size:10}}} }},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:false,maxRotation:0,font:{size:10}}}}},
   });
 }
 
-function renderDonutChart(total, sent, missing, dup, late){
-  if (donutChartInstance) donutChartInstance.destroy();
-  donutChartInstance = new Chart(document.getElementById('donutChart'), {
+function renderDonutChart(total,sent,missing,dup,late){
+  if(donutChartInstance) donutChartInstance.destroy();
+  donutChartInstance=new Chart(document.getElementById('donutChart'),{
     type:'doughnut',
-    data:{
-      labels:['Submitted','Not submitted','Late','Duplicate'],
-      datasets:[{ data:[sent,missing,late,dup], backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC'], borderWidth:0 }],
-    },
-    options:{ responsive:false, cutout:'72%', plugins:{legend:{display:false}} },
+    data:{labels:['Submitted','Not submitted','Late','Duplicate'],datasets:[{data:[sent,missing,late,dup],backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC'],borderWidth:0}]},
+    options:{responsive:false,cutout:'72%',plugins:{legend:{display:false}}},
   });
-  const pct = n => total > 0 ? ((n/total)*100).toFixed(1)+'%' : '0%';
-  document.getElementById('donutLegend').innerHTML = [
-    ['#0FA968','Submitted',sent],
-    ['#D97706','Not submitted',missing],
-    ['#E0263F','Late',late],
-    ['#7C5CFC','Duplicate',dup],
-  ].map(([c,l,n]) => `
-    <div class="donut-legend-row">
-      <div class="leg-left"><span class="dot" style="background:${c};"></span>${l}</div>
-      <b>${n} <span style="font-weight:400;color:var(--ink-soft)">(${pct(n)})</span></b>
-    </div>`).join('');
+  const pct=n=>total>0?((n/total)*100).toFixed(1)+'%':'0%';
+  document.getElementById('donutLegend').innerHTML=[['#0FA968','Submitted',sent],['#D97706','Not submitted',missing],['#E0263F','Late',late],['#7C5CFC','Duplicate',dup]]
+    .map(([c,l,n])=>`<div class="donut-legend-row"><div class="leg-left"><span class="dot" style="background:${c};"></span>${l}</div><b>${n} <span style="font-weight:400;color:var(--ink-soft)">(${pct(n)})</span></b></div>`).join('');
 }
 
-/* ==================== RENDER ==================== */
+/* ── Render ── */
 function render(){
-  const salesDateFilter   = (document.getElementById('filterSalesDate')   && document.getElementById('filterSalesDate').value)   || today;
-  const depositDateFilter = (document.getElementById('filterDepositDate') && document.getElementById('filterDepositDate').value) || '';
-  let stores = allStoresList;
-  if (activeZoneFilter) stores = stores.filter(s => s.zone_code === activeZoneFilter);
-
-  const rows = stores.map(s => ({ store:s, ...getStoreStatus(s.store_code, salesDateFilter, depositDateFilter) }));
+  const salesDateFilter=(document.getElementById('filterSalesDate')&&document.getElementById('filterSalesDate').value)||today;
+  const depositDateFilter=(document.getElementById('filterDepositDate')&&document.getElementById('filterDepositDate').value)||'';
+  let stores=allStoresList;
+  if(activeZoneFilter) stores=stores.filter(s=>s.zone_code===activeZoneFilter);
+  const rows=stores.map(s=>({store:s,...getStoreStatus(s.store_code,salesDateFilter,depositDateFilter)}));
 
   renderTrendChart(stores);
-  if (!LOCKED_ZONE) renderDistrictChart(salesDateFilter || today);
+  if(!LOCKED_ZONE) renderDistrictChart(salesDateFilter||today);
 
-  const total   = rows.length;
-  const sent    = rows.filter(r => r.status === 'sent').length;
-  const missing = rows.filter(r => r.status === 'missing').length;
-  const dup     = rows.filter(r => r.status === 'duplicate').length;
-  const late    = rows.filter(r => r.status === 'late').length;
+  const total=rows.length;
+  const sent=rows.filter(r=>r.status==='sent').length;
+  const missing=rows.filter(r=>r.status==='missing').length;
+  const dup=rows.filter(r=>r.status==='duplicate').length;
+  const late=rows.filter(r=>r.status==='late').length;
 
-  renderDonutChart(total, sent, missing, dup, late);
+  renderDonutChart(total,sent,missing,dup,late);
+  document.getElementById('navCountMissing').textContent=missing;
+  document.getElementById('navCountDuplicate').textContent=dup;
+  document.getElementById('navCountLate').textContent=late;
 
-  document.getElementById('navCountMissing').textContent   = missing;
-  document.getElementById('navCountDuplicate').textContent = dup;
-  document.getElementById('navCountLate').textContent      = late;
-
-  const pct = n => total > 0 ? ((n/total)*100).toFixed(2)+'%' : '—';
-
-  document.getElementById('metricsRow').innerHTML = `
+  const pct=n=>total>0?((n/total)*100).toFixed(2)+'%':'—';
+  document.getElementById('metricsRow').innerHTML=`
     <div class="metric" data-filter=""><div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total Stores</div></div><div class="metric-value">${total}</div><div class="metric-pct blue">100%</div></div>
     <div class="metric" data-filter="sent"><div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div><div class="metric-value">${sent}</div><div class="metric-pct ok">${pct(sent)}</div></div>
     <div class="metric" data-filter="missing"><div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not Submitted</div></div><div class="metric-value">${missing}</div><div class="metric-pct warn">${pct(missing)}</div></div>
     <div class="metric" data-filter="duplicate"><div class="metric-top"><div class="metric-icon purple">&#10063;</div><div class="metric-label">Duplicate</div></div><div class="metric-value">${dup}</div><div class="metric-pct purple">${pct(dup)}</div></div>
     <div class="metric" data-filter="late"><div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late Submission</div></div><div class="metric-value">${late}</div><div class="metric-pct err">${pct(late)}</div></div>
   `;
-  document.querySelectorAll('.metric').forEach(el => {
-    const f = el.dataset.filter;
-    if (f === activeMetricFilter) el.classList.add('active');
-    el.addEventListener('click', () => {
-      activeMetricFilter = activeMetricFilter === f ? '' : f;
-      currentPage = 1; render();
-    });
+  document.querySelectorAll('.metric').forEach(el=>{
+    const f=el.dataset.filter;
+    if(f===activeMetricFilter) el.classList.add('active');
+    el.addEventListener('click',()=>{ activeMetricFilter=activeMetricFilter===f?'':f; currentPage=1; render(); });
   });
 
-  const zones = Object.keys(ZONE_BRANCHES).sort();
-  document.getElementById('zoneList').innerHTML = zones.map(z => {
-    const zStores = allStoresList.filter(s => s.zone_code === z);
-    const zRows = zStores.map(s => getStoreStatus(s.store_code, salesDateFilter, depositDateFilter));
-    const zSent = zRows.filter(r => r.status !== 'missing').length;
-    return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}">
-      <span class="zone-row-name">Zone ${z}</span>
-      <span class="zone-row-stats">
-        <span class="zs-ok">${zSent}</span>
-        <span class="zs-sep">/</span>
-        <span style="color:var(--ink-soft)">${zStores.length}</span>
-      </span>
-    </div>`;
+  const zones=Object.keys(ZONE_BRANCHES).sort();
+  document.getElementById('zoneList').innerHTML=zones.map(z=>{
+    const zStores=allStoresList.filter(s=>s.zone_code===z);
+    const zRows=zStores.map(s=>getStoreStatus(s.store_code,salesDateFilter,depositDateFilter));
+    const zSent=zRows.filter(r=>r.status!=='missing').length;
+    return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}"><span class="zone-row-name">Zone ${z}</span><span class="zone-row-stats"><span class="zs-ok">${zSent}</span><span class="zs-sep">/</span><span style="color:var(--ink-soft)">${zStores.length}</span></span></div>`;
   }).join('');
-
-  document.querySelectorAll('.zone-row').forEach(el => {
-    el.addEventListener('click', () => {
-      if (LOCKED_ZONE) return;
-      const z = el.dataset.zone;
-      activeZoneFilter = activeZoneFilter === z ? '' : z;
-      filterZoneEl.value = activeZoneFilter;
-      currentPage = 1; render();
-    });
+  document.querySelectorAll('.zone-row').forEach(el=>{
+    el.addEventListener('click',()=>{ if(LOCKED_ZONE) return; const z=el.dataset.zone; activeZoneFilter=activeZoneFilter===z?'':z; filterZoneEl.value=activeZoneFilter; currentPage=1; render(); });
   });
 
-  const missingRows = rows.filter(r => r.status === 'missing');
-  document.getElementById('missingCardTitle').textContent = `Not Submitted (${missingRows.length})`;
-  document.getElementById('missingListBody').innerHTML = missingRows.length === 0
-    ? '<div style="padding:12px 8px;font-size:12px;color:var(--ok);">✓ All stores have submitted</div>'
-    : missingRows.slice(0, 50).map(r => `
-        <div class="missing-item">
-          <span class="missing-code">${r.store.store_code}</span>
-          <span class="missing-name" title="${r.store.store_name||''}">${r.store.store_name||'—'}</span>
-          <span class="missing-zone">${r.store.zone_code}</span>
-        </div>`).join('');
+  const missingRows=rows.filter(r=>r.status==='missing');
+  document.getElementById('missingCardTitle').textContent=`Not Submitted (${missingRows.length})`;
+  document.getElementById('missingListBody').innerHTML=missingRows.length===0
+    ?'<div style="padding:12px 8px;font-size:12px;color:var(--ok);">✓ All stores have submitted</div>'
+    :missingRows.slice(0,50).map(r=>`<div class="missing-item"><span class="missing-code">${r.store.store_code}</span><span class="missing-name" title="${r.store.store_name||''}">${r.store.store_name||'—'}</span><span class="missing-zone">${r.store.zone_code}</span></div>`).join('');
 
-  /* Table */
-  let filteredRows = rows;
-  if (activeMetricFilter) filteredRows = filteredRows.filter(r => r.status === activeMetricFilter);
-  if (searchQuery) filteredRows = filteredRows.filter(r =>
-    r.store.store_code.toLowerCase().includes(searchQuery) ||
-    (r.store.store_name && r.store.store_name.toLowerCase().includes(searchQuery))
-  );
-
-  filteredRows = filteredRows.map(r => ({...r, missedDays: countMissedDays(r.store.store_code, activeRange)}));
-
-  filteredRows = [...filteredRows].sort((a, b) => {
-    let va, vb;
-    if(sortCol==='store_code'){va=a.store.store_code; vb=b.store.store_code;}
-    else if(sortCol==='zone'){va=a.store.zone_code; vb=b.store.zone_code;}
-    else if(sortCol==='status'){va=a.status; vb=b.status;}
-    else if(sortCol==='sales_date'){va=a.latest?a.latest.sales_date||'':''; vb=b.latest?b.latest.sales_date||'':'';}
-    else if(sortCol==='deposit_date'){va=a.latest?a.latest.deposit_date||'':''; vb=b.latest?b.latest.deposit_date||'':'';}
-    else if(sortCol==='time'){va=a.latest?a.latest.submitted_at:''; vb=b.latest?b.latest.submitted_at:'';}
-    else if(sortCol==='amount'){va=a.latest?Number(a.latest.amount):-1; vb=b.latest?Number(b.latest.amount):-1;}
-    else if(sortCol==='slip'){va=a.latest&&a.latest.slip_url?1:0; vb=b.latest&&b.latest.slip_url?1:0;}
-    else if(sortCol==='missed'){va=a.missedDays||0; vb=b.missedDays||0;}
-    else{va=a.store.store_code; vb=b.store.store_code;}
+  let filteredRows=rows;
+  if(activeMetricFilter) filteredRows=filteredRows.filter(r=>r.status===activeMetricFilter);
+  if(searchQuery) filteredRows=filteredRows.filter(r=>r.store.store_code.toLowerCase().includes(searchQuery)||(r.store.store_name&&r.store.store_name.toLowerCase().includes(searchQuery)));
+  filteredRows=filteredRows.map(r=>({...r,missedDays:countMissedDays(r.store.store_code,activeRange)}));
+  filteredRows=[...filteredRows].sort((a,b)=>{
+    let va,vb;
+    if(sortCol==='store_code'){va=a.store.store_code;vb=b.store.store_code;}
+    else if(sortCol==='zone'){va=a.store.zone_code;vb=b.store.zone_code;}
+    else if(sortCol==='status'){va=a.status;vb=b.status;}
+    else if(sortCol==='sales_date'){va=a.latest?a.latest.sales_date||'':'';vb=b.latest?b.latest.sales_date||'':'';}
+    else if(sortCol==='deposit_date'){va=a.latest?a.latest.deposit_date||'':'';vb=b.latest?b.latest.deposit_date||'':'';}
+    else if(sortCol==='time'){va=a.latest?a.latest.submitted_at:'';vb=b.latest?b.latest.submitted_at:'';}
+    else if(sortCol==='amount'){va=a.latest?Number(a.latest.amount):-1;vb=b.latest?Number(b.latest.amount):-1;}
+    else if(sortCol==='slip'){va=a.latest&&a.latest.slip_url?1:0;vb=b.latest&&b.latest.slip_url?1:0;}
+    else if(sortCol==='missed'){va=a.missedDays||0;vb=b.missedDays||0;}
+    else{va=a.store.store_code;vb=b.store.store_code;}
     if(va<vb) return sortDir==='asc'?-1:1;
     if(va>vb) return sortDir==='asc'?1:-1;
     return 0;
   });
 
-  ['store_code','zone','status','sales_date','deposit_date','time','amount','slip','missed'].forEach(col => {
-    const th = document.getElementById('th_'+col);
-    if(!th) return;
-    const base = {store_code:'Store Code',zone:'District',status:'Status',sales_date:'Sales Date',deposit_date:'Deposit Date',time:'Submitted At',amount:'Deposit Amount',slip:'Slip',missed:`Missed (${activeRange}d)`}[col];
-    th.textContent = base + (sortCol===col ? (sortDir==='asc'?' ▲':' ▼'):' ↕');
+  ['store_code','zone','status','sales_date','deposit_date','time','amount','slip','missed'].forEach(col=>{
+    const th=document.getElementById('th_'+col); if(!th) return;
+    const base={store_code:'Store Code',zone:'District',status:'Status',sales_date:'Sales Date',deposit_date:'Deposit Date',time:'Submitted At',amount:'Deposit Amount',slip:'Slip',missed:`Missed (${activeRange}d)`}[col];
+    th.textContent=base+(sortCol===col?(sortDir==='asc'?' ▲':' ▼'):' ↕');
   });
 
-  document.getElementById('tableTitle').textContent = `All submissions (${filteredRows.length})`;
+  document.getElementById('tableTitle').textContent=`All submissions (${filteredRows.length})`;
+  const totalPages=Math.max(1,Math.ceil(filteredRows.length/PAGE_SIZE));
+  if(currentPage>totalPages) currentPage=totalPages;
+  const pageRows=filteredRows.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
 
-  const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
-  if (currentPage > totalPages) currentPage = totalPages;
-  const pageRows = filteredRows.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
-
-  if (filteredRows.length === 0){
-    document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="empty-state">No data found for the selected filters.</td></tr>';
-    document.getElementById('pager').innerHTML = '';
-    return;
+  if(filteredRows.length===0){
+    document.getElementById('tableBody').innerHTML='<tr><td colspan="9" class="empty-state">No data found for the selected filters.</td></tr>';
+    document.getElementById('pager').innerHTML=''; return;
   }
 
-  const badgeMap = {
+  const badgeMap={
     sent:'<span class="badge ok">Submitted</span>',
     missing:'<span class="badge warn">Not Submitted</span>',
     late:'<span class="badge err">Late</span>',
   };
 
-  document.getElementById('tableBody').innerHTML = pageRows.map(r => {
-    const rec = r.latest;
-    const salesDateStr   = rec && rec.sales_date   ? rec.sales_date.slice(0,10)   : '—';
-    const depositDateStr = rec && rec.deposit_date ? rec.deposit_date.slice(0,10) : '—';
-    const timeStr = rec ? new Date(rec.submitted_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
-    const amountStr = rec ? Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
-    const slipLink = rec && rec.slip_url ? `<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>` : '—';
-
-    // ── Duplicate badge: กดเพื่อเปิด modal ──
-    const statusBadge = r.status === 'duplicate'
-      ? `<button class="badge-dup-btn" onclick="openDupModal('${r.store.store_code}','${salesDateStr}')">
-           ⚠ Duplicate (${r.records.length})
-         </button>`
-      : (badgeMap[r.status] || '');
-
-    let missClass = 'zero';
-    if (r.missedDays > 0 && r.missedDays <= Math.ceil(activeRange*.3)) missClass = 'some';
-    else if (r.missedDays > Math.ceil(activeRange*.3)) missClass = 'many';
-
-    return `<tr>
-      <td><b>${r.store.store_code}</b></td>
-      <td>${r.store.zone_code}</td>
-      <td>${statusBadge}</td>
-      <td>${salesDateStr}</td>
-      <td>${depositDateStr}</td>
-      <td>${timeStr}</td>
-      <td>${amountStr}</td>
-      <td>${slipLink}</td>
-      <td><span class="miss-count ${missClass}">${r.missedDays}d</span></td>
-    </tr>`;
+  document.getElementById('tableBody').innerHTML=pageRows.map(r=>{
+    const rec=r.latest;
+    const salesDateStr=rec&&rec.sales_date?rec.sales_date.slice(0,10):'—';
+    const depositDateStr=rec&&rec.deposit_date?rec.deposit_date.slice(0,10):'—';
+    const timeStr=rec?new Date(rec.submitted_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'—';
+    const amountStr=rec?Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
+    const slipLink=rec&&rec.slip_url?`<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>`:'—';
+    const statusBadge=r.status==='duplicate'
+      ?`<button class="badge-dup-btn" onclick="openDupModal('${r.store.store_code}','${salesDateStr}')">⚠ Duplicate (${r.records.length})</button>`
+      :(badgeMap[r.status]||'');
+    let missClass='zero';
+    if(r.missedDays>0&&r.missedDays<=Math.ceil(activeRange*.3)) missClass='some';
+    else if(r.missedDays>Math.ceil(activeRange*.3)) missClass='many';
+    return `<tr><td><b>${r.store.store_code}</b></td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${slipLink}</td><td><span class="miss-count ${missClass}">${r.missedDays}d</span></td></tr>`;
   }).join('');
 
-  let pagerHtml = `<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
-  for (let p=1; p<=totalPages; p++){
-    if (totalPages>7 && p>2 && p<totalPages-1 && Math.abs(p-currentPage)>1){
-      if(p===3||p===totalPages-2) pagerHtml+=`<span style="padding:0 4px;color:var(--ink-faint);">…</span>`;
-      continue;
-    }
+  let pagerHtml=`<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
+  for(let p=1;p<=totalPages;p++){
+    if(totalPages>7&&p>2&&p<totalPages-1&&Math.abs(p-currentPage)>1){ if(p===3||p===totalPages-2) pagerHtml+=`<span style="padding:0 4px;color:var(--ink-faint);">…</span>`; continue; }
     pagerHtml+=`<button class="${p===currentPage?'active':''}" data-page="${p}">${p}</button>`;
   }
   pagerHtml+=`<button ${currentPage===totalPages?'disabled':''} data-page="${currentPage+1}">&#8250;</button>`;
-  document.getElementById('pager').innerHTML = pagerHtml;
-  document.querySelectorAll('#pager button[data-page]').forEach(btn => {
-    btn.addEventListener('click', () => { currentPage=Number(btn.dataset.page); render(); });
-  });
+  document.getElementById('pager').innerHTML=pagerHtml;
+  document.querySelectorAll('#pager button[data-page]').forEach(btn=>{ btn.addEventListener('click',()=>{ currentPage=Number(btn.dataset.page); render(); }); });
 }
 
-/* ==================== URL-BASED ZONE LOCK ==================== */
-const urlParams = new URLSearchParams(window.location.search);
-const LOCKED_ZONE = urlParams.get('zone');
-
-if (LOCKED_ZONE) {
-  activeZoneFilter = LOCKED_ZONE;
-  document.getElementById('sidebarAvatar').textContent = 'DM';
-  document.getElementById('sidebarName').textContent = 'District Team';
-  document.getElementById('sidebarEmail').textContent = `DM${LOCKED_ZONE}@bata.co.th`;
-  document.getElementById('navByDistrict').style.display = 'none';
-  document.getElementById('districtNavGroup').style.display = 'none';
-  document.getElementById('districtSection').style.display = 'none';
-  document.getElementById('chartsRow').style.gridTemplateColumns = '1fr';
-  document.getElementById('filterZone').style.display = 'none';
-  document.getElementById('zoneListSection').style.display = 'none';
+/* ── Zone lock ── */
+const urlParams=new URLSearchParams(window.location.search);
+const LOCKED_ZONE=urlParams.get('zone');
+if(LOCKED_ZONE){
+  activeZoneFilter=LOCKED_ZONE;
+  document.getElementById('sidebarAvatar').textContent='DM';
+  document.getElementById('sidebarName').textContent='District Team';
+  document.getElementById('sidebarEmail').textContent=`DM${LOCKED_ZONE}@bata.co.th`;
+  document.getElementById('navByDistrict').style.display='none';
+  document.getElementById('districtNavGroup').style.display='none';
+  document.getElementById('districtSection').style.display='none';
+  document.getElementById('chartsRow').style.gridTemplateColumns='1fr';
+  document.getElementById('filterZone').style.display='none';
+  document.getElementById('zoneListSection').style.display='none';
 }
 
-/* ==================== PAYMENT CHANNEL MODAL ==================== */
-const COUNTER_SERVICES = ['7eleven','lotus','bigc'];
-
-function openPayModal() {
-  document.getElementById('payModalBackdrop').classList.add('open');
-}
-function closePayModal() {
-  document.getElementById('payModalBackdrop').classList.remove('open');
-}
-
-function selectPayOption(value, labelEl) {
-  // clear all
-  document.querySelectorAll('.pay-option').forEach(el => el.classList.remove('selected'));
-  document.querySelectorAll('.sub-bank-wrap').forEach(el => el.classList.remove('open'));
-
-  labelEl.classList.add('selected');
-  labelEl.querySelector('input[type=radio]').checked = true;
-
-  // ถ้าเป็น counter service → แสดง sub-bank picker
-  if (COUNTER_SERVICES.includes(value)) {
-    const sub = document.getElementById('sub-' + value);
-    if (sub) sub.classList.add('open');
-  }
-}
-
-function selectSubBank(e, counter, bank) {
-  e.stopPropagation(); // ไม่ให้ trigger parent label
-  const wrap = document.getElementById('sub-' + counter);
-  if (!wrap) return;
-  wrap.querySelectorAll('.sub-bank-option').forEach(el => el.classList.remove('selected'));
-  e.currentTarget.classList.add('selected');
-  e.currentTarget.querySelector('input[type=radio]').checked = true;
-}
-
-function confirmPayChannel() {
-  const mainRadio = document.querySelector('input[name="payChannel"]:checked');
-  if (!mainRadio) { showToast('กรุณาเลือกช่องทางฝากเงิน', 'err'); return; }
-
-  const val = mainRadio.value;
-  let summary = '';
-
-  if (COUNTER_SERVICES.includes(val)) {
-    const subRadio = document.querySelector(`input[name="subbank-${val}"]:checked`);
-    if (!subRadio) { showToast('กรุณาเลือกธนาคารปลายทาง', 'err'); return; }
-    const counterName = {
-      '7eleven': '7-Eleven', lotus: 'Lotus', bigc: 'Big C'
-    }[val];
-    const bankName = {
-      bbl: 'ธ.กรุงเทพ (106-315-6325)',
-      scb: 'ธ.ไทยพาณิชย์ (347-301-3949)',
-      bay: 'ธ.กรุงศรีอยุธยา (333-171-6277)',
-    }[subRadio.value];
-    summary = `${counterName} → ${bankName}`;
-  } else {
-    const bankMap = {
-      scb: 'ธ.ไทยพาณิชย์ (347-301-3949)',
-      bbl: 'ธ.กรุงเทพ (106-315-6325)',
-      bay: 'ธ.กรุงศรีอยุธยา (333-171-6277)',
-    };
-    summary = bankMap[val] || val;
-  }
-
-  showToast('✓ เลือกช่องทาง: ' + summary, 'ok');
-  closePayModal();
-}
-
-// ปิด modal เมื่อกด backdrop
-document.getElementById('payModalBackdrop').addEventListener('click', function(e) {
-  if (e.target === this) closePayModal();
-});
-
-/* ==================== START ==================== */
-allStoresList = buildStoreList();
+allStoresList=buildStoreList();
 setupAutoRefresh();
 loadData();
 </script>
