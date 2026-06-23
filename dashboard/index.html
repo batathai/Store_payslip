@@ -390,6 +390,73 @@
   #toastMsg.show{display:block;}
   #toastMsg.ok-toast{background:var(--ok);}
   #toastMsg.err-toast{background:var(--err);}
+  /* ===================== PAYMENT CHANNEL MODAL ===================== */
+  #payModalBackdrop{
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.45); z-index:100;
+    align-items:center; justify-content:center; padding:16px;
+  }
+  #payModalBackdrop.open{display:flex;}
+  .pay-modal{
+    background:#fff; border-radius:16px;
+    width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.2);
+  }
+  .pay-modal-header{
+    padding:16px 20px; border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center;
+    position:sticky; top:0; background:#fff; z-index:1;
+  }
+  .pay-modal-header h2{font-size:15px; font-weight:800;}
+  .pay-modal-close{background:none;border:none;font-size:20px;color:var(--ink-faint);cursor:pointer;line-height:1;padding:0 4px;}
+  .pay-modal-close:hover{color:var(--ink);}
+  .pay-modal-body{padding:20px;}
+
+  .pay-group-label{
+    font-size:10px; font-weight:800; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--ink-faint); margin-bottom:8px; margin-top:20px;
+  }
+  .pay-group-label:first-child{margin-top:0;}
+
+  .pay-option{
+    display:flex; align-items:flex-start; gap:12px;
+    padding:12px 14px; border:1.5px solid var(--line); border-radius:12px;
+    margin-bottom:8px; cursor:pointer; transition:border-color .12s, background .12s;
+    position:relative;
+  }
+  .pay-option:hover{border-color:var(--bata-red); background:#FFF8F8;}
+  .pay-option.selected{border-color:var(--bata-red); background:#FFF0F0;}
+  .pay-option input[type=radio]{
+    accent-color:var(--bata-red); width:17px; height:17px; margin-top:1px; flex:0 0 auto; cursor:pointer;
+  }
+  .pay-option-body{flex:1;}
+  .pay-option-name{font-size:13px; font-weight:700; color:var(--ink); line-height:1.3;}
+  .pay-option-sub{font-size:11.5px; color:var(--ink-soft); margin-top:2px; line-height:1.4;}
+
+  /* sub-bank picker inside counter service */
+  .sub-bank-wrap{
+    margin-top:10px; padding:10px 12px;
+    background:var(--paper); border-radius:8px;
+    display:none; flex-direction:column; gap:6px;
+  }
+  .sub-bank-wrap.open{display:flex;}
+  .sub-bank-label{font-size:10.5px;font-weight:700;color:var(--ink-soft);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em;}
+  .sub-bank-option{
+    display:flex; align-items:center; gap:8px;
+    padding:7px 10px; border:1.5px solid var(--line); border-radius:8px;
+    background:#fff; cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink);
+    transition:border-color .1s, background .1s;
+  }
+  .sub-bank-option:hover{border-color:var(--bata-red); background:#FFF8F8;}
+  .sub-bank-option.selected{border-color:var(--bata-red); background:#FFF0F0;}
+  .sub-bank-option input[type=radio]{accent-color:var(--bata-red); width:15px; height:15px; flex:0 0 auto; cursor:pointer;}
+  .sub-bank-acc{font-size:11px; color:var(--ink-faint); font-weight:400; margin-left:auto;}
+
+  .pay-modal-footer{
+    padding:12px 20px; border-top:1px solid var(--line);
+    display:flex; justify-content:flex-end; gap:8px;
+    position:sticky; bottom:0; background:#fff;
+  }
 </style>
 </head>
 <body>
@@ -451,8 +518,20 @@
           <div class="topbar-sub" id="updatedAt">Loading...</div>
         </div>
       </div>
-      <div class="topbar-controls">
+      <div class="topbar-controls" id="topbarControls">
+        <!-- date filters — แสดงในทุก view (ย้ายขึ้นมาจาก table-head-bar) -->
+        <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:4px 10px;">
+          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
+          <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:4px 10px;">
+          <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Deposit Date</label>
+          <input type="date" id="filterDepositDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+        </div>
+        <!-- zone select — ซ่อนเมื่อ LOCKED_ZONE -->
         <select id="filterZone"><option value="">All Districts</option></select>
+        <!-- ปุ่มทดสอบ payment channel form -->
+        <button onclick="openPayModal()" style="padding:7px 14px;background:var(--bata-red);color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--font-body);">+ ฝากเงิน</button>
       </div>
     </div>
 
@@ -505,14 +584,6 @@
           <div class="table-head-bar">
             <div class="table-title" id="tableTitle">All submissions</div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
-                <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
-                <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
-              </div>
-              <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
-                <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Deposit Date</label>
-                <input type="date" id="filterDepositDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
-              </div>
               <input
                 class="search-input"
                 type="text"
@@ -624,6 +695,132 @@
       <button class="btn-save" id="dupSaveBtn" onclick="saveDupResolve()" disabled>บันทึก</button>
     </div>
 
+  </div>
+</div>
+
+<!-- ===================== PAYMENT CHANNEL MODAL ===================== -->
+<div id="payModalBackdrop">
+  <div class="pay-modal">
+    <div class="pay-modal-header">
+      <h2>ช่องทางที่ทำการฝากเงิน</h2>
+      <button class="pay-modal-close" onclick="closePayModal()">✕</button>
+    </div>
+    <div class="pay-modal-body">
+
+      <!-- กลุ่ม 1: ธนาคาร -->
+      <div class="pay-group-label">ธนาคาร</div>
+
+      <label class="pay-option" id="payopt-scb" onclick="selectPayOption('scb',this)">
+        <input type="radio" name="payChannel" value="scb">
+        <div class="pay-option-body">
+          <div class="pay-option-name">ธ.ไทยพาณิชย์ (Saving)</div>
+          <div class="pay-option-sub">เลขบัญชี: 347-301-3949</div>
+        </div>
+      </label>
+
+      <label class="pay-option" id="payopt-bbl" onclick="selectPayOption('bbl',this)">
+        <input type="radio" name="payChannel" value="bbl">
+        <div class="pay-option-body">
+          <div class="pay-option-name">ธ.กรุงเทพ (Current)</div>
+          <div class="pay-option-sub">เลขบัญชี: 106-315-6325</div>
+        </div>
+      </label>
+
+      <label class="pay-option" id="payopt-bay" onclick="selectPayOption('bay',this)">
+        <input type="radio" name="payChannel" value="bay">
+        <div class="pay-option-body">
+          <div class="pay-option-name">ธ.กรุงศรีอยุธยา (Saving)</div>
+          <div class="pay-option-sub">เลขบัญชี: 333-171-6277</div>
+        </div>
+      </label>
+
+      <!-- กลุ่ม 2: Counter Service -->
+      <div class="pay-group-label" style="margin-top:20px;">เคาน์เตอร์เซอร์วิส</div>
+
+      <label class="pay-option" id="payopt-7eleven" onclick="selectPayOption('7eleven',this)">
+        <input type="radio" name="payChannel" value="7eleven">
+        <div class="pay-option-body">
+          <div class="pay-option-name">7-Eleven</div>
+          <div class="pay-option-sub">ฝากผ่านเคาน์เตอร์เซเว่น</div>
+          <!-- sub: เลือกธนาคารปลายทาง -->
+          <div class="sub-bank-wrap" id="sub-7eleven">
+            <div class="sub-bank-label">ฝากเข้าธนาคาร</div>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'7eleven','bbl')">
+              <input type="radio" name="subbank-7eleven" value="bbl">
+              ธ.กรุงเทพ
+              <span class="sub-bank-acc">106-315-6325</span>
+            </label>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'7eleven','scb')">
+              <input type="radio" name="subbank-7eleven" value="scb">
+              ธ.ไทยพาณิชย์
+              <span class="sub-bank-acc">347-301-3949</span>
+            </label>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'7eleven','bay')">
+              <input type="radio" name="subbank-7eleven" value="bay">
+              ธ.กรุงศรีอยุธยา
+              <span class="sub-bank-acc">333-171-6277</span>
+            </label>
+          </div>
+        </div>
+      </label>
+
+      <label class="pay-option" id="payopt-lotus" onclick="selectPayOption('lotus',this)">
+        <input type="radio" name="payChannel" value="lotus">
+        <div class="pay-option-body">
+          <div class="pay-option-name">Lotus</div>
+          <div class="pay-option-sub">ฝากผ่านเคาน์เตอร์โลตัส</div>
+          <div class="sub-bank-wrap" id="sub-lotus">
+            <div class="sub-bank-label">ฝากเข้าธนาคาร</div>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'lotus','bbl')">
+              <input type="radio" name="subbank-lotus" value="bbl">
+              ธ.กรุงเทพ
+              <span class="sub-bank-acc">106-315-6325</span>
+            </label>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'lotus','scb')">
+              <input type="radio" name="subbank-lotus" value="scb">
+              ธ.ไทยพาณิชย์
+              <span class="sub-bank-acc">347-301-3949</span>
+            </label>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'lotus','bay')">
+              <input type="radio" name="subbank-lotus" value="bay">
+              ธ.กรุงศรีอยุธยา
+              <span class="sub-bank-acc">333-171-6277</span>
+            </label>
+          </div>
+        </div>
+      </label>
+
+      <label class="pay-option" id="payopt-bigc" onclick="selectPayOption('bigc',this)">
+        <input type="radio" name="payChannel" value="bigc">
+        <div class="pay-option-body">
+          <div class="pay-option-name">Big C</div>
+          <div class="pay-option-sub">ฝากผ่านเคาน์เตอร์บิ๊กซี</div>
+          <div class="sub-bank-wrap" id="sub-bigc">
+            <div class="sub-bank-label">ฝากเข้าธนาคาร</div>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'bigc','bbl')">
+              <input type="radio" name="subbank-bigc" value="bbl">
+              ธ.กรุงเทพ
+              <span class="sub-bank-acc">106-315-6325</span>
+            </label>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'bigc','scb')">
+              <input type="radio" name="subbank-bigc" value="scb">
+              ธ.ไทยพาณิชย์
+              <span class="sub-bank-acc">347-301-3949</span>
+            </label>
+            <label class="sub-bank-option" onclick="selectSubBank(event,'bigc','bay')">
+              <input type="radio" name="subbank-bigc" value="bay">
+              ธ.กรุงศรีอยุธยา
+              <span class="sub-bank-acc">333-171-6277</span>
+            </label>
+          </div>
+        </div>
+      </label>
+
+    </div>
+    <div class="pay-modal-footer">
+      <button class="btn-secondary" onclick="closePayModal()">ยกเลิก</button>
+      <button class="btn-save" onclick="confirmPayChannel()">ยืนยัน</button>
+    </div>
   </div>
 </div>
 
@@ -1262,6 +1459,77 @@ if (LOCKED_ZONE) {
   document.getElementById('filterZone').style.display = 'none';
   document.getElementById('zoneListSection').style.display = 'none';
 }
+
+/* ==================== PAYMENT CHANNEL MODAL ==================== */
+const COUNTER_SERVICES = ['7eleven','lotus','bigc'];
+
+function openPayModal() {
+  document.getElementById('payModalBackdrop').classList.add('open');
+}
+function closePayModal() {
+  document.getElementById('payModalBackdrop').classList.remove('open');
+}
+
+function selectPayOption(value, labelEl) {
+  // clear all
+  document.querySelectorAll('.pay-option').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.sub-bank-wrap').forEach(el => el.classList.remove('open'));
+
+  labelEl.classList.add('selected');
+  labelEl.querySelector('input[type=radio]').checked = true;
+
+  // ถ้าเป็น counter service → แสดง sub-bank picker
+  if (COUNTER_SERVICES.includes(value)) {
+    const sub = document.getElementById('sub-' + value);
+    if (sub) sub.classList.add('open');
+  }
+}
+
+function selectSubBank(e, counter, bank) {
+  e.stopPropagation(); // ไม่ให้ trigger parent label
+  const wrap = document.getElementById('sub-' + counter);
+  if (!wrap) return;
+  wrap.querySelectorAll('.sub-bank-option').forEach(el => el.classList.remove('selected'));
+  e.currentTarget.classList.add('selected');
+  e.currentTarget.querySelector('input[type=radio]').checked = true;
+}
+
+function confirmPayChannel() {
+  const mainRadio = document.querySelector('input[name="payChannel"]:checked');
+  if (!mainRadio) { showToast('กรุณาเลือกช่องทางฝากเงิน', 'err'); return; }
+
+  const val = mainRadio.value;
+  let summary = '';
+
+  if (COUNTER_SERVICES.includes(val)) {
+    const subRadio = document.querySelector(`input[name="subbank-${val}"]:checked`);
+    if (!subRadio) { showToast('กรุณาเลือกธนาคารปลายทาง', 'err'); return; }
+    const counterName = {
+      '7eleven': '7-Eleven', lotus: 'Lotus', bigc: 'Big C'
+    }[val];
+    const bankName = {
+      bbl: 'ธ.กรุงเทพ (106-315-6325)',
+      scb: 'ธ.ไทยพาณิชย์ (347-301-3949)',
+      bay: 'ธ.กรุงศรีอยุธยา (333-171-6277)',
+    }[subRadio.value];
+    summary = `${counterName} → ${bankName}`;
+  } else {
+    const bankMap = {
+      scb: 'ธ.ไทยพาณิชย์ (347-301-3949)',
+      bbl: 'ธ.กรุงเทพ (106-315-6325)',
+      bay: 'ธ.กรุงศรีอยุธยา (333-171-6277)',
+    };
+    summary = bankMap[val] || val;
+  }
+
+  showToast('✓ เลือกช่องทาง: ' + summary, 'ok');
+  closePayModal();
+}
+
+// ปิด modal เมื่อกด backdrop
+document.getElementById('payModalBackdrop').addEventListener('click', function(e) {
+  if (e.target === this) closePayModal();
+});
 
 /* ==================== START ==================== */
 allStoresList = buildStoreList();
