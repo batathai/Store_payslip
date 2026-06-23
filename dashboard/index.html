@@ -774,9 +774,11 @@ function render(){
   filteredRows=filteredRows.map(r=>{
     let depositDelay=null;
     if(r.latest&&r.latest.deposit_date&&r.latest.sales_date){
-      const dep=new Date(r.latest.deposit_date);
-      const sal=new Date(r.latest.sales_date);
-      depositDelay=Math.round((dep-sal)/(1000*60*60*24));
+      const [dy,dm,dd2]=r.latest.deposit_date.slice(0,10).split('-').map(Number);
+      const [sy,sm,sd2]=r.latest.sales_date.slice(0,10).split('-').map(Number);
+      const depMs=Date.UTC(dy,dm-1,dd2);
+      const salMs=Date.UTC(sy,sm-1,sd2);
+      depositDelay=Math.round((depMs-salMs)/(1000*60*60*24));
     }
     return {...r,depositDelay};
   });
