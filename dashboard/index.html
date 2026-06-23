@@ -92,6 +92,7 @@
   .badge.warn{background:var(--warn-bg);color:var(--warn);}
   .badge.err{background:var(--err-bg);color:var(--err);}
   .badge.purple{background:var(--purple-bg);color:var(--purple);}
+  .badge.delay{background:#FEE2E2;color:#B91C1C;border:1px solid #FECACA;}
   .badge-dup-btn{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:6px;background:var(--purple-bg);color:var(--purple);border:none;cursor:pointer;font-family:var(--font-body);transition:background .12s;}
   .badge-dup-btn:hover{background:#e0d8fe;}
   .pager{display:flex;justify-content:center;align-items:center;gap:5px;padding:12px;}
@@ -193,35 +194,14 @@
 </head>
 <body>
 
-<div class="shell">
-  <div class="sidebar">
-    <div class="sidebar-brand">
-      <div class="sidebar-logo">B</div>
-      <div class="sidebar-word">BATA</div>
-    </div>
-    <div class="sidebar-nav" id="sidebarNav">
-      <div class="nav-group-label">Overview</div>
-      <button class="nav-item active" data-view="dashboard"><span class="nav-icon">&#9632;</span>Dashboard</button>
-      <div class="nav-group-label">Submissions</div>
-      <button class="nav-item" data-view="all"><span class="nav-icon">&#9776;</span>All Submissions</button>
-      <button class="nav-item" data-view="missing"><span class="nav-icon">&#9888;</span>Not Submitted<span class="nav-count err-count" id="navCountMissing">—</span></button>
-      <button class="nav-item" data-view="duplicate"><span class="nav-icon">&#10063;</span>Duplicate<span class="nav-count warn-count" id="navCountDuplicate">—</span></button>
-      <button class="nav-item" data-view="late"><span class="nav-icon">&#9201;</span>Late Submission<span class="nav-count warn-count" id="navCountLate">—</span></button>
-      <div class="nav-group-label" id="districtNavGroup">Analytics</div>
-      <button class="nav-item" id="navByDistrict" data-view="district"><span class="nav-icon">&#9776;</span>By District</button>
-    </div>
-    <div class="sidebar-foot">
-      <div class="sidebar-avatar" id="sidebarAvatar">AC</div>
-      <div>
-        <div class="sidebar-foot-name" id="sidebarName">Accounting Team</div>
-        <div class="sidebar-foot-sub" id="sidebarEmail">admin@bata.co.th</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="main">
+<div class="shell"><div class="main">
     <div class="topbar">
       <div class="topbar-left">
+        <div style="display:flex;align-items:center;gap:10px;margin-right:16px;">
+          <div style="width:28px;height:28px;border-radius:8px;background:var(--bata-red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex:0 0 auto;">B</div>
+          <div style="font-weight:800;font-size:16px;letter-spacing:.03em;color:var(--bata-red);">BATA</div>
+        </div>
+        <div style="width:1px;height:28px;background:var(--line);margin-right:16px;"></div>
         <div>
           <div class="page-title" id="pageTitle">Daily Payslip Dashboard</div>
           <div class="topbar-sub" id="updatedAt">Loading...</div>
@@ -335,7 +315,7 @@
         <div class="toggle-row">
           <div>
             <div class="toggle-label">Auto Refresh</div>
-            <div class="toggle-sub">Every 5 minutes</div>
+            <div class="toggle-sub">ทุก 3 ชั่วโมง</div>
           </div>
           <div class="switch" id="autoRefreshToggle"></div>
         </div>
@@ -387,7 +367,8 @@
 const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const LATE_CUTOFF_HOUR = 22;
+const LATE_CUTOFF_HOUR = 14;  // บ่าย 2 โมง
+const DELAY_CUTOFF_HOUR = 14; // เดียวกัน — ถ้าไม่ส่งหลังบ่าย 2 = Delay
 const PAGE_SIZE = 25;
 
 /* ── READ ?zone= FIRST before anything else ── */
@@ -438,11 +419,11 @@ if (LOCKED_ZONE) {
   }
   // Sidebar identity
   document.getElementById('sidebarAvatar').textContent = 'DM';
-  document.getElementById('sidebarName').textContent   = 'District Manager';
-  document.getElementById('sidebarEmail').textContent  = `zone${LOCKED_ZONE}@bata.co.th`;
+  
+  
   // Hide accounting-only elements
-  document.getElementById('navByDistrict').style.display   = 'none';
-  document.getElementById('districtNavGroup').style.display = 'none';
+  
+  
   document.getElementById('districtSection').style.display  = 'none';
   document.getElementById('chartsRow').style.gridTemplateColumns = '1fr';
   document.getElementById('filterZone').style.display  = 'none';
@@ -489,23 +470,10 @@ document.getElementById('autoRefreshToggle').addEventListener('click',()=>{
 
 function setupAutoRefresh(){
   if(autoRefreshTimer) clearInterval(autoRefreshTimer);
-  if(autoRefreshOn) autoRefreshTimer=setInterval(loadData,5*60*1000);
+  if(autoRefreshOn) autoRefreshTimer=setInterval(loadData,3*60*60*1000); // 3 ชั่วโมง
 }
 
-document.querySelectorAll('.nav-item').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const view=btn.dataset.view;
-    document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    if(view==='dashboard'){ activeMetricFilter=''; window.scrollTo({top:0,behavior:'smooth'}); }
-    else if(view==='all'){ activeMetricFilter=''; document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'}); }
-    else if(view==='missing'){ activeMetricFilter='missing'; document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'}); }
-    else if(view==='duplicate'){ activeMetricFilter='duplicate'; document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'}); }
-    else if(view==='late'){ activeMetricFilter='late'; document.querySelector('.table-wrap').scrollIntoView({behavior:'smooth',block:'start'}); }
-    else if(view==='district'){ document.getElementById('districtSection').scrollIntoView({behavior:'smooth',block:'start'}); }
-    currentPage=1; render();
-  });
-});
+// nav-item listeners removed (sidebar removed)
 
 function onSearchInput(){ searchQuery=document.getElementById('storeSearch').value.trim().toLowerCase(); currentPage=1; render(); }
 function sortBy(col){ if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc'; else{ sortCol=col; sortDir='asc'; } currentPage=1; render(); }
@@ -567,10 +535,41 @@ function getStoreStatus(storeCode, salesDate, depositDate){
   const sd = salesDate||today;
   recs = recs.filter(r=>(r.sales_date||'').slice(0,10)===sd);
   if(depositDate) recs = recs.filter(r=>(r.deposit_date||'').slice(0,10)===depositDate);
-  if(recs.length===0) return {status:'missing',records:[]};
+
+  // เวลาปัจจุบันในไทย (UTC+7)
+  const nowTH = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Bangkok'}));
+  const nowHour = nowTH.getHours() + nowTH.getMinutes()/60;
+  const isPastCutoff = nowHour >= DELAY_CUTOFF_HOUR; // ผ่านบ่าย 2 แล้วไหม
+
+  // ยังไม่ส่งเลย
+  if(recs.length===0){
+    // ถ้า salesDate = เมื่อวาน และผ่านบ่าย 2 แล้ว → Delay
+    const yesterday = new Date(nowTH); yesterday.setDate(yesterday.getDate()-1);
+    const yStr = yesterday.toISOString().slice(0,10);
+    if(sd===yStr && isPastCutoff) return {status:'delay',records:[]};
+    return {status:'missing',records:[]};
+  }
+
   const latest = recs.reduce((a,b)=>new Date(a.submitted_at)>new Date(b.submitted_at)?a:b);
-  const isLate = new Date(latest.submitted_at).getHours()>=LATE_CUTOFF_HOUR;
-  if(recs.length>1) return {status:'duplicate',records:recs,latest,isLate};
+
+  // ส่งซ้ำ
+  if(recs.length>1) return {status:'duplicate',records:recs,latest};
+
+  // ตรวจว่าส่งช้ากว่าบ่าย 2 ของวันถัดจาก sales_date ไหม
+  // เช่น sales_date = เมื่อวาน → deadline = วันนี้บ่าย 2
+  const [sy,sm,sd2] = sd.split('-').map(Number);
+  const deadlineDate = new Date(Date.UTC(sy,sm-1,sd2));
+  deadlineDate.setUTCDate(deadlineDate.getUTCDate()+1); // วันถัดไป
+  // deadline = วันถัดไป 14:00 ไทย = 07:00 UTC
+  const deadlineUTC = new Date(Date.UTC(
+    deadlineDate.getUTCFullYear(),
+    deadlineDate.getUTCMonth(),
+    deadlineDate.getUTCDate(),
+    7, 0, 0
+  ));
+  const submittedAt = new Date(latest.submitted_at);
+  const isLate = submittedAt > deadlineUTC;
+
   if(isLate) return {status:'late',records:recs,latest};
   return {status:'sent',records:recs,latest};
 }
@@ -692,15 +691,15 @@ function renderDistrictChart(dateStr){
   });
 }
 
-function renderDonutChart(total,sent,missing,dup,late){
+function renderDonutChart(total,sent,missing,dup,late,delay=0){
   if(donutChartInstance) donutChartInstance.destroy();
   donutChartInstance=new Chart(document.getElementById('donutChart'),{
     type:'doughnut',
-    data:{labels:['Submitted','Not submitted','Late','Duplicate'],datasets:[{data:[sent,missing,late,dup],backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC'],borderWidth:0}]},
+    data:{labels:['Submitted','Not submitted','Late','Duplicate','Delay'],datasets:[{data:[sent,missing,late,dup,delay],backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC','#B91C1C'],borderWidth:0}]},
     options:{responsive:false,cutout:'72%',plugins:{legend:{display:false}}},
   });
   const pct=n=>total>0?((n/total)*100).toFixed(1)+'%':'0%';
-  document.getElementById('donutLegend').innerHTML=[['#0FA968','Submitted',sent],['#D97706','Not submitted',missing],['#E0263F','Late',late],['#7C5CFC','Duplicate',dup]]
+  document.getElementById('donutLegend').innerHTML=[['#0FA968','Submitted',sent],['#D97706','Not submitted',missing],['#E0263F','Late',late],['#7C5CFC','Duplicate',dup],['#B91C1C','Delay',delay]]
     .map(([c,l,n])=>`<div class="donut-legend-row"><div class="leg-left"><span class="dot" style="background:${c};"></span>${l}</div><b>${n} <span style="font-weight:400;color:var(--ink-soft)">(${pct(n)})</span></b></div>`).join('');
 }
 
@@ -716,29 +715,48 @@ function render(){
     ? allStoresList.filter(s=>s.zone_code===activeZoneFilter)
     : allStoresList;
 
-  const rows = stores.map(s=>({store:s,...getStoreStatus(s.store_code,salesDateFilter,depositDateFilter)}));
+  const rows = stores.map(s=>{
+    const status = getStoreStatus(s.store_code,salesDateFilter,depositDateFilter);
+    let depositDelay=null;
+    if(status.latest&&status.latest.deposit_date&&status.latest.sales_date){
+      const [dy,dm,dd2]=status.latest.deposit_date.slice(0,10).split('-').map(Number);
+      const [sy,sm,sd2]=status.latest.sales_date.slice(0,10).split('-').map(Number);
+      const depMs=Date.UTC(dy,dm-1,dd2);
+      const salMs=Date.UTC(sy,sm-1,sd2);
+      depositDelay=Math.round((depMs-salMs)/(1000*60*60*24));
+    }
+    return {store:s,...status,depositDelay};
+  });
 
   renderTrendChart(stores);
   if(!LOCKED_ZONE) renderDistrictChart(salesDateFilter||today);
 
   const total   = rows.length;
   const sent    = rows.filter(r=>r.status==='sent').length;
+  const delay   = rows.filter(r=>r.status==='delay').length;
   const missing = rows.filter(r=>r.status==='missing').length;
   const dup     = rows.filter(r=>r.status==='duplicate').length;
   const late    = rows.filter(r=>r.status==='late').length;
 
-  renderDonutChart(total,sent,missing,dup,late);
-  document.getElementById('navCountMissing').textContent   = missing;
-  document.getElementById('navCountDuplicate').textContent = dup;
-  document.getElementById('navCountLate').textContent      = late;
+  renderDonutChart(total,sent,missing,dup,late,delay);
+  const _nm=document.getElementById('navCountMissing'); if(_nm) _nm.textContent=missing;
+  const _nd=document.getElementById('navCountDuplicate'); if(_nd) _nd.textContent=dup;
+  const _nl=document.getElementById('navCountLate'); if(_nl) _nl.textContent=late;
 
   const pct = n => total>0?((n/total)*100).toFixed(2)+'%':'—';
+
+  // Deposit delay stats — คำนวณจาก filteredRows ที่มีข้อมูล
+  const delayRows = rows.filter(r=>r.depositDelay!=null);
+  const delaySum = delayRows.reduce((s,r)=>s+r.depositDelay,0);
+  const delayAvg = delayRows.length>0 ? (delaySum/delayRows.length).toFixed(1)+' วัน' : '—';
+  const delayOver1 = rows.filter(r=>r.depositDelay!=null && r.depositDelay>=2).length;
   document.getElementById('metricsRow').innerHTML=`
     <div class="metric" data-filter=""><div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total Stores</div></div><div class="metric-value">${total}</div><div class="metric-pct blue">100%</div></div>
     <div class="metric" data-filter="sent"><div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div><div class="metric-value">${sent}</div><div class="metric-pct ok">${pct(sent)}</div></div>
     <div class="metric" data-filter="missing"><div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not Submitted</div></div><div class="metric-value">${missing}</div><div class="metric-pct warn">${pct(missing)}</div></div>
     <div class="metric" data-filter="duplicate"><div class="metric-top"><div class="metric-icon purple">&#10063;</div><div class="metric-label">Duplicate</div></div><div class="metric-value">${dup}</div><div class="metric-pct purple">${pct(dup)}</div></div>
-    <div class="metric" data-filter="late"><div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late Submission</div></div><div class="metric-value">${late}</div><div class="metric-pct err">${pct(late)}</div></div>
+    <div class="metric" data-filter="late"><div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late</div></div><div class="metric-value">${late}</div><div class="metric-pct err">${pct(late)}</div></div>
+    <div class="metric" data-filter="delay"><div class="metric-top"><div class="metric-icon" style="background:#FEE2E2;color:#B91C1C;">&#9201;</div><div class="metric-label">Delay</div></div><div class="metric-value" style="color:#B91C1C;">${delay}</div><div class="metric-pct" style="color:#B91C1C;">${pct(delay)}</div></div>
   `;
   document.querySelectorAll('.metric').forEach(el=>{
     const f=el.dataset.filter;
@@ -771,17 +789,7 @@ function render(){
   let filteredRows=rows;
   if(activeMetricFilter) filteredRows=filteredRows.filter(r=>r.status===activeMetricFilter);
   if(searchQuery) filteredRows=filteredRows.filter(r=>r.store.store_code.toLowerCase().includes(searchQuery)||(r.store.store_name&&r.store.store_name.toLowerCase().includes(searchQuery)));
-  filteredRows=filteredRows.map(r=>{
-    let depositDelay=null;
-    if(r.latest&&r.latest.deposit_date&&r.latest.sales_date){
-      const [dy,dm,dd2]=r.latest.deposit_date.slice(0,10).split('-').map(Number);
-      const [sy,sm,sd2]=r.latest.sales_date.slice(0,10).split('-').map(Number);
-      const depMs=Date.UTC(dy,dm-1,dd2);
-      const salMs=Date.UTC(sy,sm-1,sd2);
-      depositDelay=Math.round((depMs-salMs)/(1000*60*60*24));
-    }
-    return {...r,depositDelay};
-  });
+  // depositDelay already in rows
   filteredRows=[...filteredRows].sort((a,b)=>{
     let va,vb;
     if(sortCol==='store_code'){va=a.store.store_code;vb=b.store.store_code;}
@@ -822,6 +830,7 @@ function render(){
     sent:'<span class="badge ok">Submitted</span>',
     missing:'<span class="badge warn">Not Submitted</span>',
     late:'<span class="badge err">Late</span>',
+    delay:'<span class="badge delay">Delay</span>',
   };
 
   document.getElementById('tableBody').innerHTML=pageRows.map(r=>{
@@ -846,7 +855,7 @@ function render(){
     let delayHtml='<span class="delay-chip delay-none">—</span>';
     if(r.depositDelay!=null){
       const dc=r.depositDelay===0?'delay-0':r.depositDelay===1?'delay-1':'delay-2';
-      const label=r.depositDelay===0?'วันเดียวกัน':`+${r.depositDelay} วัน`;
+      const label=r.depositDelay===0?'Same Day':`-${r.depositDelay} DAY`;
       delayHtml=`<span class="delay-chip ${dc}">${label}</span>`;
     }
     return `<tr><td><b>${r.store.store_code}</b></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td></tr>`;
