@@ -417,13 +417,7 @@ if (LOCKED_ZONE) {
   if (!ZONE_BRANCHES[LOCKED_ZONE]) {
     document.getElementById('updatedAt').textContent = '⚠️ Zone ไม่ถูกต้อง: ' + LOCKED_ZONE;
   }
-  // Sidebar identity
-  document.getElementById('sidebarAvatar').textContent = 'DM';
-  
-  
   // Hide accounting-only elements
-  
-  
   document.getElementById('districtSection').style.display  = 'none';
   document.getElementById('chartsRow').style.gridTemplateColumns = '1fr';
   document.getElementById('filterZone').style.display  = 'none';
@@ -536,42 +530,32 @@ function getStoreStatus(storeCode, salesDate, depositDate){
   recs = recs.filter(r=>(r.sales_date||'').slice(0,10)===sd);
   if(depositDate) recs = recs.filter(r=>(r.deposit_date||'').slice(0,10)===depositDate);
 
-  // เวลาปัจจุบันในไทย (UTC+7)
-  const nowTH = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Bangkok'}));
-  const nowHour = nowTH.getHours() + nowTH.getMinutes()/60;
-  const isPastCutoff = nowHour >= DELAY_CUTOFF_HOUR; // ผ่านบ่าย 2 แล้วไหม
+  // deadline = (sales_date + 1 วัน) เวลา 14:00 ไทย (07:00 UTC)
+  const [sy,sm,sd2] = sd.split('-').map(Number);
+  const deadlineUTC = new Date(Date.UTC(sy, sm-1, sd2+1, 7, 0, 0));
+
+  // เวลาปัจจุบัน UTC
+  const nowUTC = new Date();
+  const isPastDeadline = nowUTC >= deadlineUTC;
 
   // ยังไม่ส่งเลย
   if(recs.length===0){
-    // ถ้า salesDate = เมื่อวาน และผ่านบ่าย 2 แล้ว → Delay
-    const yesterday = new Date(nowTH); yesterday.setDate(yesterday.getDate()-1);
-    const yStr = yesterday.toISOString().slice(0,10);
-    if(sd===yStr && isPastCutoff) return {status:'delay',records:[]};
-    return {status:'missing',records:[]};
+    if(isPastDeadline) return {status:'delay', records:[]};
+    return {status:'missing', records:[]};
   }
 
   const latest = recs.reduce((a,b)=>new Date(a.submitted_at)>new Date(b.submitted_at)?a:b);
 
-  // ส่งซ้ำ
-  if(recs.length>1) return {status:'duplicate',records:recs,latest};
+  // ส่งซ้ำ — คำนวณ totalAmount รวมทุก record
+  if(recs.length>1){
+    const totalAmount = recs.reduce((s,r)=>s+(Number(r.amount)||0), 0);
+    return {status:'duplicate', records:recs, latest, totalAmount};
+  }
 
-  // ตรวจว่าส่งช้ากว่าบ่าย 2 ของวันถัดจาก sales_date ไหม
-  // เช่น sales_date = เมื่อวาน → deadline = วันนี้บ่าย 2
-  const [sy,sm,sd2] = sd.split('-').map(Number);
-  const deadlineDate = new Date(Date.UTC(sy,sm-1,sd2));
-  deadlineDate.setUTCDate(deadlineDate.getUTCDate()+1); // วันถัดไป
-  // deadline = วันถัดไป 14:00 ไทย = 07:00 UTC
-  const deadlineUTC = new Date(Date.UTC(
-    deadlineDate.getUTCFullYear(),
-    deadlineDate.getUTCMonth(),
-    deadlineDate.getUTCDate(),
-    7, 0, 0
-  ));
+  // ตรวจว่าส่งก่อนหรือหลัง deadline
   const submittedAt = new Date(latest.submitted_at);
-  const isLate = submittedAt > deadlineUTC;
-
-  if(isLate) return {status:'late',records:recs,latest};
-  return {status:'sent',records:recs,latest};
+  if(submittedAt > deadlineUTC) return {status:'late', records:recs, latest};
+  return {status:'sent', records:recs, latest};
 }
 
 function countMissedDays(storeCode,days){
@@ -840,8 +824,11 @@ function render(){
     const timeStr=rec?new Date(rec.submitted_at).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'—';
     const amountStr=rec?Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
     const slipLink=rec&&rec.slip_url?`<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>`:'—';
+    const totalAmt = r.status==='duplicate' && r.totalAmount!=null
+      ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
+      : null;
     const statusBadge=r.status==='duplicate'
-      ?`<button class="badge-dup-btn" onclick="openDupModal('${r.store.store_code}','${salesDateStr}')">⚠ Duplicate (${r.records.length})</button>`
+      ?`<button class="badge-dup-btn" onclick="openDupModal('${r.store.store_code}','${salesDateStr}')">⚠ Duplicate (${r.records.length}) ${totalAmt?'฿'+totalAmt:''}</button>`
       :(badgeMap[r.status]||'');
     // Channel badge
     const ch=rec&&rec.channel?rec.channel:'';
