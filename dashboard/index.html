@@ -37,10 +37,8 @@
     font-size:14px;
   }
 
-  /* ===================== LAYOUT ===================== */
   .shell{display:flex; min-height:100vh;}
 
-  /* ---- Sidebar ---- */
   .sidebar{
     width:220px; flex:0 0 220px;
     background:var(--sidebar-bg); color:#fff;
@@ -94,10 +92,8 @@
   .sidebar-foot-name{font-size:12px; font-weight:700; line-height:1.3;}
   .sidebar-foot-sub{font-size:11px; color:rgba(255,255,255,.45); line-height:1.3;}
 
-  /* ---- Main content area ---- */
   .main{flex:1; min-width:0; display:flex; flex-direction:column;}
 
-  /* ---- Topbar ---- */
   .topbar{
     position:sticky; top:0; z-index:9;
     background:var(--card); border-bottom:1px solid var(--line);
@@ -115,7 +111,6 @@
   }
   select:focus, input:focus{outline:none; border-color:var(--bata-red);}
 
-  /* ---- Body split: left content + right panel ---- */
   .body-split{display:flex; flex:1; align-items:flex-start; min-height:0;}
   .content-col{flex:1; min-width:0; padding:20px 20px 60px; overflow-y:auto;}
   .right-panel{
@@ -126,7 +121,6 @@
     overflow-y:auto;
   }
 
-  /* ===================== COMPONENTS ===================== */
   .metrics{
     display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr));
     gap:10px; margin-bottom:18px;
@@ -179,11 +173,9 @@
   .chart-legend span{display:flex; align-items:center; gap:5px;}
   .chart-legend .dot{width:8px; height:8px; border-radius:2px; flex:0 0 auto;}
 
-  /* Trend + district: horizontal side by side */
   .charts-row{display:grid; grid-template-columns:1.6fr 1fr; gap:14px; margin-bottom:16px;}
   @media(max-width:900px){.charts-row{grid-template-columns:1fr;}}
 
-  /* ---- Big table ---- */
   .table-wrap{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
     box-shadow:var(--shadow-card); overflow:hidden;
@@ -215,6 +207,17 @@
   .badge.err{background:var(--err-bg); color:var(--err);}
   .badge.purple{background:var(--purple-bg); color:var(--purple);}
 
+  /* Duplicate badge as button */
+  .badge-dup-btn{
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:11px; font-weight:700;
+    padding:2px 9px; border-radius:6px;
+    background:var(--purple-bg); color:var(--purple);
+    border:none; cursor:pointer; font-family:var(--font-body);
+    transition:background .12s;
+  }
+  .badge-dup-btn:hover{background:#e0d8fe;}
+
   .pager{display:flex; justify-content:center; align-items:center; gap:5px; padding:12px;}
   .pager button{
     border:1.5px solid var(--line); background:#fff; color:var(--ink-soft);
@@ -234,11 +237,9 @@
   .empty-state{padding:32px 16px; text-align:center; color:var(--ink-soft); font-size:13px;}
   .loading{padding:32px 16px; text-align:center; color:var(--ink-soft); font-size:13px;}
 
-  /* ===================== RIGHT PANEL ===================== */
   .rp-section{margin-bottom:20px;}
   .rp-title{font-size:11.5px; font-weight:800; color:var(--ink); margin-bottom:10px; text-transform:uppercase; letter-spacing:.04em;}
 
-  /* Quick summary donut */
   .donut-wrap{display:flex; justify-content:center; margin-bottom:12px;}
   .donut-legend-row{
     display:flex; justify-content:space-between; align-items:center;
@@ -249,7 +250,6 @@
   .donut-legend-row .leg-left .dot{width:8px; height:8px; border-radius:2px; display:inline-block;}
   .donut-legend-row b{font-weight:700; color:var(--ink);}
 
-  /* District overview list */
   .zone-list{display:flex; flex-direction:column; gap:0; overflow-y:auto;}
   .zone-row{
     display:flex; align-items:center; justify-content:space-between;
@@ -264,7 +264,6 @@
   .zs-err{color:var(--err); font-weight:700;}
   .zs-sep{color:var(--ink-faint);}
 
-  /* Missing stores list */
   .missing-list{max-height:400px; overflow-y:auto;}
   .missing-item{
     display:flex; align-items:center; justify-content:space-between;
@@ -275,7 +274,6 @@
   .missing-name{color:var(--ink-soft); flex:1; margin:0 8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .missing-zone{font-size:11px; color:var(--ink-faint); background:var(--paper); padding:1px 6px; border-radius:5px;}
 
-  /* Auto refresh toggle */
   .toggle-row{
     display:flex; justify-content:space-between; align-items:center;
     padding:10px 0 0; margin-top:10px; border-top:1px solid var(--line);
@@ -287,16 +285,111 @@
   .switch.off{background:#D7D9E0;}
   .switch.off::after{right:auto; left:2px;}
 
-  /* District chart section (Accounting only) */
   #districtSection{margin-bottom:16px;}
 
-  /* Search input */
   .search-input{
     padding:7px 12px; font-size:12.5px; border:1.5px solid var(--line);
     border-radius:8px; background:#fff; color:var(--ink); font-family:var(--font-body); font-weight:600;
     width:200px; outline:none;
   }
   .search-input:focus{border-color:var(--bata-red);}
+
+  /* ===================== DUPLICATE MODAL ===================== */
+  #dupModalBackdrop{
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.45); z-index:100;
+    align-items:center; justify-content:center; padding:16px;
+  }
+  #dupModalBackdrop.open{display:flex;}
+
+  .dup-modal{
+    background:#fff; border-radius:14px;
+    width:100%; max-width:720px; max-height:90vh;
+    overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2);
+    display:flex; flex-direction:column;
+  }
+  .dup-modal-header{
+    padding:16px 20px; border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:flex-start;
+    position:sticky; top:0; background:#fff; z-index:1;
+  }
+  .dup-modal-header h2{font-size:15px; font-weight:800; color:var(--ink);}
+  .dup-modal-header p{font-size:12px; color:var(--ink-soft); margin-top:3px;}
+  .dup-modal-close{
+    background:none; border:none; font-size:20px;
+    color:var(--ink-faint); cursor:pointer; line-height:1; padding:0 4px;
+  }
+  .dup-modal-close:hover{color:var(--ink);}
+
+  .dup-modal-body{padding:16px 20px; flex:1;}
+
+  .dup-reason-banner{
+    background:#fffbeb; border:1px solid #fde68a; border-radius:8px;
+    padding:10px 14px; margin-bottom:14px; font-size:12px; color:#92400e; line-height:1.7;
+  }
+  .dup-reason-banner strong{font-weight:700;}
+
+  .dup-inner-table-wrap{border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:4px;}
+  .dup-inner-table-wrap table th{font-size:10.5px; padding:8px 12px; background:#FAFAFB;}
+  .dup-inner-table-wrap table td{font-size:12px; padding:10px 12px;}
+  .dup-inner-table-wrap table tr:hover td{background:#FAFAFB;}
+
+  .dup-row-correct{background:#f0fdf4 !important;}
+  .dup-row-correct td{background:#f0fdf4 !important;}
+  .dup-row-rejected{opacity:.45;}
+
+  .tag-correct{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--ok-bg);color:var(--ok);border-radius:5px;font-size:11px;font-weight:700;}
+  .tag-rejected{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--err-bg);color:var(--err);border-radius:5px;font-size:11px;font-weight:700;}
+  .tag-pending{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--paper);color:var(--ink-soft);border-radius:5px;font-size:11px;}
+
+  .btn-mark-correct{
+    padding:4px 12px; border-radius:7px;
+    border:1.5px solid var(--line); background:#fff;
+    font-size:11px; font-weight:700; cursor:pointer; color:var(--ink);
+    font-family:var(--font-body); transition:background .12s, border-color .12s;
+  }
+  .btn-mark-correct:hover{background:var(--ok-bg); border-color:var(--ok); color:var(--ok);}
+  .btn-mark-correct:disabled{opacity:.4; cursor:not-allowed;}
+
+  .dup-modal-footer{
+    padding:12px 20px; border-top:1px solid var(--line);
+    display:flex; justify-content:flex-end; gap:8px; align-items:center;
+    position:sticky; bottom:0; background:#fff;
+  }
+  .dup-save-msg{font-size:12px; color:var(--ok); flex:1; font-weight:600;}
+
+  .btn-secondary{
+    padding:7px 16px; border-radius:8px; font-size:13px; font-weight:700;
+    cursor:pointer; border:1.5px solid var(--line); background:#fff; color:var(--ink);
+    font-family:var(--font-body);
+  }
+  .btn-secondary:hover{background:var(--paper);}
+  .btn-save{
+    padding:7px 20px; border-radius:8px; font-size:13px; font-weight:700;
+    cursor:pointer; border:none; background:var(--ink); color:#fff;
+    font-family:var(--font-body); transition:background .12s;
+  }
+  .btn-save:hover{background:#2d2d2d;}
+  .btn-save:disabled{opacity:.4; cursor:not-allowed;}
+
+  .dup-spinner{
+    display:inline-block; width:14px; height:14px;
+    border:2px solid var(--line); border-top-color:var(--ink-soft);
+    border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:4px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* Toast notification */
+  #toastMsg{
+    position:fixed; bottom:24px; right:24px;
+    background:var(--ink); color:#fff;
+    padding:10px 18px; border-radius:10px; font-size:13px; font-weight:600;
+    z-index:200; display:none; max-width:340px; line-height:1.5;
+    box-shadow:0 4px 20px rgba(0,0,0,.2);
+  }
+  #toastMsg.show{display:block;}
+  #toastMsg.ok-toast{background:var(--ok);}
+  #toastMsg.err-toast{background:var(--err);}
 </style>
 </head>
 <body>
@@ -351,7 +444,6 @@
   <!-- ===================== MAIN ===================== -->
   <div class="main">
 
-    <!-- Topbar -->
     <div class="topbar">
       <div class="topbar-left">
         <div>
@@ -364,20 +456,15 @@
       </div>
     </div>
 
-    <!-- Body: content + right panel -->
     <div class="body-split">
 
-      <!-- ---- Left content column ---- -->
       <div class="content-col">
 
-        <!-- Metric cards -->
         <div class="metrics" id="metricsRow">
           <div class="metric"><div class="metric-label">Total Stores</div><div class="metric-value">—</div></div>
         </div>
 
-        <!-- Charts row: Trend (wide) + District (Accounting only) -->
         <div class="charts-row" id="chartsRow">
-          <!-- Trend chart -->
           <div>
             <div class="section-head" style="min-height:36px;">
               <div class="section-title" id="trendTitle">Submission Trend</div>
@@ -397,7 +484,6 @@
             </div>
           </div>
 
-          <!-- District chart (Accounting only) -->
           <div id="districtSection">
             <div class="section-head" style="min-height:36px;">
               <div class="section-title" id="districtTitle">By District</div>
@@ -415,7 +501,6 @@
           </div>
         </div>
 
-        <!-- All Submissions table -->
         <div class="table-wrap">
           <div class="table-head-bar">
             <div class="table-title" id="tableTitle">All submissions</div>
@@ -460,12 +545,10 @@
           <div class="pager" id="pager"></div>
         </div>
 
-      </div><!-- /content-col -->
+      </div>
 
-      <!-- ---- Right panel ---- -->
       <div class="right-panel" id="rightPanel">
 
-        <!-- Quick summary donut -->
         <div class="rp-section">
           <div class="rp-title">Quick summary</div>
           <div class="donut-wrap">
@@ -474,7 +557,6 @@
           <div id="donutLegend"></div>
         </div>
 
-        <!-- District overview list -->
         <div class="rp-section" id="zoneListSection">
           <div class="rp-title">District Overview</div>
           <div class="zone-list" id="zoneList">
@@ -482,7 +564,6 @@
           </div>
         </div>
 
-        <!-- Not submitted stores list -->
         <div class="rp-section">
           <div class="rp-title" id="missingCardTitle">Not submitted</div>
           <div class="missing-list">
@@ -490,7 +571,6 @@
           </div>
         </div>
 
-        <!-- Auto refresh -->
         <div class="toggle-row">
           <div>
             <div class="toggle-label">Auto Refresh</div>
@@ -499,11 +579,56 @@
           <div class="switch" id="autoRefreshToggle"></div>
         </div>
 
-      </div><!-- /right-panel -->
+      </div>
 
-    </div><!-- /body-split -->
-  </div><!-- /main -->
-</div><!-- /shell -->
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DUPLICATE REVIEW MODAL ===================== -->
+<div id="dupModalBackdrop">
+  <div class="dup-modal">
+
+    <div class="dup-modal-header">
+      <div>
+        <h2 id="dupModalTitle">รายการ Duplicate</h2>
+        <p id="dupModalSub"></p>
+      </div>
+      <button class="dup-modal-close" onclick="closeDupModal()">✕</button>
+    </div>
+
+    <div class="dup-modal-body">
+      <div class="dup-reason-banner" id="dupModalReason"></div>
+      <div class="dup-inner-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Submitted At</th>
+              <th>Sales Date</th>
+              <th>Deposit Date</th>
+              <th>Amount</th>
+              <th>Slip</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dupModalTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dup-modal-footer">
+      <span class="dup-save-msg" id="dupSaveMsg" style="display:none">✓ บันทึกแล้ว รายการที่เหลือถูก Rejected</span>
+      <button class="btn-secondary" onclick="closeDupModal()">ปิด</button>
+      <button class="btn-save" id="dupSaveBtn" onclick="saveDupResolve()" disabled>บันทึก</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toastMsg"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -547,7 +672,11 @@ let trendChartInstance = null;
 let districtChartInstance = null;
 let donutChartInstance = null;
 
-// filterSalesDateEl และ filterDepositDateEl resolve ตอน render (DOM พร้อมแล้ว)
+// Duplicate modal state
+let dupSelectedId = null;
+let dupCurrentGroupId = null;
+let dupCurrentRecords = [];
+
 function getFilterSalesDateEl()   { return document.getElementById('filterSalesDate'); }
 function getFilterDepositDateEl() { return document.getElementById('filterDepositDate'); }
 const filterZoneEl = document.getElementById('filterZone');
@@ -558,8 +687,6 @@ function dateNDaysAgo(n){
   const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0,10);
 }
 
-// init date filters after DOM ready
-// init date filters inline (script is at bottom of body, DOM already ready)
 (function(){
   const sd = document.getElementById('filterSalesDate');
   const dd = document.getElementById('filterDepositDate');
@@ -594,13 +721,11 @@ function setupAutoRefresh(){
   if (autoRefreshOn) autoRefreshTimer = setInterval(loadData, 5 * 60 * 1000);
 }
 
-/* Sidebar nav */
 document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const view = btn.dataset.view;
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
     if (view === 'dashboard') {
       activeMetricFilter = '';
       window.scrollTo({top:0, behavior:'smooth'});
@@ -654,7 +779,7 @@ async function loadData(){
     .order('submitted_at', { ascending: false });
 
   if (error) {
-    document.getElementById('tableBody').innerHTML = `<tr><td colspan="7" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
     return;
   }
   allRecords = records || [];
@@ -669,7 +794,6 @@ async function loadData(){
 /* ==================== STATUS LOGIC ==================== */
 function getStoreStatus(storeCode, salesDate, depositDate){
   let recs = allRecords.filter(r => r.store_code === storeCode);
-  // default: ถ้าไม่ได้เลือก filter ให้ใช้ sales_date = วันนี้
   const sd = salesDate || today;
   recs = recs.filter(r => (r.sales_date || '').slice(0,10) === sd);
   if (depositDate) recs = recs.filter(r => (r.deposit_date || '').slice(0,10) === depositDate);
@@ -690,6 +814,183 @@ function countMissedDays(storeCode, days){
   }
   return missed;
 }
+
+/* ==================== TOAST ==================== */
+function showToast(msg, type = ''){
+  const el = document.getElementById('toastMsg');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' ' + type + '-toast' : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = '', 3500);
+}
+
+/* ==================== DUPLICATE MODAL ==================== */
+
+// เปิด modal — ดึง records จากใน allRecords ที่โหลดไว้แล้ว
+async function openDupModal(storeCode, salesDate) {
+  dupSelectedId      = null;
+  dupCurrentGroupId  = null;
+  dupCurrentRecords  = [];
+
+  const storeName = STORE_NAMES[storeCode] || storeCode;
+  document.getElementById('dupModalTitle').textContent = `Duplicate — Store ${storeCode}`;
+  document.getElementById('dupModalSub').textContent   = `${storeName} · Sales Date ${salesDate}`;
+  document.getElementById('dupModalReason').innerHTML  = '<span class="dup-spinner"></span> กำลังโหลด...';
+  document.getElementById('dupModalTbody').innerHTML   = '';
+  document.getElementById('dupSaveBtn').disabled       = true;
+  document.getElementById('dupSaveMsg').style.display  = 'none';
+  document.getElementById('dupModalBackdrop').classList.add('open');
+
+  // ดึง records ของ store + sales_date นี้จาก Supabase (ให้ได้ id และ duplicate_group_id ที่ถูกต้อง)
+  const { data, error } = await sb
+    .from('payin_records')
+    .select('id, store_code, sales_date, deposit_date, submitted_at, amount, slip_url, duplicate_status, duplicate_group_id, duplicate_reason')
+    .eq('store_code', storeCode)
+    .eq('sales_date', salesDate)
+    .order('submitted_at', { ascending: true });
+
+  if (error || !data || data.length === 0) {
+    document.getElementById('dupModalReason').textContent = error ? error.message : 'ไม่พบข้อมูล';
+    return;
+  }
+
+  dupCurrentRecords = data;
+  dupCurrentGroupId = data.find(r => r.duplicate_group_id)?.duplicate_group_id || null;
+
+  const reasons = data[0]?.duplicate_reason || [];
+  const reasonLabel = reasons.includes('same_slip_hash')
+    ? 'Store Code + Sales Date ซ้ำ และ Slip รูปเดียวกัน'
+    : 'Store Code + Sales Date ซ้ำกัน';
+
+  document.getElementById('dupModalReason').innerHTML =
+    `<strong>สาเหตุที่ detect ว่าซ้ำ:</strong> ${reasonLabel}<br>
+     เลือกรายการที่ <strong>ถูกต้อง</strong> แล้วกด <strong>บันทึก</strong> — รายการที่เหลือจะถูก Rejected อัตโนมัติ`;
+
+  renderDupRows(data);
+}
+
+function renderDupRows(rows) {
+  document.getElementById('dupModalTbody').innerHTML = rows.map((r, i) => {
+    const timeStr = new Date(r.submitted_at).toLocaleString('th-TH', { dateStyle:'short', timeStyle:'short' });
+    const amtStr  = r.amount != null ? Number(r.amount).toLocaleString('en-US', { minimumFractionDigits:2 }) : '—';
+    const slipHtml = r.slip_url
+      ? `<a class="imglink" href="${r.slip_url}" target="_blank" rel="noopener">View</a>`
+      : '—';
+    const statusBadge = r.duplicate_status === 'correct'
+      ? '<span class="tag-correct">✓ Correct</span>'
+      : r.duplicate_status === 'rejected'
+      ? '<span class="tag-rejected">✕ Rejected</span>'
+      : '<span class="tag-pending">Pending</span>';
+    const canMark = r.duplicate_status === 'pending' || !r.duplicate_status;
+    return `<tr id="duprow-${r.id}">
+      <td>${i + 1}</td>
+      <td>${timeStr}</td>
+      <td>${(r.sales_date || '').slice(0,10) || '—'}</td>
+      <td>${(r.deposit_date || '').slice(0,10) || '—'}</td>
+      <td style="font-weight:700;color:var(--warn)">${amtStr}</td>
+      <td>${slipHtml}</td>
+      <td id="dupstatus-${r.id}">${statusBadge}</td>
+      <td>
+        <button class="btn-mark-correct" id="dupbtn-${r.id}"
+          onclick="selectDupCorrect('${r.id}')"
+          ${canMark ? '' : 'disabled'}>
+          ✓ Mark as Correct
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function selectDupCorrect(id) {
+  dupSelectedId = id;
+
+  // reset ทุก row
+  dupCurrentRecords.forEach(r => {
+    const row = document.getElementById('duprow-' + r.id);
+    if (!row) return;
+    row.className = '';
+    document.getElementById('dupstatus-' + r.id).innerHTML = '<span class="tag-pending">Pending</span>';
+  });
+
+  // row ที่เลือก = correct
+  const selRow = document.getElementById('duprow-' + id);
+  if (selRow) selRow.className = 'dup-row-correct';
+  document.getElementById('dupstatus-' + id).innerHTML = '<span class="tag-correct">✓ Correct</span>';
+
+  // ที่เหลือ = rejected (preview)
+  dupCurrentRecords.forEach(r => {
+    if (r.id !== id) {
+      const row = document.getElementById('duprow-' + r.id);
+      if (row) row.className = 'dup-row-rejected';
+      document.getElementById('dupstatus-' + r.id).innerHTML = '<span class="tag-rejected">✕ Rejected</span>';
+    }
+  });
+
+  document.getElementById('dupSaveBtn').disabled = false;
+  document.getElementById('dupSaveMsg').style.display = 'none';
+}
+
+async function saveDupResolve() {
+  if (!dupSelectedId) return;
+
+  const saveBtn = document.getElementById('dupSaveBtn');
+  saveBtn.disabled  = true;
+  saveBtn.innerHTML = '<span class="dup-spinner"></span>บันทึก...';
+
+  try {
+    // ถ้า records ยังไม่มี duplicate_group_id (ข้อมูลเก่าก่อน migration)
+    // ให้เรียก detect ก่อน แล้วค่อย resolve
+    if (!dupCurrentGroupId) {
+      const { error: detectErr } = await sb.rpc('detect_and_group_duplicates');
+      if (detectErr) throw detectErr;
+      // ดึง group_id ที่ถูก detect ใหม่
+      const { data: refreshed } = await sb
+        .from('payin_records')
+        .select('id, duplicate_group_id')
+        .eq('id', dupSelectedId)
+        .single();
+      dupCurrentGroupId = refreshed?.duplicate_group_id || null;
+    }
+
+    const { data: { user } } = await sb.auth.getUser();
+    const userId = user?.id || null;
+
+    const { error } = await sb.rpc('resolve_duplicate', {
+      p_correct_id:  dupSelectedId,
+      p_resolved_by: userId,
+    });
+    if (error) throw error;
+
+    document.getElementById('dupSaveMsg').style.display = 'block';
+    saveBtn.innerHTML = 'บันทึก';
+    document.querySelectorAll('[id^="dupbtn-"]').forEach(b => b.disabled = true);
+
+    showToast('✓ บันทึกสำเร็จ', 'ok');
+
+    // ปิด modal และ reload ข้อมูล
+    setTimeout(() => {
+      closeDupModal();
+      loadData();
+    }, 1200);
+
+  } catch (e) {
+    showToast('บันทึกไม่สำเร็จ: ' + e.message, 'err');
+    saveBtn.disabled  = false;
+    saveBtn.innerHTML = 'บันทึก';
+  }
+}
+
+function closeDupModal() {
+  document.getElementById('dupModalBackdrop').classList.remove('open');
+  dupSelectedId     = null;
+  dupCurrentGroupId = null;
+  dupCurrentRecords = [];
+}
+
+// ปิด modal เมื่อกด backdrop
+document.getElementById('dupModalBackdrop').addEventListener('click', function(e) {
+  if (e.target === this) closeDupModal();
+});
 
 /* ==================== CHARTS ==================== */
 function renderTrendChart(stores){
@@ -780,7 +1081,7 @@ function render(){
   renderTrendChart(stores);
   if (!LOCKED_ZONE) renderDistrictChart(salesDateFilter || today);
 
-  const total = rows.length;
+  const total   = rows.length;
   const sent    = rows.filter(r => r.status === 'sent').length;
   const missing = rows.filter(r => r.status === 'missing').length;
   const dup     = rows.filter(r => r.status === 'duplicate').length;
@@ -788,13 +1089,12 @@ function render(){
 
   renderDonutChart(total, sent, missing, dup, late);
 
-  document.getElementById('navCountMissing').textContent  = missing;
+  document.getElementById('navCountMissing').textContent   = missing;
   document.getElementById('navCountDuplicate').textContent = dup;
-  document.getElementById('navCountLate').textContent     = late;
+  document.getElementById('navCountLate').textContent      = late;
 
   const pct = n => total > 0 ? ((n/total)*100).toFixed(2)+'%' : '—';
 
-  /* Metric cards */
   document.getElementById('metricsRow').innerHTML = `
     <div class="metric" data-filter=""><div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total Stores</div></div><div class="metric-value">${total}</div><div class="metric-pct blue">100%</div></div>
     <div class="metric" data-filter="sent"><div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div><div class="metric-value">${sent}</div><div class="metric-pct ok">${pct(sent)}</div></div>
@@ -811,7 +1111,6 @@ function render(){
     });
   });
 
-  /* Zone list (right panel) */
   const zones = Object.keys(ZONE_BRANCHES).sort();
   document.getElementById('zoneList').innerHTML = zones.map(z => {
     const zStores = allStoresList.filter(s => s.zone_code === z);
@@ -837,7 +1136,6 @@ function render(){
     });
   });
 
-  /* Missing list (right panel) */
   const missingRows = rows.filter(r => r.status === 'missing');
   document.getElementById('missingCardTitle').textContent = `Not Submitted (${missingRows.length})`;
   document.getElementById('missingListBody').innerHTML = missingRows.length === 0
@@ -859,14 +1157,13 @@ function render(){
 
   filteredRows = filteredRows.map(r => ({...r, missedDays: countMissedDays(r.store.store_code, activeRange)}));
 
-  /* Sort */
   filteredRows = [...filteredRows].sort((a, b) => {
     let va, vb;
     if(sortCol==='store_code'){va=a.store.store_code; vb=b.store.store_code;}
     else if(sortCol==='zone'){va=a.store.zone_code; vb=b.store.zone_code;}
     else if(sortCol==='status'){va=a.status; vb=b.status;}
     else if(sortCol==='sales_date'){va=a.latest?a.latest.sales_date||'':''; vb=b.latest?b.latest.sales_date||'':'';}
-    else if(sortCol==='deposit_date'){va=a.latest?a.latest.deposit_date||'':''; vb=b.latest?b.latest.deposit_date||'':'';}  
+    else if(sortCol==='deposit_date'){va=a.latest?a.latest.deposit_date||'':''; vb=b.latest?b.latest.deposit_date||'':'';}
     else if(sortCol==='time'){va=a.latest?a.latest.submitted_at:''; vb=b.latest?b.latest.submitted_at:'';}
     else if(sortCol==='amount'){va=a.latest?Number(a.latest.amount):-1; vb=b.latest?Number(b.latest.amount):-1;}
     else if(sortCol==='slip'){va=a.latest&&a.latest.slip_url?1:0; vb=b.latest&&b.latest.slip_url?1:0;}
@@ -909,12 +1206,18 @@ function render(){
     const timeStr = rec ? new Date(rec.submitted_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
     const amountStr = rec ? Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
     const slipLink = rec && rec.slip_url ? `<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>` : '—';
+
+    // ── Duplicate badge: กดเพื่อเปิด modal ──
     const statusBadge = r.status === 'duplicate'
-      ? `<span class="badge purple">Duplicate (${r.records.length})</span>`
+      ? `<button class="badge-dup-btn" onclick="openDupModal('${r.store.store_code}','${salesDateStr}')">
+           ⚠ Duplicate (${r.records.length})
+         </button>`
       : (badgeMap[r.status] || '');
+
     let missClass = 'zero';
     if (r.missedDays > 0 && r.missedDays <= Math.ceil(activeRange*.3)) missClass = 'some';
     else if (r.missedDays > Math.ceil(activeRange*.3)) missClass = 'many';
+
     return `<tr>
       <td><b>${r.store.store_code}</b></td>
       <td>${r.store.zone_code}</td>
@@ -928,7 +1231,6 @@ function render(){
     </tr>`;
   }).join('');
 
-  /* Pager */
   let pagerHtml = `<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
   for (let p=1; p<=totalPages; p++){
     if (totalPages>7 && p>2 && p<totalPages-1 && Math.abs(p-currentPage)>1){
@@ -954,8 +1256,8 @@ if (LOCKED_ZONE) {
   document.getElementById('sidebarName').textContent = 'District Team';
   document.getElementById('sidebarEmail').textContent = `DM${LOCKED_ZONE}@bata.co.th`;
   document.getElementById('navByDistrict').style.display = 'none';
-  document.getElementById('districtNavGroup').style.display = 'none';  document.getElementById('districtSection').style.display = 'none';
-  /* ซ่อนกราฟ district แต่ให้ trend chart กว้างขึ้น */
+  document.getElementById('districtNavGroup').style.display = 'none';
+  document.getElementById('districtSection').style.display = 'none';
   document.getElementById('chartsRow').style.gridTemplateColumns = '1fr';
   document.getElementById('filterZone').style.display = 'none';
   document.getElementById('zoneListSection').style.display = 'none';
