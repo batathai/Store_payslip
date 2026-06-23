@@ -855,7 +855,7 @@ function render(){
     let delayHtml='<span class="delay-chip delay-none">—</span>';
     if(r.depositDelay!=null){
       const dc=r.depositDelay===0?'delay-0':r.depositDelay===1?'delay-1':'delay-2';
-      const label=r.depositDelay===0?'Same Day':`-${r.depositDelay} DAY`;
+      const label=r.depositDelay===0?'Same Day':`${r.depositDelay} DAY`;
       delayHtml=`<span class="delay-chip ${dc}">${label}</span>`;
     }
     return `<tr><td><b>${r.store.store_code}</b></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td></tr>`;
