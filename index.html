@@ -521,25 +521,34 @@ const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+/* ==================== SVG LOGO DATA (Inline) ==================== */
+const SCB_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%234A235A"/><path d="M30 70 C30 40, 70 60, 70 30" stroke="white" stroke-width="8" fill="none"/></svg> `;
+const BBL_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="90" height="60" x="5" y="20" rx="10" fill="%23003399"/><polygon points="30,35 70,50 30,65" fill="white"/></svg> `;
+const KRUNGSRI_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23FFCC00"/><path d="M35 35 L65 35 L50 70 Z" fill="%23533214"/></svg> `;
+
+const SEVEN_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="90" height="90" x="5" y="5" fill="%23008060"/><text x="50" y="65" font-family="sans-serif" font-size="50" font-weight="bold" fill="%23EE1D23" text-anchor="middle">7</text></svg> `;
+const LOTUS_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="90" height="90" x="5" y="5" fill="%23005A43"/><circle cx="50" cy="50" r="20" fill="%23DCE600"/></svg> `;
+const BIGC_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="90" height="90" x="5" y="5" fill="%23ED1C24"/><text x="50" y="70" font-family="sans-serif" font-size="70" font-weight="bold" fill="%2399CC33" text-anchor="middle">B</text></svg> `;
+
 /* ==================== CHANNEL DATA ==================== */
 // กลุ่ม 1: ธนาคาร (ลำดับ: ไทยพาณิชย์ → กรุงเทพ → กรุงศรี)
 const BANK_CHANNELS = [
-  { id:'scb',      name:'ธ.ไทยพาณิชย์ (Saving)',    detail:'เลขบัญชี: 347-301-3949' },
-  { id:'bbl',      name:'ธ.กรุงเทพ (Current)',        detail:'เลขบัญชี: 106-315-6325' },
-  { id:'krungsri', name:'ธ.กรุงศรีอยุธยา (Saving)',  detail:'เลขบัญชี: 333-171-6277' },
+  { id:'scb',      name:'ธ.ไทยพาณิชย์ (Saving)',    detail:'เลขบัญชี: 347-301-3949', logo: SCB_SVG },
+  { id:'bbl',      name:'ธ.กรุงเทพ (Current)',        detail:'เลขบัญชี: 106-315-6325', logo: BBL_SVG },
+  { id:'krungsri', name:'ธ.กรุงศรีอยุธยา (Saving)',  detail:'เลขบัญชี: 333-171-6277', logo: KRUNGSRI_SVG },
 ];
 
 // กลุ่ม 2: เคาน์เตอร์เซอร์วิส — แต่ละเจ้ามี sub-bank picker (กรุงเทพ → ไทยพาณิชย์ → กรุงศรี)
 const COUNTER_CHANNELS = [
-  { id:'seven_eleven', name:'7-Eleven', detail:'ฝากผ่านเคาน์เตอร์เซเว่น' },
-  { id:'lotus',        name:'Lotus',    detail:'ฝากผ่านเคาน์เตอร์โลตัส' },
-  { id:'bigc',         name:'Big C',    detail:'ฝากผ่านเคาน์เตอร์บิ๊กซี' },
+  { id:'seven_eleven', name:'7-Eleven', detail:'ฝากผ่านเคาน์เตอร์เซเว่น', logo: SEVEN_SVG },
+  { id:'lotus',        name:'Lotus',    detail:'ฝากผ่านเคาน์เตอร์โลตัส', logo: LOTUS_SVG },
+  { id:'bigc',         name:'Big C',    detail:'ฝากผ่านเคาน์เตอร์บิ๊กซี', logo: BIGC_SVG },
 ];
 
 const SUB_BANKS = [
-  { id:'bbl',      name:'ธ.กรุงเทพ',         acc:'106-315-6325' },
-  { id:'scb',      name:'ธ.ไทยพาณิชย์',      acc:'347-301-3949' },
-  { id:'krungsri', name:'ธ.กรุงศรีอยุธยา',   acc:'333-171-6277' },
+  { id:'bbl',      name:'ธ.กรุงเทพ',         acc:'106-315-6325', logo: BBL_SVG },
+  { id:'scb',      name:'ธ.ไทยพาณิชย์',      acc:'347-301-3949', logo: SCB_SVG },
+  { id:'krungsri', name:'ธ.กรุงศรีอยุธยา',   acc:'333-171-6277', logo: KRUNGSRI_SVG },
 ];
 
 const COUNTER_IDS = COUNTER_CHANNELS.map(c => c.id);
