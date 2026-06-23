@@ -822,7 +822,10 @@ function render(){
     const salesDateStr=rec&&rec.sales_date?rec.sales_date.slice(0,10):'—';
     const depositDateStr=rec&&rec.deposit_date?rec.deposit_date.slice(0,10):'—';
     const timeStr=rec?new Date(rec.submitted_at).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'—';
-    const amountStr=rec?Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
+    // Duplicate → แสดงยอดรวมทั้งหมด, สถานะอื่น → ยอดของ record นั้น
+    const amountStr = r.status==='duplicate' && r.totalAmount!=null
+      ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
+      : rec ? Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
     const slipLink=rec&&rec.slip_url?`<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>`:'—';
     const totalAmt = r.status==='duplicate' && r.totalAmount!=null
       ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
