@@ -826,7 +826,7 @@ function render(){
     const amountStr = r.status==='duplicate' && r.totalAmount!=null
       ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
       : rec ? Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
-    const slipLink=rec&&rec.slip_url?`<a class="imglink" href="${rec.slip_url}" target="_blank" rel="noopener">View</a>`:'—';
+    const slipLink = rec && rec.slip_url? `<a class="imglink" href="https://docs.google.com/viewer?url=${encodeURIComponent(rec.slip_url)}" target="_blank" rel="noopener">View</a>`: '—';
     const totalAmt = r.status==='duplicate' && r.totalAmount!=null
       ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
       : null;
