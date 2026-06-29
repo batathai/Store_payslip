@@ -486,7 +486,21 @@ function buildStoreList(){
 /* ============================================================
    LOAD DATA — filter by zone at Supabase level for DM
    ============================================================ */
-async function loadData(){
+    function openSlip(e, url){
+    e.preventDefault();
+    const w = window.open('', '_blank', 'width=800,height=700');
+    w.document.write(`<!DOCTYPE html><html><head>
+      <title>Slip</title>
+      <style>
+        body{margin:0;background:#111;display:flex;align-items:center;
+             justify-content:center;min-height:100vh;}
+        img{max-width:100%;max-height:100vh;object-fit:contain;}
+      </style>
+    </head><body>
+      <img src="${url}" onerror="this.outerHTML='<p style=color:#fff;padding:20px>โหลดรูปไม่ได้ — <a style=color:#f66 href=${url} download>คลิกเพื่อ Download</a></p>'">
+    </body></html>`);
+  }
+  async function loadData(){
   document.getElementById('updatedAt').textContent = 'กำลังโหลด...';
   const sinceDate = dateNDaysAgo(90)+'T00:00:00';
 
@@ -524,7 +538,7 @@ async function loadData(){
 /* ============================================================
    STATUS HELPERS
    ============================================================ */
-function getStoreStatus(storeCode, salesDate, depositDate){
+  function getStoreStatus(storeCode, salesDate, depositDate){
   let recs = allRecords.filter(r=>r.store_code===storeCode);
   const sd = salesDate||today;
   recs = recs.filter(r=>(r.sales_date||'').slice(0,10)===sd);
@@ -595,7 +609,7 @@ async function openDupModal(storeCode,salesDate){
   document.getElementById('dupModalTbody').innerHTML=data.map((r,i)=>{
     const timeStr=new Date(r.submitted_at).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
     const amtStr=r.amount!=null?Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
-    const slipHtml=r.slip_url?`<a class="imglink" href="${r.slip_url}" target="_blank" rel="noopener">View</a>`:'—';
+    const slipHtml = r.slip_url ? `<a class="imglink" href="#" onclick="openSlip(event,'${r.slip_url}')">View</a>` : '—';
     const statusBadge=r.duplicate_status==='correct'?'<span class="tag-correct">✓ Correct</span>':r.duplicate_status==='rejected'?'<span class="tag-rejected">✕ Rejected</span>':'<span class="tag-pending">Pending</span>';
     const canMark=r.duplicate_status==='pending'||!r.duplicate_status;
     return `<tr id="duprow-${r.id}"><td>${i+1}</td><td>${timeStr}</td><td>${(r.sales_date||'').slice(0,10)||'—'}</td><td>${(r.deposit_date||'').slice(0,10)||'—'}</td><td style="font-weight:700;color:var(--warn)">${amtStr}</td><td>${slipHtml}</td><td id="dupstatus-${r.id}">${statusBadge}</td><td><button class="btn-mark-correct" id="dupbtn-${r.id}" onclick="selectDupCorrect('${r.id}')" ${canMark?'':'disabled'}>✓ Mark as Correct</button></td></tr>`;
@@ -826,7 +840,7 @@ function render(){
     const amountStr = r.status==='duplicate' && r.totalAmount!=null
       ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
       : rec ? Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
-    const slipLink = rec && rec.slip_url? `<a class="imglink" href="https://docs.google.com/viewer?url=${encodeURIComponent(rec.slip_url)}" target="_blank" rel="noopener">View</a>`: '—';
+    const slipLink = rec && rec.slip_url ? `<a class="imglink" href="#" onclick="openSlip(event,'${rec.slip_url}')">View</a>` : '—';
     const totalAmt = r.status==='duplicate' && r.totalAmount!=null
       ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
       : null;
