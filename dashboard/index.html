@@ -260,6 +260,7 @@
           <div class="table-head-bar">
             <div class="table-title" id="tableTitle">All submissions</div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <button id="exportExcelBtn" onclick="exportToExcel()" style="display:flex;align-items:center;gap:6px;background:var(--ok);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--font-body);">⬇ Export Excel</button>
               <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
                 <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
                 <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
@@ -307,10 +308,6 @@
         <div class="rp-section" id="zoneListSection">
           <div class="rp-title">District Overview</div>
           <div class="zone-list" id="zoneList"><div class="loading">Loading...</div></div>
-        </div>
-        <div class="rp-section">
-          <div class="rp-title" id="missingCardTitle">Not submitted</div>
-          <div class="missing-list"><div id="missingListBody"><div class="loading">Loading...</div></div></div>
         </div>
         <div class="toggle-row">
           <div>
@@ -360,6 +357,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* ============================================================
    CONFIG
@@ -405,6 +403,7 @@ let autoRefreshOn = true;
 let autoRefreshTimer = null;
 let trendChartInstance = null, districtChartInstance = null, donutChartInstance = null;
 let dupSelectedId = null, dupCurrentGroupId = null, dupCurrentRecords = [];
+let lastRenderedRows = [];
 
 const today = new Date().toISOString().slice(0,10);
 function dateNDaysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
@@ -579,6 +578,83 @@ function countMissedDays(storeCode,days){
 }
 
 /* ============================================================
+   EXPORT TO EXCEL
+   ============================================================ */
+function statusLabelTH(status){
+  return {sent:'Submitted',missing:'Not Submitted',late:'Late',delay:'Delay',duplicate:'Duplicate'}[status]||status;
+}
+
+function exportToExcel(){
+  if(typeof XLSX==='undefined'){ showToast('ไม่สามารถโหลดไลบรารี Export ได้ กรุณาตรวจสอบอินเทอร์เน็ต','err'); return; }
+  if(!lastRenderedRows || lastRenderedRows.length===0){ showToast('ไม่มีข้อมูลให้ Export','warn'); return; }
+
+  const salesDateFilter=(document.getElementById('filterSalesDate')&&document.getElementById('filterSalesDate').value)||today;
+
+  // Sheet 1: All submissions (รวมทุกสาขา ทุกสถานะ)
+  const allData = lastRenderedRows.map(r=>{
+    const rec=r.latest;
+    const amount = r.status==='duplicate' && r.totalAmount!=null ? Number(r.totalAmount) : (rec?Number(rec.amount):'');
+    return {
+      'Store Code': r.store.store_code,
+      'Store Name': r.store.store_name||'',
+      'District': r.store.zone_code,
+      'Status': statusLabelTH(r.status),
+      'Sales Date': rec&&rec.sales_date?rec.sales_date.slice(0,10):'',
+      'Deposit Date': rec&&rec.deposit_date?rec.deposit_date.slice(0,10):'',
+      'Submitted At': rec&&rec.submitted_at?new Date(rec.submitted_at).toLocaleString('th-TH'):'',
+      'Deposit Amount': amount,
+      'Channel': rec&&rec.channel?rec.channel:'',
+      'Channel Detail': rec&&rec.channel_detail?rec.channel_detail:'',
+      'Deposit Delay (days)': r.depositDelay!=null?r.depositDelay:'',
+      'Missed Days (last 7d)': countMissedDays(r.store.store_code,7),
+    };
+  });
+
+  // Sheet 2: Not submitted / Delay only — สาขาที่ยังไม่ส่งหรือเลยกำหนด
+  const notSubmittedData = lastRenderedRows
+    .filter(r=>r.status==='missing'||r.status==='delay')
+    .map(r=>({
+      'Store Code': r.store.store_code,
+      'Store Name': r.store.store_name||'',
+      'District': r.store.zone_code,
+      'Status': statusLabelTH(r.status),
+      'Sales Date': salesDateFilter,
+      'Missed Days (last 7d)': countMissedDays(r.store.store_code,7),
+    }));
+
+  // Sheet 3: Summary by district
+  const zones=Object.keys(ZONE_BRANCHES||{}).sort();
+  const summaryData = zones.map(z=>{
+    const zRows=lastRenderedRows.filter(r=>r.store.zone_code===z);
+    return {
+      'District': 'Zone '+z,
+      'Total Stores': zRows.length,
+      'Submitted': zRows.filter(r=>r.status==='sent').length,
+      'Late': zRows.filter(r=>r.status==='late').length,
+      'Not Submitted': zRows.filter(r=>r.status==='missing').length,
+      'Delay': zRows.filter(r=>r.status==='delay').length,
+      'Duplicate': zRows.filter(r=>r.status==='duplicate').length,
+    };
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.json_to_sheet(allData);
+  ws1['!cols']=[{wch:11},{wch:24},{wch:9},{wch:13},{wch:11},{wch:12},{wch:18},{wch:14},{wch:14},{wch:16},{wch:14},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'All Submissions');
+
+  const ws2 = XLSX.utils.json_to_sheet(notSubmittedData);
+  ws2['!cols']=[{wch:11},{wch:24},{wch:9},{wch:13},{wch:11},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Not Submitted');
+
+  const ws3 = XLSX.utils.json_to_sheet(summaryData);
+  ws3['!cols']=[{wch:12},{wch:12},{wch:10},{wch:8},{wch:13},{wch:8},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'Summary by District');
+
+  XLSX.writeFile(wb, `BATA_Payslip_${salesDateFilter}.xlsx`);
+  showToast('Export Excel สำเร็จ','ok');
+}
+
+/* ============================================================
    TOAST
    ============================================================ */
 function showToast(msg,type=''){
@@ -725,6 +801,7 @@ function render(){
     }
     return {store:s,...status,depositDelay};
   });
+  lastRenderedRows = rows;
 
   renderTrendChart(stores);
   if(!LOCKED_ZONE) renderDistrictChart(salesDateFilter||today);
@@ -775,13 +852,6 @@ function render(){
       el.addEventListener('click',()=>{ const z=el.dataset.zone; activeZoneFilter=activeZoneFilter===z?'':z; document.getElementById('filterZone').value=activeZoneFilter; currentPage=1; render(); });
     });
   }
-
-  // Missing list
-  const missingRows=rows.filter(r=>r.status==='missing');
-  document.getElementById('missingCardTitle').textContent=`Not Submitted (${missingRows.length})`;
-  document.getElementById('missingListBody').innerHTML=missingRows.length===0
-    ?'<div style="padding:12px 8px;font-size:12px;color:var(--ok);">✓ ทุกสาขาส่งแล้ว</div>'
-    :missingRows.slice(0,50).map(r=>`<div class="missing-item"><span class="missing-code">${r.store.store_code}</span><span class="missing-name" title="${getStoreName(r.store.store_code)}">${getStoreName(r.store.store_code)||'—'}</span><span class="missing-zone">${r.store.zone_code}</span></div>`).join('');
 
   // Table
   let filteredRows=rows;
