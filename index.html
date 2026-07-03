@@ -941,8 +941,7 @@ submitBtn.addEventListener('click', async () => {
       zone_code: zoneCode, store_code: storeCode,
       deposit_date: depositDate, sales_date: salesDate,
       amount, channel, channel_detail: channelDetail,
-      slip_path: slipPath, slip_url: slipUrl,
-      status: 'pending'
+      slip_path: slipPath, slip_url: slipUrl
     });
     if(insertError) throw insertError;
 
