@@ -609,6 +609,22 @@ const submitBtn    = document.getElementById('submitBtn');
 const formScreen   = document.getElementById('formScreen');
 const statusScreen = document.getElementById('statusScreen');
 
+/* ==================== DATE LIMIT (ย้อนหลังได้ไม่เกิน 7 วัน) ==================== */
+const MAX_BACKDATE_DAYS = 7;
+function setupDateLimits(){
+  const todayStr = new Date().toLocaleDateString('sv-SE'); // YYYY-MM-DD ตาม local timezone
+  const minDate = new Date();
+  minDate.setDate(minDate.getDate() - MAX_BACKDATE_DAYS);
+  const minStr = minDate.toLocaleDateString('sv-SE');
+
+  ['depositDate','salesDate'].forEach(id => {
+    const el = document.getElementById(id);
+    el.min = minStr;
+    el.max = todayStr;
+    el.value = todayStr; // ตั้งค่าเริ่มต้นเป็นวันนี้ สาขาแก้ย้อนหลังได้เอง
+  });
+}
+
 /* ==================== INIT ==================== */
 function populateZones(){
   Object.keys(ZONE_BRANCHES).sort().forEach(zone => {
@@ -842,14 +858,32 @@ function showError(field){ const el=document.getElementById(field); const e=docu
 function clearError(field){ const el=document.getElementById(field); const e=document.getElementById('err-'+field); if(el)el.classList.remove('invalid'); if(e)e.style.display='none'; }
 function clearAllErrors(){ ['zoneCode','storeCode','depositDate','salesDate','amount','channel','file'].forEach(clearError); }
 
+function isWithinBackdateWindow(dateStr){
+  if(!dateStr) return false;
+  const d = new Date(dateStr + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const minDate = new Date(today); minDate.setDate(minDate.getDate() - MAX_BACKDATE_DAYS);
+  return d >= minDate && d <= today;
+}
+
 function validate(){
   clearAllErrors();
   let ok = true;
   const isNoDeposit = noDepositCheck.checked;
   if(!zoneSelect.value){ showError('zoneCode'); ok = false; }
   if(!storeSelect.value){ showError('storeCode'); ok = false; }
-  if(!document.getElementById('depositDate').value){ showError('depositDate'); ok = false; }
-  if(!document.getElementById('salesDate').value){ showError('salesDate'); ok = false; }
+  const depositDateVal = document.getElementById('depositDate').value;
+  const salesDateVal = document.getElementById('salesDate').value;
+  if(!depositDateVal || !isWithinBackdateWindow(depositDateVal)){
+    showError('depositDate');
+    document.getElementById('err-depositDate').textContent = `กรุณาเลือกวันที่นำฝาก (ย้อนหลังได้ไม่เกิน ${MAX_BACKDATE_DAYS} วัน)`;
+    ok = false;
+  }
+  if(!salesDateVal || !isWithinBackdateWindow(salesDateVal)){
+    showError('salesDate');
+    document.getElementById('err-salesDate').textContent = `กรุณาเลือกยอดขายวันที่ (ย้อนหลังได้ไม่เกิน ${MAX_BACKDATE_DAYS} วัน)`;
+    ok = false;
+  }
   if(!isNoDeposit){
     const amtVal = document.getElementById('amount').value.trim();
     if(!amtVal || isNaN(amtVal.replace(/,/g,'')) || Number(amtVal.replace(/,/g,'')) <= 0){ showError('amount'); ok = false; }
@@ -907,7 +941,8 @@ submitBtn.addEventListener('click', async () => {
       zone_code: zoneCode, store_code: storeCode,
       deposit_date: depositDate, sales_date: salesDate,
       amount, channel, channel_detail: channelDetail,
-      slip_path: slipPath, slip_url: slipUrl
+      slip_path: slipPath, slip_url: slipUrl,
+      status: 'pending'
     });
     if(insertError) throw insertError;
 
@@ -918,7 +953,14 @@ submitBtn.addEventListener('click', async () => {
     );
   }catch(err){
     console.error(err);
-    showStatus('err','ส่งข้อมูลไม่สำเร็จ','เกิดข้อผิดพลาดระหว่างส่งข้อมูล กรุณาลองใหม่อีกครั้ง หรือแจ้งฝ่าย IT หากยังไม่สำเร็จ');
+    // Postgres unique_violation — เกิดเมื่อสาขาส่งยอดของวันเดียวกันซ้ำ (เช่น ร้านขายดีแบ่งส่งหลายรอบ)
+    // ไม่ถือเป็น error ที่ต้องบล็อก ให้บันทึกเป็นรายการซ้ำ แล้วให้ฝ่ายบัญชีตรวจสอบภายหลัง
+    if(err && err.code === '23505'){
+      showStatus('warn','บันทึกเป็นรายการที่ส่งเพิ่ม',
+        `ระบบตรวจพบว่าสาขา ${storeCode} มีการส่งยอดของวันที่นี้มาก่อนแล้ว บันทึกรายการนี้เป็นรายการเพิ่มเติมเรียบร้อย ฝ่ายบัญชีจะเป็นผู้ตรวจสอบและยืนยันรายการที่ถูกต้องครับ`);
+    } else {
+      showStatus('err','ส่งข้อมูลไม่สำเร็จ','เกิดข้อผิดพลาดระหว่างส่งข้อมูล กรุณาลองใหม่อีกครั้ง หรือแจ้งฝ่าย IT หากยังไม่สำเร็จ');
+    }
   }finally{
     submitBtn.disabled = false;
     submitBtn.textContent = 'ส่งข้อมูล';
@@ -938,6 +980,7 @@ function showStatus(type, title, msg){
 document.getElementById('sendAnotherBtn').addEventListener('click', () => { location.reload(); });
 
 /* ==================== START ==================== */
+setupDateLimits();
 populateZones();
 renderChannels();
 </script>
