@@ -500,27 +500,43 @@ function buildStoreList(){
   }
   async function loadData(){
   document.getElementById('updatedAt').textContent = 'กำลังโหลด...';
-  const sinceDate = dateNDaysAgo(90)+'T00:00:00';
+  const sinceDate = dateNDaysAgo(30)+'T00:00:00';
 
   // โหลด store names จาก Supabase
   const {data:storeRows} = await sb.from('stores').select('store_code,store_name');
   if(storeRows){ storeRows.forEach(s=>{ storeNameMap[s.store_code]=s.store_name||''; }); }
 
-  let query = sb.from('payin_records').select('id,zone_code,store_code,sales_date,deposit_date,amount,channel,channel_detail,slip_url,submitted_at,duplicate_status,duplicate_group_id,duplicate_reason').gte('submitted_at', sinceDate).order('submitted_at',{ascending:false});
+  // ดึงข้อมูลแบบ pagination ทีละ 1000 แถว จนกว่าจะครบ (Supabase จำกัด 1000 แถว/query)
+  let allFetched = [];
+  let from = 0;
+  const pageSize = 1000;
+  let keepGoing = true;
 
-  // For DM: filter at DB level — only fetch store codes in their zone
-  if (LOCKED_ZONE && ZONE_BRANCHES[LOCKED_ZONE]) {
-    query = query.in('store_code', ZONE_BRANCHES[LOCKED_ZONE]);
+  while (keepGoing) {
+    let query = sb.from('payin_records')
+      .select('id,zone_code,store_code,sales_date,deposit_date,amount,channel,channel_detail,slip_url,submitted_at,duplicate_status,duplicate_group_id,duplicate_reason')
+      .gte('submitted_at', sinceDate)
+      .order('submitted_at',{ascending:false})
+      .range(from, from + pageSize - 1);
+
+    // For DM: filter at DB level — only fetch store codes in their zone
+    if (LOCKED_ZONE && ZONE_BRANCHES[LOCKED_ZONE]) {
+      query = query.in('store_code', ZONE_BRANCHES[LOCKED_ZONE]);
+    }
+
+    const {data:records, error} = await query;
+    if(error){
+      document.getElementById('tableBody').innerHTML=`<tr><td colspan="10" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
+      document.getElementById('updatedAt').textContent = '⚠️ โหลดไม่สำเร็จ';
+      return;
+    }
+
+    allFetched = allFetched.concat(records||[]);
+    keepGoing = (records && records.length === pageSize);
+    from += pageSize;
   }
 
-  const {data:records, error} = await query;
-  if(error){
-    document.getElementById('tableBody').innerHTML=`<tr><td colspan="10" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
-    document.getElementById('updatedAt').textContent = '⚠️ โหลดไม่สำเร็จ';
-    return;
-  }
-
-  allRecords = records||[];
+  allRecords = allFetched;
 
   // Populate zone dropdown (Accounting only)
   if (!LOCKED_ZONE) {
