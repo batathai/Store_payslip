@@ -485,19 +485,61 @@ function buildStoreList(){
    LOAD DATA — filter by zone at Supabase level for DM
    ============================================================ */
   function openSlip(e, url){
-    e.preventDefault();
-    const w = window.open('', '_blank', 'width=800,height=700');
-    w.document.write(`<!DOCTYPE html><html><head>
-      <title>Slip</title>
-      <style>
-        body{margin:0;background:#111;display:flex;align-items:center;
-             justify-content:center;min-height:100vh;}
-        img{max-width:100%;max-height:100vh;object-fit:contain;}
-      </style>
-    </head><body>
-      <img src="${url}" onerror="this.outerHTML='<p style=color:#fff;padding:20px>โหลดรูปไม่ได้ — <a style=color:#f66 href=${url} download>คลิกเพื่อ Download</a></p>'">
-    </body></html>`);
-  }
+  e.preventDefault();
+  const w = window.open('', '_blank', 'width=800,height=700');
+  w.document.write(`<!DOCTYPE html><html><head>
+    <title>Slip</title>
+    <style>
+      html,body{margin:0;height:100%;background:#111;overflow:hidden;}
+      #wrap{
+        position:fixed; inset:0; display:flex; align-items:center;
+        justify-content:center; overflow:auto;
+      }
+      #slipImg{
+        max-width:90vw; max-height:90vh; object-fit:contain;
+        transition:transform .2s ease;
+        transform-origin:center center;
+      }
+      #controls{
+        position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
+        display:flex; gap:10px; z-index:10;
+      }
+      #controls button{
+        background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.3);
+        border-radius:8px; padding:10px 16px; font-size:20px; cursor:pointer;
+        backdrop-filter:blur(4px);
+      }
+      #controls button:hover{ background:rgba(255,255,255,.25); }
+      .errmsg{color:#fff;padding:20px;text-align:center;}
+      .errmsg a{color:#f66;}
+    </style>
+  </head><body>
+    <div id="wrap">
+      <img id="slipImg" src="${url}"
+           onerror="document.getElementById('wrap').innerHTML='<p class=errmsg>โหลดรูปไม่ได้ — <a href=${url} download>คลิกเพื่อ Download</a></p>'">
+    </div>
+    <div id="controls">
+      <button onclick="rotateSlip(-90)" title="หมุนซ้าย">↺</button>
+      <button onclick="rotateSlip(90)" title="หมุนขวา">↻</button>
+    </div>
+    <script>
+      let deg = 0;
+      function rotateSlip(delta){
+        deg = (deg + delta) % 360;
+        const img = document.getElementById('slipImg');
+        img.style.transform = 'rotate(' + deg + 'deg)';
+        // สลับ max-width/max-height เมื่อหมุน 90/270 องศา จะได้ไม่ล้นจอ
+        if (Math.abs(deg % 180) === 90){
+          img.style.maxWidth = '90vh';
+          img.style.maxHeight = '90vw';
+        } else {
+          img.style.maxWidth = '90vw';
+          img.style.maxHeight = '90vh';
+        }
+      }
+    <\/script>
+  </body></html>`);
+}
   async function loadData(){
   document.getElementById('updatedAt').textContent = 'กำลังโหลด...';
   const sinceDate = dateNDaysAgo(30)+'T00:00:00';
