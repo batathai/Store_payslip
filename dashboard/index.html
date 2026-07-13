@@ -285,7 +285,7 @@
                   <th onclick="sortBy('time')" id="th_time">Submitted At ↕</th>
                   <th onclick="sortBy('amount')" id="th_amount">Deposit Amount ↕</th>
                   <th onclick="sortBy('xstore_cash')" id="th_xstore_cash">Xstore Cash ↕</th>
-                  <th id="th_cash_match">Match</th>
+                  <th onclick="sortBy('cash_match')" id="th_cash_match">Match ↕</th>
                   <th onclick="sortBy('slip')" id="th_slip">Slip ↕</th>
                   <th onclick="sortBy('channel')" id="th_channel">Channel ↕</th>
                   <th onclick="sortBy('channel_detail')" id="th_channel_detail">Channel Detail ↕</th>
@@ -409,8 +409,8 @@ let sortCol = 'store_code', sortDir = 'asc';
 let activeRange   = 7;
 let currentPage   = 1;
 let xstoreCashMap = {};       // key: `${store_code}_${date}` -> {cash, total, ...}
-let xstoreCashLoadedDate = null;  // วันที่ล่าสุดที่โหลด xstore cash สำเร็จแล้ว
-let xstoreCashLoadingDate = null; // วันที่กำลังโหลดอยู่ตอนนี้ (null = ไม่มีอะไรกำลังโหลด)
+let xstoreCashLoadedKeys = new Set();   // key: `${date}|${scope}` ที่โหลดสำเร็จแล้ว
+let xstoreCashLoadingKeys = new Set();  // key: `${date}|${scope}` ที่กำลังโหลดอยู่
 let autoRefreshOn = true;
 let autoRefreshTimer = null;
 let trendChartInstance = null, districtChartInstance = null, donutChartInstance = null;
@@ -454,7 +454,10 @@ if (LOCKED_ZONE) {
 document.getElementById('filterZone').addEventListener('change',()=>{
   if(LOCKED_ZONE) return;   // DM cannot change zone
   activeZoneFilter = document.getElementById('filterZone').value;
-  currentPage=1; render();
+  currentPage=1;
+  const sdEl=document.getElementById('filterSalesDate');
+  loadXstoreCash((sdEl&&sdEl.value)||today);
+  render();
 });
 
 document.getElementById('rangeToggle').querySelectorAll('button').forEach(btn=>{
@@ -607,34 +610,50 @@ function buildStoreList(){
 /* ============================================================
    XSTORE CASH — ดึงยอด Cash จาก Oracle ผ่าน 2_sales_api.py
    ============================================================ */
+function getScopeStoreCodes(){
+  // คืนรายชื่อ store_code ตาม zone ที่กำลังดูอยู่ (null = ดูทุกเขต = ดึงทุกสาขา)
+  const zone = LOCKED_ZONE || activeZoneFilter;
+  if(zone && ZONE_BRANCHES[zone]) return ZONE_BRANCHES[zone];
+  return null;
+}
+
 async function loadXstoreCash(dateStr){
-  // ถ้าวันนี้โหลดสำเร็จไปแล้ว หรือกำลังโหลดวันนี้อยู่พอดี — ไม่ต้องยิงซ้ำ
-  if(xstoreCashLoadedDate===dateStr || xstoreCashLoadingDate===dateStr) return;
-  xstoreCashLoadingDate = dateStr;
+  const storeCodes = getScopeStoreCodes();
+  const scopeKey = storeCodes ? storeCodes.slice().sort().join(',') : 'ALL';
+  const key = `${dateStr}|${scopeKey}`;
+
+  if(xstoreCashLoadedKeys.has(key) || xstoreCashLoadingKeys.has(key)) return;
+  xstoreCashLoadingKeys.add(key);
   render();  // re-render ทันทีเพื่อโชว์สถานะ "กำลังโหลด" ในตาราง
+
   try{
-    const url = `${XSTORE_API_BASE}/api/xstore-cash?start=${dateStr}&end=${dateStr}`;
+    let url = `${XSTORE_API_BASE}/api/xstore-cash?start=${dateStr}&end=${dateStr}`;
+    if(storeCodes) url += `&store_codes=${storeCodes.join(',')}`;
     const res = await fetch(url);
     if(!res.ok){
       console.warn('โหลด Xstore Cash ไม่สำเร็จ:', res.status);
-      if(xstoreCashLoadingDate===dateStr) xstoreCashLoadingDate = null;
+      xstoreCashLoadingKeys.delete(key);
       render();
       return;
     }
     const json = await res.json();
     (json.data||[]).forEach(rec=>{
       if(rec.error) return;  // แถวที่ query error ให้ข้ามไป
-      const key = `${rec.store_code}_${rec.sale_date}`;
-      xstoreCashMap[key] = rec;
+      const mapKey = `${rec.store_code}_${rec.sale_date}`;
+      xstoreCashMap[mapKey] = rec;
     });
-    xstoreCashLoadedDate = dateStr;
+    xstoreCashLoadedKeys.add(key);
   }catch(e){
     console.warn('โหลด Xstore Cash error:', e);
   }
-  // เคลียร์สถานะ "กำลังโหลด" เฉพาะถ้ายังเป็นวันเดิมที่เรากำลังตามอยู่
-  // (กันกรณีมีการเปลี่ยนวันที่ไปแล้วระหว่างรอ ไม่ให้ไปเคลียร์สถานะโหลดของวันใหม่ทับ)
-  if(xstoreCashLoadingDate===dateStr) xstoreCashLoadingDate = null;
+  xstoreCashLoadingKeys.delete(key);
   render();  // re-render พอข้อมูลมาถึง
+}
+
+function isCashLoadingFor(dateStr){
+  const storeCodes = getScopeStoreCodes();
+  const scopeKey = storeCodes ? storeCodes.slice().sort().join(',') : 'ALL';
+  return xstoreCashLoadingKeys.has(`${dateStr}|${scopeKey}`);
 }
 
 function getXstoreCash(storeCode, dateStr){
@@ -873,15 +892,15 @@ function renderDistrictChart(dateStr){
   });
 }
 
-function renderDonutChart(total,sent,missing,dup,late,delay=0){
+function renderDonutChart(total,sent,missing,dup,late,delay=0,cashMismatch=0){
   if(donutChartInstance) donutChartInstance.destroy();
   donutChartInstance=new Chart(document.getElementById('donutChart'),{
     type:'doughnut',
-    data:{labels:['Submitted','Not submitted','Late','Duplicate','Delay'],datasets:[{data:[sent,missing,late,dup,delay],backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC','#B91C1C'],borderWidth:0}]},
+    data:{labels:['Submitted','Not submitted','Late','Duplicate','Delay','Cash Mismatch'],datasets:[{data:[sent,missing,late,dup,delay,cashMismatch],backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC','#B91C1C','#E0263F'],borderWidth:0}]},
     options:{responsive:false,cutout:'72%',plugins:{legend:{display:false}}},
   });
   const pct=n=>total>0?((n/total)*100).toFixed(1)+'%':'0%';
-  document.getElementById('donutLegend').innerHTML=[['#0FA968','Submitted',sent],['#D97706','Not submitted',missing],['#E0263F','Late',late],['#7C5CFC','Duplicate',dup],['#B91C1C','Delay',delay]]
+  document.getElementById('donutLegend').innerHTML=[['#0FA968','Submitted',sent],['#D97706','Not submitted',missing],['#E0263F','Late',late],['#7C5CFC','Duplicate',dup],['#B91C1C','Delay',delay],['#E0263F','Cash Mismatch',cashMismatch]]
     .map(([c,l,n])=>`<div class="donut-legend-row"><div class="leg-left"><span class="dot" style="background:${c};"></span>${l}</div><b>${n} <span style="font-weight:400;color:var(--ink-soft)">(${pct(n)})</span></b></div>`).join('');
 }
 
@@ -932,7 +951,7 @@ function render(){
   const late    = rows.filter(r=>r.status==='late').length;
   const cashMismatch = rows.filter(r=>r.cashMatch===false).length;
 
-  renderDonutChart(total,sent,missing,dup,late,delay);
+  renderDonutChart(total,sent,missing,dup,late,delay,cashMismatch);
   const _nm=document.getElementById('navCountMissing'); if(_nm) _nm.textContent=missing;
   const _nd=document.getElementById('navCountDuplicate'); if(_nd) _nd.textContent=dup;
   const _nl=document.getElementById('navCountLate'); if(_nl) _nl.textContent=late;
@@ -978,7 +997,7 @@ function render(){
       return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}"><span class="zone-row-name">Zone ${z}</span><span class="zone-row-stats"><span class="zs-ok">${zSent}</span><span class="zs-sep">/</span><span style="color:var(--ink-soft)">${zStores.length}</span></span></div>`;
     }).join('');
     document.querySelectorAll('.zone-row').forEach(el=>{
-      el.addEventListener('click',()=>{ const z=el.dataset.zone; activeZoneFilter=activeZoneFilter===z?'':z; document.getElementById('filterZone').value=activeZoneFilter; currentPage=1; render(); });
+      el.addEventListener('click',()=>{ const z=el.dataset.zone; activeZoneFilter=activeZoneFilter===z?'':z; document.getElementById('filterZone').value=activeZoneFilter; currentPage=1; const sdEl2=document.getElementById('filterSalesDate'); loadXstoreCash((sdEl2&&sdEl2.value)||today); render(); });
     });
   }
 
@@ -999,6 +1018,11 @@ function render(){
     else if(sortCol==='time'){va=a.latest?a.latest.submitted_at:'';vb=b.latest?b.latest.submitted_at:'';}
     else if(sortCol==='amount'){va=a.latest?Number(a.latest.amount):-1;vb=b.latest?Number(b.latest.amount):-1;}
     else if(sortCol==='xstore_cash'){va=a.xstoreCash!=null?a.xstoreCash:-1;vb=b.xstoreCash!=null?b.xstoreCash:-1;}
+    else if(sortCol==='cash_match'){
+      // เรียง: ไม่ตรง(false)=0, ตรง(true)=1, ไม่มีข้อมูล(null)=2 — จะได้เจอที่ไม่ตรงก่อนเสมอตอน sort ascending
+      const rank=v=>v===false?0:(v===true?1:2);
+      va=rank(a.cashMatch); vb=rank(b.cashMatch);
+    }
     else if(sortCol==='slip'){va=a.latest&&a.latest.slip_url?1:0;vb=b.latest&&b.latest.slip_url?1:0;}
     else if(sortCol==='channel'){va=a.latest&&a.latest.channel?a.latest.channel:'';vb=b.latest&&b.latest.channel?b.latest.channel:'';}
     else if(sortCol==='channel_detail'){va=a.latest&&a.latest.channel_detail?a.latest.channel_detail:'';vb=b.latest&&b.latest.channel_detail?b.latest.channel_detail:'';}
@@ -1009,9 +1033,9 @@ function render(){
     return 0;
   });
 
-  ['store_code','store_name','zone','status','sales_date','deposit_date','time','amount','xstore_cash','slip','channel','channel_detail','delay'].forEach(col=>{
+  ['store_code','store_name','zone','status','sales_date','deposit_date','time','amount','xstore_cash','cash_match','slip','channel','channel_detail','delay'].forEach(col=>{
     const th=document.getElementById('th_'+col); if(!th) return;
-    const base={store_code:'Store Code',store_name:'Store Name',zone:'District',status:'Status',sales_date:'Sales Date',deposit_date:'Deposit Date',time:'Submitted At',amount:'Deposit Amount',xstore_cash:'Xstore Cash',slip:'Slip',channel:'Channel',channel_detail:'Channel Detail',delay:'Deposit Delay'}[col];
+    const base={store_code:'Store Code',store_name:'Store Name',zone:'District',status:'Status',sales_date:'Sales Date',deposit_date:'Deposit Date',time:'Submitted At',amount:'Deposit Amount',xstore_cash:'Xstore Cash',cash_match:'Match',slip:'Slip',channel:'Channel',channel_detail:'Channel Detail',delay:'Deposit Delay'}[col];
     th.textContent=base+(sortCol===col?(sortDir==='asc'?' ▲':' ▼'):' ↕');
   });
 
@@ -1064,7 +1088,7 @@ function render(){
       delayHtml=`<span class="delay-chip ${dc}">${label}</span>`;
     }
     // Xstore Cash + Match
-    const isLoadingCash = xstoreCashLoadingDate===r.cashDate;
+    const isLoadingCash = isCashLoadingFor(r.cashDate);
     const xstoreCashStr = r.xstoreCash!=null
       ? Number(r.xstoreCash).toLocaleString('en-US',{minimumFractionDigits:2})
       : (isLoadingCash ? '<span style="color:var(--blue);font-size:11px;">⏳ loading...</span>' : '<span style="color:var(--ink-faint);">—</span>');
