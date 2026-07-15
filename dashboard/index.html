@@ -149,6 +149,7 @@
   #histModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
   #histModalBackdrop.open{display:flex;}
   .dup-modal{background:#fff;border-radius:14px;width:100%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column;}
+  #histModalBackdrop .dup-modal{max-width:1000px;}
   .dup-modal-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:1;}
   .dup-modal-header h2{font-size:15px;font-weight:800;color:var(--ink);}
   .dup-modal-header p{font-size:12px;color:var(--ink-soft);margin-top:3px;}
@@ -910,18 +911,11 @@ async function openHistoryModal(storeCode, storeName){
   const startStr = dateList[dateList.length-1];
   const endStr = dateList[0];
 
-  // ดึงยอด Xstore Cash ของสาขานี้ในช่วงเวลาเดียวกัน (ขอครั้งเดียว ครอบคลุมทุกวัน)
+  // เก็บสถานะไว้เพื่อ re-render ตอน cash โหลดเสร็จ
   let cashByDate = {};
-  try{
-    const url = `${XSTORE_API_BASE}/api/xstore-cash?store_code=${storeCode}&start=${startStr}&end=${endStr}`;
-    const res = await fetch(url);
-    if(res.ok){
-      const json = await res.json();
-      (json.data||[]).forEach(rec=>{ if(!rec.error) cashByDate[rec.sale_date]=Number(rec.cash); });
-    }
-  }catch(e){ console.warn('โหลด Xstore Cash สำหรับ History ไม่สำเร็จ:', e); }
+  let cashLoadState = 'loading'; // loading | done | error
 
-  const rowsHtml = dateList.map(dateStr=>{
+  function buildRow(dateStr){
     const status = getStoreStatus(storeCode, dateStr);
     const rec = status.latest;
     const amount = status.status==='duplicate' && status.totalAmount!=null
@@ -935,18 +929,26 @@ async function openHistoryModal(storeCode, storeName){
       ? `<button class="badge-dup-btn" onclick="openDupModal('${storeCode}','${dateStr}')">⚠ Duplicate (${status.records.length})</button>`
       : (HIST_BADGE_MAP[status.status]||status.status);
 
-    const cash = cashByDate[dateStr];
-    let cashCell = '<span style="color:var(--ink-faint);">—</span>';
-    if(cash!=null){
-      if(amount!=null){
-        const diff = Math.abs(cash - amount);
-        const match = diff <= CASH_MISMATCH_THRESHOLD;
-        const cashStr = cash.toLocaleString('en-US',{minimumFractionDigits:2});
-        cashCell = match
-          ? `${cashStr} <span class="badge ok">✓</span>`
-          : `${cashStr} <span class="badge err">✗ Δ${diff.toFixed(2)}</span>`;
+    let cashCell;
+    if(cashLoadState==='loading'){
+      cashCell = '<span style="color:var(--blue);font-size:11px;">⏳ loading...</span>';
+    }else if(cashLoadState==='error'){
+      cashCell = '<span style="color:var(--red);font-size:11px;" title="โหลด Xstore Cash ไม่สำเร็จ กด F12 ดู Console">⚠ error</span>';
+    }else{
+      const cash = cashByDate[dateStr];
+      if(cash!=null){
+        if(amount!=null){
+          const diff = Math.abs(cash - amount);
+          const match = diff <= CASH_MISMATCH_THRESHOLD;
+          const cashStr = cash.toLocaleString('en-US',{minimumFractionDigits:2});
+          cashCell = match
+            ? `${cashStr} <span class="badge ok">✓</span>`
+            : `${cashStr} <span class="badge err">✗ Δ${diff.toFixed(2)}</span>`;
+        }else{
+          cashCell = cash.toLocaleString('en-US',{minimumFractionDigits:2});
+        }
       }else{
-        cashCell = cash.toLocaleString('en-US',{minimumFractionDigits:2});
+        cashCell = '<span style="color:var(--ink-faint);">—</span>';
       }
     }
 
@@ -959,9 +961,28 @@ async function openHistoryModal(storeCode, storeName){
       <td>${cashCell}</td>
       <td>${slip}</td>
     </tr>`;
-  }).join('');
+  }
 
-  document.getElementById('histModalTbody').innerHTML = rowsHtml;
+  function renderRows(){
+    document.getElementById('histModalTbody').innerHTML = dateList.map(buildRow).join('');
+  }
+
+  // แสดงตารางทันที (สถานะ/ยอดแจ้ง มาจาก allRecords ที่มีอยู่แล้ว ไม่ต้องรอเน็ตเวิร์ก)
+  renderRows();
+
+  // แล้วค่อยดึงยอด Xstore Cash ตามหลัง (อาจใช้เวลานานเพราะ query 30 วันต่อเนื่อง)
+  try{
+    const url = `${XSTORE_API_BASE}/api/xstore-cash?store_code=${storeCode}&start=${startStr}&end=${endStr}`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const json = await res.json();
+    (json.data||[]).forEach(rec=>{ if(!rec.error) cashByDate[rec.sale_date]=Number(rec.cash); });
+    cashLoadState = 'done';
+  }catch(e){
+    console.warn('โหลด Xstore Cash สำหรับ History ไม่สำเร็จ:', e);
+    cashLoadState = 'error';
+  }
+  renderRows();
 }
 
 function closeHistoryModal(){
