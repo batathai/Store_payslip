@@ -146,6 +146,8 @@
   /* Duplicate Modal */
   #dupModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
   #dupModalBackdrop.open{display:flex;}
+  #histModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
+  #histModalBackdrop.open{display:flex;}
   .dup-modal{background:#fff;border-radius:14px;width:100%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column;}
   .dup-modal-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:1;}
   .dup-modal-header h2{font-size:15px;font-weight:800;color:var(--ink);}
@@ -289,10 +291,11 @@
                   <th onclick="sortBy('channel')" id="th_channel">Channel ↕</th>
                   <th onclick="sortBy('channel_detail')" id="th_channel_detail">Channel Detail ↕</th>
                   <th onclick="sortBy('delay')" id="th_delay">Deposit Delay ↕</th>
+                  <th>History</th>
                 </tr>
               </thead>
               <tbody id="tableBody">
-                <tr><td colspan="13" class="empty-state">Loading data...</td></tr>
+                <tr><td colspan="14" class="empty-state">Loading data...</td></tr>
               </tbody>
             </table>
           </div>
@@ -350,6 +353,34 @@
       <span class="dup-save-msg" id="dupSaveMsg" style="display:none">✓ บันทึกแล้ว รายการที่เหลือถูก Rejected</span>
       <button class="btn-secondary" onclick="closeDupModal()">ปิด</button>
       <button class="btn-save" id="dupSaveBtn" onclick="saveDupResolve()" disabled>บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div id="histModalBackdrop">
+  <div class="dup-modal">
+    <div class="dup-modal-header">
+      <div>
+        <h2 id="histModalTitle">ประวัติการส่งยอด</h2>
+        <p id="histModalSub"></p>
+      </div>
+      <button class="dup-modal-close" onclick="closeHistoryModal()">✕</button>
+    </div>
+    <div class="dup-modal-body">
+      <div class="dup-inner-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Sales Date</th><th>Deposit Date</th><th>Submitted At</th>
+              <th>Amount</th><th>Xstore Cash</th><th>Status</th><th>Slip</th>
+            </tr>
+          </thead>
+          <tbody id="histModalTbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="dup-modal-footer">
+      <button class="btn-secondary" onclick="closeHistoryModal()">ปิด</button>
     </div>
   </div>
 </div>
@@ -583,7 +614,7 @@ function buildStoreList(){
 
     const {data:records, error} = await query;
     if(error){
-      document.getElementById('tableBody').innerHTML=`<tr><td colspan="13" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
+      document.getElementById('tableBody').innerHTML=`<tr><td colspan="14" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
       document.getElementById('updatedAt').textContent = '⚠️ โหลดไม่สำเร็จ';
       return;
     }
@@ -852,6 +883,81 @@ function closeDupModal(){
 document.getElementById('dupModalBackdrop').addEventListener('click',function(e){ if(e.target===this) closeDupModal(); });
 
 /* ============================================================
+   HISTORY MODAL — ดูประวัติการส่งยอดของสาขาย้อนหลัง (30 วันล่าสุด)
+   ============================================================ */
+const HISTORY_DAYS = 30;
+
+async function openHistoryModal(storeCode, storeName){
+  document.getElementById('histModalTitle').textContent = `ประวัติการส่งยอด — สาขา ${storeCode}`;
+  document.getElementById('histModalSub').textContent = `${storeName||''} · ย้อนหลัง ${HISTORY_DAYS} วัน`;
+  document.getElementById('histModalTbody').innerHTML = '<tr><td colspan="7" class="empty-state">กำลังโหลด...</td></tr>';
+  document.getElementById('histModalBackdrop').classList.add('open');
+
+  const endDate = new Date();
+  const startDate = new Date(); startDate.setDate(startDate.getDate()-HISTORY_DAYS);
+  const startStr = startDate.toISOString().slice(0,10);
+  const endStr = endDate.toISOString().slice(0,10);
+
+  // ดึงประวัติการส่งยอด (ที่สาขาแจ้ง) จาก Supabase
+  const {data:records,error} = await sb.from('payin_records')
+    .select('sales_date,deposit_date,submitted_at,amount,slip_url,duplicate_status')
+    .eq('store_code',storeCode)
+    .gte('sales_date',startStr).lte('sales_date',endStr)
+    .order('sales_date',{ascending:false});
+
+  if(error){
+    document.getElementById('histModalTbody').innerHTML = `<tr><td colspan="7" class="empty-state">โหลดไม่สำเร็จ: ${error.message}</td></tr>`;
+    return;
+  }
+
+  // ดึงยอด Xstore Cash ของสาขานี้ในช่วงเวลาเดียวกัน (ขอครั้งเดียว ครอบคลุมทุกวัน)
+  let cashByDate = {};
+  try{
+    const url = `${XSTORE_API_BASE}/api/xstore-cash?store_code=${storeCode}&start=${startStr}&end=${endStr}`;
+    const res = await fetch(url);
+    if(res.ok){
+      const json = await res.json();
+      (json.data||[]).forEach(rec=>{ if(!rec.error) cashByDate[rec.sale_date]=Number(rec.cash); });
+    }
+  }catch(e){ console.warn('โหลด Xstore Cash สำหรับ History ไม่สำเร็จ:', e); }
+
+  if(!records || records.length===0){
+    document.getElementById('histModalTbody').innerHTML = '<tr><td colspan="7" class="empty-state">ไม่มีข้อมูลย้อนหลังในช่วงนี้</td></tr>';
+    return;
+  }
+
+  document.getElementById('histModalTbody').innerHTML = records.map(r=>{
+    const cash = cashByDate[r.sales_date];
+    let cashCell = '<span style="color:var(--ink-faint);">—</span>';
+    if(cash!=null){
+      const diff = Math.abs(cash - Number(r.amount));
+      const match = diff <= CASH_MISMATCH_THRESHOLD;
+      const cashStr = cash.toLocaleString('en-US',{minimumFractionDigits:2});
+      cashCell = match
+        ? `${cashStr} <span class="badge ok">✓</span>`
+        : `${cashStr} <span class="badge err">✗ Δ${diff.toFixed(2)}</span>`;
+    }
+    const statusLabel = r.duplicate_status==='duplicate' ? '<span class="badge-dup-btn" style="cursor:default;">Duplicate</span>' : '<span class="badge ok">Submitted</span>';
+    const slip = r.slip_url ? `<a class="imglink" href="#" onclick="openSlip(event,'${r.slip_url}')">View</a>` : '—';
+    return `<tr>
+      <td>${r.sales_date}</td>
+      <td>${r.deposit_date||'—'}</td>
+      <td>${r.submitted_at ? new Date(r.submitted_at).toLocaleString('th-TH') : '—'}</td>
+      <td>${Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+      <td>${cashCell}</td>
+      <td>${statusLabel}</td>
+      <td>${slip}</td>
+    </tr>`;
+  }).join('');
+}
+
+function closeHistoryModal(){
+  document.getElementById('histModalBackdrop').classList.remove('open');
+}
+document.getElementById('histModalBackdrop').addEventListener('click',function(e){ if(e.target===this) closeHistoryModal(); });
+
+
+/* ============================================================
    CHARTS
    ============================================================ */
 function renderTrendChart(stores){
@@ -1043,7 +1149,7 @@ function render(){
   const pageRows=filteredRows.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
 
   if(filteredRows.length===0){
-    document.getElementById('tableBody').innerHTML='<tr><td colspan="13" class="empty-state">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>';
+    document.getElementById('tableBody').innerHTML='<tr><td colspan="14" class="empty-state">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>';
     document.getElementById('pager').innerHTML=''; return;
   }
 
@@ -1104,7 +1210,8 @@ function render(){
     }else{
       xstoreCashCell = '<span style="color:var(--ink-faint);">—</span>';
     }
-    return `<tr><td><b>${r.store.store_code}</b></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${xstoreCashCell}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td></tr>`;
+    const historyBtn = `<button class="badge-dup-btn" onclick="openHistoryModal('${r.store.store_code}','${(r.store.store_name||'').replace(/'/g,"\\'")}')">🕐 History</button>`;
+    return `<tr><td><b>${r.store.store_code}</b></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${xstoreCashCell}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td><td>${historyBtn}</td></tr>`;
   }).join('');
 
   let pagerHtml=`<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
