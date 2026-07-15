@@ -403,9 +403,10 @@ const DELAY_CUTOFF_HOUR = 14; // เดียวกัน — ถ้าไม่
 const PAGE_SIZE = 25;
 
 // API สำหรับดึงยอด Cash จาก Xstore/Oracle (2_sales_api.py)
-// รันอยู่บนเครื่อง Local Server (Ethernet, IP คงที่กว่า Wi-Fi)
-// TODO: ถ้าย้ายเครื่องอีก ให้แก้ IP ตรงนี้ตาม `ipconfig` ของเครื่องใหม่
-const XSTORE_API_BASE = 'http://192.1.36.59:5001';
+// ใช้ HTTPS (self-signed cert) เพราะเว็บนี้เป็น HTTPS แล้ว — เบราว์เซอร์บล็อกการยิงไป HTTP (Mixed Content)
+// สำคัญ: ผู้ใช้แต่ละคนต้องเปิด https://192.1.36.59:5001/api/health ครั้งแรกก่อน
+// แล้วกด "Advanced" > "Proceed" เพื่อยอมรับ certificate ก่อนถึงจะใช้งาน dashboard ได้
+const XSTORE_API_BASE = 'https://192.1.36.59:5001';
 // ถือว่า "ไม่ตรงกัน" ถ้าส่วนต่างเกินค่านี้ (กันปัดเศษทศนิยม)
 const CASH_MISMATCH_THRESHOLD = 1;
 
