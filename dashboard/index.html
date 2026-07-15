@@ -371,8 +371,8 @@
         <table>
           <thead>
             <tr>
-              <th>Sales Date</th><th>Deposit Date</th><th>Submitted At</th>
-              <th>Amount</th><th>Xstore Cash</th><th>Status</th><th>Slip</th>
+              <th>Sales Date</th><th>Status</th><th>Deposit Date</th><th>Submitted At</th>
+              <th>Amount</th><th>Xstore Cash</th><th>Slip</th>
             </tr>
           </thead>
           <tbody id="histModalTbody"></tbody>
@@ -884,8 +884,16 @@ document.getElementById('dupModalBackdrop').addEventListener('click',function(e)
 
 /* ============================================================
    HISTORY MODAL — ดูประวัติการส่งยอดของสาขาย้อนหลัง (30 วันล่าสุด)
+   ใช้ getStoreStatus() ตัวเดียวกับตารางหลัก เพื่อให้สถานะตรงกันเป๊ะ
+   (Submitted / Not Submitted / Late / Delay / Duplicate)
    ============================================================ */
 const HISTORY_DAYS = 30;
+const HIST_BADGE_MAP = {
+  sent:'<span class="badge ok">Submitted</span>',
+  missing:'<span class="badge warn">Not Submitted</span>',
+  late:'<span class="badge err">Late</span>',
+  delay:'<span class="badge delay">Delay</span>',
+};
 
 async function openHistoryModal(storeCode, storeName){
   document.getElementById('histModalTitle').textContent = `ประวัติการส่งยอด — สาขา ${storeCode}`;
@@ -893,22 +901,14 @@ async function openHistoryModal(storeCode, storeName){
   document.getElementById('histModalTbody').innerHTML = '<tr><td colspan="7" class="empty-state">กำลังโหลด...</td></tr>';
   document.getElementById('histModalBackdrop').classList.add('open');
 
-  const endDate = new Date();
-  const startDate = new Date(); startDate.setDate(startDate.getDate()-HISTORY_DAYS);
-  const startStr = startDate.toISOString().slice(0,10);
-  const endStr = endDate.toISOString().slice(0,10);
-
-  // ดึงประวัติการส่งยอด (ที่สาขาแจ้ง) จาก Supabase
-  const {data:records,error} = await sb.from('payin_records')
-    .select('sales_date,deposit_date,submitted_at,amount,slip_url,duplicate_status')
-    .eq('store_code',storeCode)
-    .gte('sales_date',startStr).lte('sales_date',endStr)
-    .order('sales_date',{ascending:false});
-
-  if(error){
-    document.getElementById('histModalTbody').innerHTML = `<tr><td colspan="7" class="empty-state">โหลดไม่สำเร็จ: ${error.message}</td></tr>`;
-    return;
+  // สร้างรายการวันที่ย้อนหลัง 30 วัน (ล่าสุดก่อน) — ใช้ allRecords ที่โหลดมาแล้วตอนเปิดหน้าเว็บ (ไม่ต้อง query Supabase ซ้ำ)
+  const dateList = [];
+  for(let i=0;i<HISTORY_DAYS;i++){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    dateList.push(d.toISOString().slice(0,10));
   }
+  const startStr = dateList[dateList.length-1];
+  const endStr = dateList[0];
 
   // ดึงยอด Xstore Cash ของสาขานี้ในช่วงเวลาเดียวกัน (ขอครั้งเดียว ครอบคลุมทุกวัน)
   let cashByDate = {};
@@ -921,34 +921,47 @@ async function openHistoryModal(storeCode, storeName){
     }
   }catch(e){ console.warn('โหลด Xstore Cash สำหรับ History ไม่สำเร็จ:', e); }
 
-  if(!records || records.length===0){
-    document.getElementById('histModalTbody').innerHTML = '<tr><td colspan="7" class="empty-state">ไม่มีข้อมูลย้อนหลังในช่วงนี้</td></tr>';
-    return;
-  }
+  const rowsHtml = dateList.map(dateStr=>{
+    const status = getStoreStatus(storeCode, dateStr);
+    const rec = status.latest;
+    const amount = status.status==='duplicate' && status.totalAmount!=null
+      ? Number(status.totalAmount) : (rec ? Number(rec.amount) : null);
+    const amountStr = amount!=null ? amount.toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
+    const depositDateStr = rec && rec.deposit_date ? rec.deposit_date.slice(0,10) : '—';
+    const submittedAtStr = rec && rec.submitted_at ? new Date(rec.submitted_at).toLocaleString('th-TH') : '—';
+    const slip = rec && rec.slip_url ? `<a class="imglink" href="#" onclick="openSlip(event,'${rec.slip_url}')">View</a>` : '—';
 
-  document.getElementById('histModalTbody').innerHTML = records.map(r=>{
-    const cash = cashByDate[r.sales_date];
+    const statusBadge = status.status==='duplicate'
+      ? `<button class="badge-dup-btn" onclick="openDupModal('${storeCode}','${dateStr}')">⚠ Duplicate (${status.records.length})</button>`
+      : (HIST_BADGE_MAP[status.status]||status.status);
+
+    const cash = cashByDate[dateStr];
     let cashCell = '<span style="color:var(--ink-faint);">—</span>';
     if(cash!=null){
-      const diff = Math.abs(cash - Number(r.amount));
-      const match = diff <= CASH_MISMATCH_THRESHOLD;
-      const cashStr = cash.toLocaleString('en-US',{minimumFractionDigits:2});
-      cashCell = match
-        ? `${cashStr} <span class="badge ok">✓</span>`
-        : `${cashStr} <span class="badge err">✗ Δ${diff.toFixed(2)}</span>`;
+      if(amount!=null){
+        const diff = Math.abs(cash - amount);
+        const match = diff <= CASH_MISMATCH_THRESHOLD;
+        const cashStr = cash.toLocaleString('en-US',{minimumFractionDigits:2});
+        cashCell = match
+          ? `${cashStr} <span class="badge ok">✓</span>`
+          : `${cashStr} <span class="badge err">✗ Δ${diff.toFixed(2)}</span>`;
+      }else{
+        cashCell = cash.toLocaleString('en-US',{minimumFractionDigits:2});
+      }
     }
-    const statusLabel = r.duplicate_status==='duplicate' ? '<span class="badge-dup-btn" style="cursor:default;">Duplicate</span>' : '<span class="badge ok">Submitted</span>';
-    const slip = r.slip_url ? `<a class="imglink" href="#" onclick="openSlip(event,'${r.slip_url}')">View</a>` : '—';
+
     return `<tr>
-      <td>${r.sales_date}</td>
-      <td>${r.deposit_date||'—'}</td>
-      <td>${r.submitted_at ? new Date(r.submitted_at).toLocaleString('th-TH') : '—'}</td>
-      <td>${Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+      <td>${dateStr}</td>
+      <td>${statusBadge}</td>
+      <td>${depositDateStr}</td>
+      <td>${submittedAtStr}</td>
+      <td>${amountStr}</td>
       <td>${cashCell}</td>
-      <td>${statusLabel}</td>
       <td>${slip}</td>
     </tr>`;
   }).join('');
+
+  document.getElementById('histModalTbody').innerHTML = rowsHtml;
 }
 
 function closeHistoryModal(){
