@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BATA Store Dashboard</title>
+<style>
+  :root{
+    --bata-red:#E11D2E;--bata-red-dark:#8F0E1F;--ink:#15171C;--ink-soft:#6B7280;--ink-faint:#9CA3AF;
+    --paper:#F4F5F7;--card:#FFFFFF;--line:#ECEDF1;--sidebar-bg:#8F0E1F;
+    --ok:#0FA968;--ok-bg:#E7F8EF;--warn:#D97706;--warn-bg:#FEF3DD;
+    --err:#E0263F;--err-bg:#FDEBED;--purple:#7C5CFC;--purple-bg:#EFEAFE;
+    --blue:#2F7DE1;--blue-bg:#E8F1FD;--radius-lg:16px;--radius-md:10px;
+    --shadow-card:0 1px 4px rgba(21,23,28,.06);
+    --font-body:'Inter','Noto Sans Thai','Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;font-size:14px;}
+  .shell{display:flex;min-height:100vh;}
+  .sidebar{width:220px;flex:0 0 220px;background:var(--sidebar-bg);color:#fff;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:10;}
+  .sidebar-brand{display:flex;align-items:center;gap:10px;padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .sidebar-logo{width:28px;height:28px;border-radius:8px;background:var(--bata-red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .sidebar-word{font-weight:800;font-size:17px;letter-spacing:.03em;}
+  .sidebar-nav{flex:1;padding:10px;overflow-y:auto;}
+  .nav-group-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:12px 10px 4px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:rgba(255,255,255,.65);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:1px;transition:background .12s,color .12s;border:none;background:none;width:100%;text-align:left;font-family:var(--font-body);}
+  .nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+  .nav-item.active{background:var(--bata-red);color:#fff;}
+  .nav-item .nav-icon{font-size:15px;width:18px;text-align:center;flex:0 0 auto;}
+  .nav-item .nav-count{margin-left:auto;font-size:11px;font-weight:700;background:rgba(255,255,255,.15);border-radius:6px;padding:1px 7px;min-width:24px;text-align:center;}
+  .nav-item.active .nav-count{background:rgba(255,255,255,.25);}
+  .nav-count.warn-count{background:rgba(217,119,6,.35)!important;}
+  .nav-count.err-count{background:rgba(224,38,63,.35)!important;}
+  .sidebar-foot{padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
+  .sidebar-avatar{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:0 0 auto;}
+  .sidebar-foot-name{font-size:12px;font-weight:700;line-height:1.3;}
+  .sidebar-foot-sub{font-size:11px;color:rgba(255,255,255,.45);line-height:1.3;}
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{position:sticky;top:0;z-index:9;background:var(--card);border-bottom:1px solid var(--line);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .topbar-left{display:flex;align-items:center;gap:10px;}
+  .page-title{font-size:16px;font-weight:800;margin:0;}
+  .topbar-sub{font-size:12px;color:var(--ink-soft);margin-top:1px;}
+  .topbar-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  select,input[type=date]{padding:7px 10px;font-size:12.5px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-family:var(--font-body);font-weight:600;cursor:pointer;}
+  select:focus,input:focus{outline:none;border-color:var(--bata-red);}
+  .body-split{display:flex;flex:1;align-items:flex-start;min-height:0;}
+  .content-col{flex:1;min-width:0;padding:20px 20px 60px;overflow-y:auto;}
+  .right-panel{width:260px;flex:0 0 260px;padding:20px 16px 60px;border-left:1px solid var(--line);background:var(--card);overflow-y:auto;}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px;}
+  .metric{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:14px 16px;cursor:pointer;transition:border-color .15s,transform .05s;}
+  .metric:hover{border-color:var(--ink-faint);}
+  .metric:active{transform:scale(.98);}
+  .metric.active{border-color:var(--bata-red);}
+  .metric-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .metric-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto;}
+  .metric-icon.blue{background:var(--blue-bg);color:var(--blue);}
+  .metric-icon.ok{background:var(--ok-bg);color:var(--ok);}
+  .metric-icon.warn{background:var(--warn-bg);color:var(--warn);}
+  .metric-icon.purple{background:var(--purple-bg);color:var(--purple);}
+  .metric-icon.err{background:var(--err-bg);color:var(--err);}
+  .metric-label{font-size:10.5px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .metric-value{font-size:24px;font-weight:800;line-height:1;}
+  .metric-pct{font-size:11px;font-weight:700;margin-top:3px;}
+  .metric-pct.blue{color:var(--blue);}
+  .metric-pct.ok{color:var(--ok);}
+  .metric-pct.warn{color:var(--warn);}
+  .metric-pct.purple{color:var(--purple);}
+  .metric-pct.err{color:var(--err);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:16px;}
+  .section-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+  .section-title{font-size:13px;font-weight:800;color:var(--ink);margin:0;}
+  .range-toggle{display:flex;gap:3px;background:#F4F5F7;border:1px solid var(--line);border-radius:8px;padding:2px;}
+  .range-toggle button{border:none;background:none;padding:5px 12px;font-size:12px;font-weight:700;color:var(--ink-soft);border-radius:6px;cursor:pointer;font-family:var(--font-body);}
+  .range-toggle button.active{background:var(--bata-red);color:#fff;}
+  .chart-legend{display:flex;gap:14px;margin-bottom:8px;font-size:11.5px;color:var(--ink-soft);flex-wrap:wrap;}
+  .chart-legend span{display:flex;align-items:center;gap:5px;}
+  .chart-legend .dot{width:8px;height:8px;border-radius:2px;flex:0 0 auto;}
+  .charts-row{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:16px;}
+  @media(max-width:900px){.charts-row{grid-template-columns:1fr;}}
+  .table-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);overflow:hidden;}
+  .table-head-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .table-title{font-size:13px;font-weight:800;margin:0;}
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{text-align:left;padding:9px 12px;background:#FAFAFB;font-weight:700;color:var(--ink-soft);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none;}
+  th:hover{color:var(--ink);}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:#FAFAFB;}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:6px;}
+  .badge.ok{background:var(--ok-bg);color:var(--ok);}
+  .badge.warn{background:var(--warn-bg);color:var(--warn);}
+  .badge.err{background:var(--err-bg);color:var(--err);}
+  .badge.purple{background:var(--purple-bg);color:var(--purple);}
+  .badge.delay{background:#FEE2E2;color:#B91C1C;border:1px solid #FECACA;}
+  .badge-dup-btn{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:6px;background:var(--purple-bg);color:var(--purple);border:none;cursor:pointer;font-family:var(--font-body);transition:background .12s;}
+  .badge-dup-btn:hover{background:#e0d8fe;}
+  .pager{display:flex;justify-content:center;align-items:center;gap:5px;padding:12px;}
+  .pager button{border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);width:28px;height:28px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-body);}
+  .pager button.active{background:var(--bata-red);border-color:var(--bata-red);color:#fff;}
+  .pager button:disabled{opacity:.4;cursor:not-allowed;}
+  a.imglink{color:var(--bata-red);font-weight:700;text-decoration:none;font-size:12px;}
+  .miss-count{font-weight:700;font-size:12px;}
+  .miss-count.zero{color:var(--ok);}
+  .miss-count.some{color:var(--warn);}
+  .miss-count.many{color:var(--err);}
+  .empty-state{padding:32px 16px;text-align:center;color:var(--ink-soft);font-size:13px;}
+  .loading{padding:32px 16px;text-align:center;color:var(--ink-soft);font-size:13px;}
+  .rp-section{margin-bottom:20px;}
+  .rp-title{font-size:11.5px;font-weight:800;color:var(--ink);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em;}
+  .donut-wrap{display:flex;justify-content:center;margin-bottom:12px;}
+  .donut-legend-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-size:12px;}
+  .donut-legend-row:last-child{border-bottom:none;}
+  .donut-legend-row .leg-left{display:flex;align-items:center;gap:6px;color:var(--ink-soft);}
+  .donut-legend-row .leg-left .dot{width:8px;height:8px;border-radius:2px;display:inline-block;}
+  .donut-legend-row b{font-weight:700;color:var(--ink);}
+  .zone-list{display:flex;flex-direction:column;gap:0;overflow-y:auto;}
+  .zone-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;transition:background .1s;}
+  .zone-row:hover{background:var(--paper);}
+  .zone-row.active{background:#FFF0F0;}
+  .zone-row-name{font-weight:700;color:var(--ink);}
+  .zone-row-stats{display:flex;align-items:center;gap:6px;font-size:11.5px;}
+  .zs-ok{color:var(--ok);font-weight:700;}
+  .zs-sep{color:var(--ink-faint);}
+  .missing-list{max-height:400px;overflow-y:auto;}
+  .missing-item{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:7px;font-size:12px;}
+  .missing-item:hover{background:var(--paper);}
+  .missing-code{font-weight:700;color:var(--ink);min-width:48px;}
+  .missing-name{color:var(--ink-soft);flex:1;margin:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .missing-zone{font-size:11px;color:var(--ink-faint);background:var(--paper);padding:1px 6px;border-radius:5px;}
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;margin-top:10px;border-top:1px solid var(--line);}
+  .toggle-label{font-size:12px;font-weight:700;}
+  .toggle-sub{font-size:11px;color:var(--ink-soft);}
+  .switch{position:relative;width:36px;height:20px;background:var(--ok);border-radius:99px;cursor:pointer;flex:0 0 auto;transition:background .2s;}
+  .switch::after{content:'';position:absolute;top:2px;right:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:right .2s;}
+  .switch.off{background:#D7D9E0;}
+  .switch.off::after{right:auto;left:2px;}
+  #districtSection{margin-bottom:16px;}
+  .search-input{padding:7px 12px;font-size:12.5px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-family:var(--font-body);font-weight:600;width:200px;outline:none;}
+  .search-input:focus{border-color:var(--bata-red);}
+
+  /* DM Banner */
+  .dm-banner{background:#FFF8E1;border:1.5px solid #FDE68A;border-radius:10px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#92400e;}
+  .dm-banner span{font-size:18px;}
+
+  /* Duplicate Modal */
+  #dupModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
+  #dupModalBackdrop.open{display:flex;}
+  .dup-modal{background:#fff;border-radius:14px;width:100%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column;}
+  .dup-modal-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:1;}
+  .dup-modal-header h2{font-size:15px;font-weight:800;color:var(--ink);}
+  .dup-modal-header p{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+  .dup-modal-close{background:none;border:none;font-size:20px;color:var(--ink-faint);cursor:pointer;line-height:1;padding:0 4px;}
+  .dup-modal-close:hover{color:var(--ink);}
+  .dup-modal-body{padding:16px 20px;flex:1;}
+  .dup-reason-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#92400e;line-height:1.7;}
+  .dup-reason-banner strong{font-weight:700;}
+  .dup-inner-table-wrap{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:4px;}
+  .dup-inner-table-wrap table th{font-size:10.5px;padding:8px 12px;background:#FAFAFB;}
+  .dup-inner-table-wrap table td{font-size:12px;padding:10px 12px;}
+  .dup-inner-table-wrap table tr:hover td{background:#FAFAFB;}
+  .dup-row-correct{background:#f0fdf4!important;}
+  .dup-row-correct td{background:#f0fdf4!important;}
+  .dup-row-rejected{opacity:.45;}
+  .tag-correct{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--ok-bg);color:var(--ok);border-radius:5px;font-size:11px;font-weight:700;}
+  .tag-rejected{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--err-bg);color:var(--err);border-radius:5px;font-size:11px;font-weight:700;}
+  .tag-pending{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--paper);color:var(--ink-soft);border-radius:5px;font-size:11px;}
+  .btn-mark-correct{padding:4px 12px;border-radius:7px;border:1.5px solid var(--line);background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:var(--ink);font-family:var(--font-body);transition:background .12s,border-color .12s;}
+  .btn-mark-correct:hover{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);}
+  .btn-mark-correct:disabled{opacity:.4;cursor:not-allowed;}
+  .dup-modal-footer{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;align-items:center;position:sticky;bottom:0;background:#fff;}
+  .dup-save-msg{font-size:12px;color:var(--ok);flex:1;font-weight:600;}
+  .btn-secondary{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-family:var(--font-body);}
+  .btn-secondary:hover{background:var(--paper);}
+  .btn-save{padding:7px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--ink);color:#fff;font-family:var(--font-body);transition:background .12s;}
+  .btn-save:hover{background:#2d2d2d;}
+
+  /* Store History Modal */
+  #histModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
+  #histModalBackdrop.open{display:flex;}
+  .hist-modal{background:#fff;border-radius:14px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column;}
+  .hist-modal-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:1;}
+  .hist-modal-header h2{font-size:15px;font-weight:800;color:var(--ink);}
+  .hist-modal-header p{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+  .hist-modal-close{background:none;border:none;font-size:20px;color:var(--ink-faint);cursor:pointer;line-height:1;padding:0 4px;}
+  .hist-modal-close:hover{color:var(--ink);}
+  .hist-modal-body{padding:16px 20px;flex:1;}
+  .hist-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .hist-stat{border:1.5px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center;}
+  .hist-stat.ok{background:var(--ok-bg);border-color:#bdeed2;}
+  .hist-stat.err{background:var(--err-bg);border-color:#f9c6cd;}
+  .hist-stat.delay{background:#FEE2E2;border-color:#FECACA;}
+  .hist-stat-icon{font-size:18px;margin-bottom:4px;}
+  .hist-stat-value{font-size:22px;font-weight:800;line-height:1.1;}
+  .hist-stat.ok .hist-stat-value{color:var(--ok);}
+  .hist-stat.err .hist-stat-value{color:var(--err);}
+  .hist-stat.delay .hist-stat-value{color:#B91C1C;}
+  .hist-stat-label{font-size:10.5px;color:var(--ink-soft);font-weight:700;margin-top:3px;line-height:1.3;}
+  .hist-sub{font-size:11.5px;color:var(--ink-soft);text-align:center;margin-top:16px;margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+  .hist-strip{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;padding:4px 0 8px;}
+  .hist-day{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex:0 0 auto;cursor:default;}
+  .hist-day.sent,.hist-day.late,.hist-day.duplicate{background:var(--ok);}
+  .hist-day.missing{background:#E5E7EB;color:var(--ink-soft);}
+  .hist-day.delay{background:var(--err);}
+  .hist-legend{display:flex;justify-content:center;gap:14px;font-size:11px;color:var(--ink-soft);margin-top:6px;}
+  .hist-legend span{display:flex;align-items:center;gap:5px;}
+  .hist-legend .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto;}
+  .store-link{color:var(--ink);font-weight:800;background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:inherit;padding:0;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px;}
+  .store-link:hover{color:var(--bata-red);text-decoration-color:var(--bata-red);}
+  .btn-save:disabled{opacity:.4;cursor:not-allowed;}
+  .dup-spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--ink-soft);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #toastMsg{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:200;display:none;max-width:340px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,.2);}
+  #toastMsg.show{display:block;}
+  #toastMsg.ok-toast{background:var(--ok);}
+  #toastMsg.err-toast{background:var(--err);}
+  .ch-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;gap:4px;}
+  .ch-bank{background:#EEF2FF;color:#4F46E5;}
+  .ch-counter{background:#FFF7ED;color:#C2410C;}
+  .ch-other{background:var(--paper);color:var(--ink-soft);}
+  .delay-chip{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;}
+  .delay-0{background:var(--ok-bg);color:var(--ok);}
+  .delay-1{background:var(--warn-bg);color:var(--warn);}
+  .delay-2{background:#FEE2E2;color:#B91C1C;}
+  .delay-none{background:var(--paper);color:var(--ink-faint);}
+</style>
+</head>
+<body>
+
+<div class="shell"><div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div style="display:flex;align-items:center;gap:10px;margin-right:16px;">
+          <div style="width:28px;height:28px;border-radius:8px;background:var(--bata-red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex:0 0 auto;">B</div>
+          <div style="font-weight:800;font-size:16px;letter-spacing:.03em;color:var(--bata-red);">BATA</div>
+        </div>
+        <div style="width:1px;height:28px;background:var(--line);margin-right:16px;"></div>
+        <div>
+          <div class="page-title" id="pageTitle">Daily Payslip Dashboard</div>
+          <div class="topbar-sub" id="updatedAt">Loading...</div>
+        </div>
+      </div>
+      <div class="topbar-controls">
+        <select id="filterZone"><option value="">All Districts</option></select>
+      </div>
+    </div>
+
+    <div class="body-split">
+      <div class="content-col">
+        <!-- DM Banner (hidden by default, shown for DM mode) -->
+        <div class="dm-banner" id="dmBanner" style="display:none">
+          <span>🗺️</span>
+          <div>กำลังดูข้อมูล <strong id="dmBannerZone"></strong> — เห็นเฉพาะสาขาในโซนของคุณเท่านั้น</div>
+        </div>
+
+        <div class="metrics" id="metricsRow">
+          <div class="metric"><div class="metric-label">Total Stores</div><div class="metric-value">—</div></div>
+        </div>
+
+        <div class="charts-row" id="chartsRow">
+          <div>
+            <div class="section-head" style="min-height:36px;">
+              <div class="section-title" id="trendTitle">Submission Trend</div>
+              <div class="range-toggle" id="rangeToggle">
+                <button data-range="7" class="active">7 days</button>
+                <button data-range="30">30 days</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="chart-legend">
+                <span><span class="dot" style="background:#E11D2E;"></span>Submitted on time</span>
+                <span><span class="dot" style="background:#D8D4CF;"></span>Total stores</span>
+              </div>
+              <div style="position:relative;width:100%;height:200px;"><canvas id="trendChart"></canvas></div>
+            </div>
+          </div>
+          <div id="districtSection">
+            <div class="section-head" style="min-height:36px;">
+              <div class="section-title" id="districtTitle">By District</div>
+            </div>
+            <div class="card">
+              <div class="chart-legend">
+                <span><span class="dot" style="background:#0FA968;"></span>Submitted</span>
+                <span><span class="dot" style="background:#D97706;"></span>Not submitted</span>
+                <span><span class="dot" style="background:#E0263F;"></span>Late</span>
+              </div>
+              <div style="position:relative;width:100%;height:200px;"><canvas id="districtChart"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-head-bar">
+            <div class="table-title" id="tableTitle">All submissions</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <button id="exportExcelBtn" onclick="exportToExcel()" style="display:flex;align-items:center;gap:6px;background:var(--ok);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--font-body);">⬇ Export Excel</button>
+              <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
+                <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
+                <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
+                <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Deposit Date</label>
+                <input type="date" id="filterDepositDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
+              </div>
+              <input class="search-input" type="text" id="storeSearch" placeholder="🔍 Search store code or name..." oninput="onSearchInput()">
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th onclick="sortBy('store_code')" id="th_store_code">Store Code ↕</th>
+                  <th onclick="sortBy('store_name')" id="th_store_name">Store Name ↕</th>
+                  <th onclick="sortBy('zone')" id="th_zone">District ↕</th>
+                  <th onclick="sortBy('status')" id="th_status">Status ↕</th>
+                  <th onclick="sortBy('sales_date')" id="th_sales_date">Sales Date ↕</th>
+                  <th onclick="sortBy('deposit_date')" id="th_deposit_date">Deposit Date ↕</th>
+                  <th onclick="sortBy('time')" id="th_time">Submitted At ↕</th>
+                  <th onclick="sortBy('amount')" id="th_amount">Deposit Amount ↕</th>
+                  <th onclick="sortBy('xstore_cash')" id="th_xstore_cash">Xstore Cash ↕</th>
+                  <th onclick="sortBy('cash_match')" id="th_cash_match">Match ↕</th>
+                  <th onclick="sortBy('slip')" id="th_slip">Slip ↕</th>
+                  <th onclick="sortBy('channel')" id="th_channel">Channel ↕</th>
+                  <th onclick="sortBy('channel_detail')" id="th_channel_detail">Channel Detail ↕</th>
+                  <th onclick="sortBy('delay')" id="th_delay">Deposit Delay ↕</th>
+                  <th>History</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                <tr><td colspan="15" class="empty-state">Loading data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pager" id="pager"></div>
+        </div>
+      </div>
+
+      <div class="right-panel" id="rightPanel">
+        <div class="rp-section">
+          <div class="rp-title">Quick summary</div>
+          <div class="donut-wrap"><canvas id="donutChart" width="140" height="140"></canvas></div>
+          <div id="donutLegend"></div>
+        </div>
+        <div class="rp-section" id="zoneListSection">
+          <div class="rp-title">District Overview</div>
+          <div class="zone-list" id="zoneList"><div class="loading">Loading...</div></div>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Auto Refresh</div>
+            <div class="toggle-sub">ทุก 3 ชั่วโมง</div>
+          </div>
+          <div class="switch" id="autoRefreshToggle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Store History Modal -->
+<div id="histModalBackdrop">
+  <div class="hist-modal">
+    <div class="hist-modal-header">
+      <div>
+        <h2 id="histModalTitle">ประวัติการส่งเงิน</h2>
+        <p id="histModalSub"></p>
+      </div>
+      <button class="hist-modal-close" onclick="closeStoreHistory()">✕</button>
+    </div>
+    <div class="hist-modal-body">
+      <div class="hist-stat-grid">
+        <div class="hist-stat ok">
+          <div class="hist-stat-icon">🟢</div>
+          <div class="hist-stat-value" id="histStreakSent">—</div>
+          <div class="hist-stat-label">ส่งตรงเวลาต่อเนื่อง (วัน)</div>
+        </div>
+        <div class="hist-stat err">
+          <div class="hist-stat-icon">⏳</div>
+          <div class="hist-stat-value" id="histStreakMissing">—</div>
+          <div class="hist-stat-label">ยังไม่ได้ส่งต่อเนื่อง (วัน)</div>
+        </div>
+        <div class="hist-stat delay">
+          <div class="hist-stat-icon">🔴</div>
+          <div class="hist-stat-value" id="histDelayCount">—</div>
+          <div class="hist-stat-label">Delay สะสม (30 วันล่าสุด)</div>
+        </div>
+      </div>
+      <div id="histLastSubmitted" style="text-align:center;font-size:12px;color:var(--ink-soft);margin-bottom:4px;"></div>
+      <div class="hist-sub">30 วันล่าสุด (ล่าสุด → เก่าสุด)</div>
+      <div class="hist-strip" id="histStrip"></div>
+      <div class="hist-legend">
+        <span><span class="dot" style="background:var(--ok);"></span>ส่งแล้ว</span>
+        <span><span class="dot" style="background:#E5E7EB;"></span>ยังไม่ส่ง (ไม่เกิน Deadline)</span>
+        <span><span class="dot" style="background:var(--err);"></span>Delay</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Duplicate Modal -->
+<div id="dupModalBackdrop">
+  <div class="dup-modal">
+    <div class="dup-modal-header">
+      <div>
+        <h2 id="dupModalTitle">รายการ Duplicate</h2>
+        <p id="dupModalSub"></p>
+      </div>
+      <button class="dup-modal-close" onclick="closeDupModal()">✕</button>
+    </div>
+    <div class="dup-modal-body">
+      <div class="dup-reason-banner" id="dupModalReason"></div>
+      <div class="dup-inner-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Submitted At</th><th>Sales Date</th><th>Deposit Date</th>
+              <th>Amount</th><th>Slip</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dupModalTbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="dup-modal-footer">
+      <span class="dup-save-msg" id="dupSaveMsg" style="display:none">✓ บันทึกแล้ว รายการที่เหลือถูก Rejected</span>
+      <button class="btn-secondary" onclick="closeDupModal()">ปิด</button>
+      <button class="btn-save" id="dupSaveBtn" onclick="saveDupResolve()" disabled>บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastMsg"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const LATE_CUTOFF_HOUR = 14;  // บ่าย 2 โมง
+const DELAY_CUTOFF_HOUR = 14; // เดียวกัน — ถ้าไม่ส่งหลังบ่าย 2 = Delay
+const PAGE_SIZE = 25;
+
+// API สำหรับดึงยอด Cash จาก Xstore/Oracle (2_sales_api.py)
+// TODO: ถ้าเปิด dashboard นี้จากคนละเครื่องกับที่รัน 2_sales_api.py
+//       ให้เปลี่ยนกลับเป็น IP ของเครื่องนั้น เช่น 'http://192.1.102.75:5001'
+const XSTORE_API_BASE = 'http://localhost:5001';
+// ถือว่า "ไม่ตรงกัน" ถ้าส่วนต่างเกินค่านี้ (กันปัดเศษทศนิยม)
+const CASH_MISMATCH_THRESHOLD = 1;
+
+/* ── READ ?zone= FIRST before anything else ── */
+const urlParams = new URLSearchParams(window.location.search);
+const LOCKED_ZONE = urlParams.get('zone'); // null = Accounting, '530' = DM
+
+const ZONE_BRANCHES = {
+  '511': ['51426','51428','51436','51438','51450','51508','51510','51511','51514','51518','51521','51524','51530','51534','51542','51546','51549','51550','51905','51906','51944','51960','51968'],
+  '512': ['51403','51404','51407','51409','51415','51416','51418','51419','51425','51430','51446','51498','51520','51533','51535','51540','51903','51938','51939','51946','51948','51965'],
+  '513': ['51002','51201','51410','51427','51431','51435','51439','51512','51545','51548','53947','54004','54005','54007','54016','54021','54023','54029','54030','54046','54048','54026'],
+  '520': ['52002','52005','52007','52008','52010','52017','52018','52019','52023','52025','52026','52031','52032','52033','52036','52037','52040','52042','52048','52098','52901','52902','52942','52943'],
+  '530': ['52043','53002','53006','53011','53012','53021','53022','53023','53026','53029','53030','53032','53035','53036','53037','53038','53046','53048','53049','53905','53955','53958'],
+  '540': ['51091','51434','51506','53003','53008','53009','53010','53018','53020','53024','53031','53040','53041','53043','53045','53047','53953','54013','54019','54038','54039','54044','54045'],
+  '550': ['51132','51433','51517','51532','52003','54001','54011','54012','54014','54017','54018','54022','54024','54027','54032','54035','54040','54042','54094','54945','54947','54960','55001','55044','54095'],
+  '560': ['55005','55008','55009','55010','55012','55018','55019','55023','55024','55030','55031','55033','55035','55036','55038','55040','55041','55042','55043','55046','55049','55901','55902','55906','55949','55950','55951'],
+};
+const STORE_NAMES = {
+  '51002':'เซ็นทรัลวิจเลจ','51091':'เทอร์มินอล 21 โคราชแฟร์','51132':'บิ๊กซี ลพบุรี','51403':'ฟิวเจอร์พาร์ค','51404':'แฟชั่นไอส์แลนด์','51407':'มอลล์ 6','51409':'ไอทีสแควร์ หลักสี่','51410':'เซนทรัลบางนา','51415':'เซ็นทรัล รามอินทรา','51416':'มอลล์ 8','51418':'โลตัส รังสิต คลอง 7','51419':'โลตัส นวนคร','51425':'เซ็นทรัล แจ้งวัฒนะ','51426':'บิ๊กซี ราชดำริ','51427':'พาราไดซ์พาร์ค','51428':'มาบุญครอง 2','51430':'เซ็นทรัล พระราม 9','51431':'เมกาบางนา','51433':'เซ็นทรัล ศาลายา','51434':'สุขุมวิท 15','51435':'โฮมโปร สุวรรณภูมิ','51436':'เซ็นทรัล เวสท์เกต','51438':'เซ็นทรัลปิ่นเกล้า','51439':'โรบินสัน ลาดกระบัง','51446':'โลตัส รังสิตคลอง 4','51450':'เซ็นทรัลเวสต์วิลล์','51498':'มีนบุรีเอาท์เล็ท','51506':'อิมพีเรียลเวิลด์ สำโรง','51508':'ท่าพระจันทร์','51510':'เยาวราช','51511':'มอลล์ 7','51512':'ซีคอนสแควร์','51514':'บิ๊กซี พระราม 4','51517':'โลตัส ศาลายา','51518':'เซ็นทรัล พระราม 3','51520':'โรบินสัน ศรีสมาน','51521':'โลตัส บางประกอก','51524':'โลตัส จรัญสนิทวงศ์','51530':'บิ๊กซี เพชรเกษม 2','51532':'บิ๊กซี อ้อมใหญ่','51533':'โลตัส ลำลูกกา','51534':'บิ๊กซี บางปะกอก','51535':'บิ๊กซี สุวินทวงศ์','51540':'บิ๊กซี รามอินทรา','51542':'สุพรีม สามเสน','51545':'โรบินสัน สมุทรปราการ','51546':'โลตัส บางใหญ่','51548':'บิ๊กซีบางพลี','51549':'บิ๊กซี บางใหญ่','51550':'บิ๊กซี สุขสวัสดิ์','51903':'อิมพีเรียล ลาดพร้าว','51905':'เซ็นทรัล พระราม 2','51906':'ซีคอน บางแค','51938':'โลตัส ลาดพร้าว','51939':'โลตัส แจ้งวัฒนะ','51944':'มาบุญครอง','51946':'บิ๊กซี รังสิต','51948':'โลตัส หลักสี่','51960':'บิ๊กซี พระราม 2','51965':'โลตัส บางกะปิ','51968':'โลตัส พระราม 4','52002':'เซ็นทรัล เชียงราย','52003':'อยุธยาพาร์ค','52005':'บิ๊กซี เชียงใหม่','52007':'โลตัส เชียงใหม่คำเที่ยง','52008':'เซ็นทรัล แอร์พอร์ต','52010':'เซ็นทรัล พิษณุโลก','52017':'โลตัส แม่สอด','52018':'โรบินสัน กำแพงเพชร','52019':'โลตัสพะเยา','52023':'แพร่','52025':'เมญ่า เชียงใหม่','52026':'เซ็นทรัล นครสวรรค์','52031':'เซ็นทรัล ลำปาง','52032':'โลตัส พิษณุโลก 2','52033':'แฮปปี้พลาซ่า','52036':'โลตัส รวมโชค','52037':'เซ็นทรัล เชียงใหม่','52040':'บิ๊กซี พิษณุโลก','52042':'อุตรดิตถ์','52043':'บิ๊กซี เพชรบูรณ์','52048':'โลตัส น่าน','52098':'เชียงใหม่ เอาท์เล็ท','52901':'บิ๊กซี กำแพงเพชร','52902':'บิ๊กซี เชียงใหม่ 2','52942':'บิ๊กซี เชียงราย','52943':'บิ๊กซี ลำปาง','53002':'บิ๊กซี อุดร','53003':'ทวีกิจ บุรีรัมย์ 2','53006':'โลตัส ท่าบ่อ หนองคาย','53008':'โลตัส เดชอุดม','53009':'มอลล์ โคราช','53010':'สุรินทร์พลาซ่า','53011':'กาฬสินธุ์พลาซ่า','53012':'เซ็นทรัล อุดร','53018':'บิ๊กซี วารินชำราบ','53020':'บิ๊กซี ศรีสะเกษ','53021':'โลตัส อุดร','53022':'เซ็นทรัล ขอนแก่น','53023':'ท็อปส์ พลาซ่า พล','53024':'บิ๊กซี ปากช่อง','53026':'แฟรี่ขอนแก่น','53029':'เสริมไทย คอมเพล็กซ์','53030':'บิ๊กซี ร้อยเอ็ด','53031':'เซ็นทรัล อุบล','53032':'โรบินสัน สกลนคร','53035':'โรบินสัน ร้อยเอ็ด','53036':'โรบินสัน มุกดาหาร','53037':'อัศวรรณ 2 หนองคาย','53038':'โลตัส ขอนแก่น','53040':'บิ๊กชี โคราช 2','53041':'เซ็นทรัล โคราช','53043':'บิ๊กชี อำนาจเจริญ','53045':'โลตัส นางรอง','53046':'โลตัส ขอนแก่น 2','53047':'โลตัส อุบล','53048':'โลตัส ชุมแพ','53049':'โรบินสัน ชัยภูมิ','53905':'บิ๊กซี เลย','53947':'บิ๊กซี ระยอง','53953':'บิ๊กซี อุบล','53955':'โลตัส หนองคาย','53958':'บิ๊กซี ขอนแก่น','54001':'เพชรบุรี','54004':'บิ๊กซี พัทยา','54005':'เซ็นทรัลศรีราชา','54007':'โลตัส พัทยาเหนือ','54011':'เซ็นทรัล อยุธยา','54012':'บิ๊กซี เพชรบุรี','54013':'บิ๊กซี ฉะเชิงเทรา 2','54014':'โลตัส บ้านโป่ง','54016':'บิ๊กซี ชลบุรี 2','54017':'โรบินสัน กาญจนบุรี','54018':'บิ๊กซี อยุธยา','54019':'บิ๊กซี สระแก้ว','54021':'เซ็นทรัล พัทยาบีช','54022':'เซ็นทรัล มหาชัย','54023':'เซ็นทรัล ชลบุรี','54026':'บิ๊กซี พัทยา 2','54027':'บิ๊กซี มหาชัย','54029':'ฮาเบอร์มอลล์','54030':'บิ๊กซี ชลบุรี','54032':'สุขอนันต์ปาร์ค','54035':'โรบินสัน สระบุรี','54038':'บิ๊กซี ศรีมหาโพธิ์','54039':'โลตัส นครนายก','54040':'โรบินสัน สุพรรณบุรี','54042':'นครปฐม','54044':'โรบินสัน ฉะเชิงเทรา','54045':'โรบินสัน ปราจีนบุรี','54046':'เซ็นทรัล ระยอง','54048':'เซ็นทรัล มารีนา พัทยา','54094':'เซ็นทรัลนครปฐม','54095':'โลตัสสระบุรี','54945':'โลตัส สุพรรณบุรี','54960':'โลตัส ราชบุรี','55001':'หัวหินมาร์เก็ต','55005':'โลตัส สุราษฎร์','55008':'จังซีลอน','55009':'บิ๊กซี หาดใหญ่ 2','55010':'โลตัส กระบี่','55012':'เซ็นทรัล ภูเก็ต','55018':'โลตัส พัทลุง','55019':'โลตัส สมุย ละไม','55023':'ปัตตานี','55024':'โลตัส หาดใหญ่ 2','55030':'เซ็นทรัล สุราษฎร์','55031':'บิ๊กซี ภูเก็ต','55033':'โลตัสเวียงสระ','55035':'เซ็นทรัล หาดใหญ่','55036':'บิ๊กซี ตรัง','55038':'เซ็นทรัล สมุย','55040':'โลตัส จะนะ','55041':'โลตัส หาดใหญ่ 1','55042':'โลตัสสงขลา','55043':'เซ็นทรัล นครศรีธรรมราช','55044':'บูลพอร์ต','55046':'บิ๊กซี พังงา','55049':'Lotus Yala','55901':'โรบินสัน ตรัง','55902':'บิ๊กซี นครศรี','55906':'บิ๊กซี สตูล','55949':'บิ๊กซี สุราษฎร์','55950':'โลตัส ภูเก็ต','55951':'บิ๊กซี หาดใหญ่'};
+
+/* ============================================================
+   STATE — initialise activeZoneFilter from URL immediately
+   ============================================================ */
+let allStoresList = [];
+let allRecords    = [];
+let storeNameMap  = {};  // store_code -> store_name (from Supabase)
+let activeZoneFilter  = LOCKED_ZONE || '';   // ← set HERE, before any render
+let activeMetricFilter = '';
+let activeCashMismatchOnly = false;  // true = แสดงเฉพาะแถวที่ยอด cash ไม่ตรงกับยอดแจ้ง
+let searchQuery   = '';
+let sortCol = 'store_code', sortDir = 'asc';
+let activeRange   = 7;
+let currentPage   = 1;
+let xstoreCashMap = {};       // key: `${store_code}_${date}` -> {cash, total, ...}
+let xstoreCashLoadedKeys = new Set();   // key: `${date}|${scope}` ที่โหลดสำเร็จแล้ว
+let xstoreCashLoadingKeys = new Set();  // key: `${date}|${scope}` ที่กำลังโหลดอยู่
+let autoRefreshOn = true;
+let autoRefreshTimer = null;
+let trendChartInstance = null, districtChartInstance = null, donutChartInstance = null;
+let dupSelectedId = null, dupCurrentGroupId = null, dupCurrentRecords = [];
+let lastRenderedRows = [];
+
+const today = new Date().toISOString().slice(0,10);
+function dateNDaysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+
+/* ============================================================
+   APPLY DM MODE (UI changes) — runs before data loads
+   ============================================================ */
+if (LOCKED_ZONE) {
+  // Validate: zone must exist in ZONE_BRANCHES
+  if (!ZONE_BRANCHES[LOCKED_ZONE]) {
+    document.getElementById('updatedAt').textContent = '⚠️ Zone ไม่ถูกต้อง: ' + LOCKED_ZONE;
+  }
+  // Hide accounting-only elements
+  document.getElementById('districtSection').style.display  = 'none';
+  document.getElementById('chartsRow').style.gridTemplateColumns = '1fr';
+  document.getElementById('filterZone').style.display  = 'none';
+  document.getElementById('zoneListSection').style.display = 'none';
+  // Show DM banner
+  document.getElementById('dmBanner').style.display = 'flex';
+  document.getElementById('dmBannerZone').textContent = `Zone ${LOCKED_ZONE}`;
+  // Page title
+  document.getElementById('pageTitle').textContent = `Dashboard — Zone ${LOCKED_ZONE}`;
+}
+
+/* ============================================================
+   INIT date pickers
+   ============================================================ */
+(function(){
+  const sd = document.getElementById('filterSalesDate');
+  const dd = document.getElementById('filterDepositDate');
+  if(sd){ sd.value=today; sd.max=today; sd.addEventListener('change',()=>{ currentPage=1; loadXstoreCash(sd.value||today); render(); }); }
+  if(dd){ dd.max=today; dd.addEventListener('change',()=>{ currentPage=1; render(); }); }
+})();
+
+/* filterZone dropdown — only active in Accounting mode */
+document.getElementById('filterZone').addEventListener('change',()=>{
+  if(LOCKED_ZONE) return;   // DM cannot change zone
+  activeZoneFilter = document.getElementById('filterZone').value;
+  currentPage=1;
+  const sdEl=document.getElementById('filterSalesDate');
+  loadXstoreCash((sdEl&&sdEl.value)||today);
+  render();
+});
+
+document.getElementById('rangeToggle').querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    activeRange=Number(btn.dataset.range);
+    document.getElementById('rangeToggle').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    // th_missed removed
+    currentPage=1; render();
+  });
+});
+
+document.getElementById('autoRefreshToggle').addEventListener('click',()=>{
+  autoRefreshOn=!autoRefreshOn;
+  document.getElementById('autoRefreshToggle').classList.toggle('off',!autoRefreshOn);
+  setupAutoRefresh();
+});
+
+function setupAutoRefresh(){
+  if(autoRefreshTimer) clearInterval(autoRefreshTimer);
+  if(autoRefreshOn) autoRefreshTimer=setInterval(loadData,3*60*60*1000); // 3 ชั่วโมง
+}
+
+// nav-item listeners removed (sidebar removed)
+
+function onSearchInput(){ searchQuery=document.getElementById('storeSearch').value.trim().toLowerCase(); currentPage=1; render(); }
+function sortBy(col){ if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc'; else{ sortCol=col; sortDir='asc'; } currentPage=1; render(); }
+
+function getStoreName(code){
+  return storeNameMap[code] || STORE_NAMES[code] || '';
+}
+
+function buildStoreList(){
+  const list=[];
+  const zones = LOCKED_ZONE ? [LOCKED_ZONE] : Object.keys(ZONE_BRANCHES).sort();
+  zones.forEach(zone=>{ ZONE_BRANCHES[zone].forEach(code=>{ list.push({store_code:code,zone_code:zone,store_name:getStoreName(code)}); }); });
+  return list;
+}
+
+/* ============================================================
+   LOAD DATA — filter by zone at Supabase level for DM
+   ============================================================ */
+  function openSlip(e, url){
+  e.preventDefault();
+  const w = window.open('', '_blank', 'width=800,height=700');
+  w.document.write(`<!DOCTYPE html><html><head>
+    <title>Slip</title>
+    <style>
+      html,body{margin:0;height:100%;background:#111;overflow:hidden;}
+      #wrap{
+        position:fixed; inset:0; display:flex; align-items:center;
+        justify-content:center; overflow:auto;
+      }
+      #slipImg{
+        max-width:90vw; max-height:90vh; object-fit:contain;
+        transition:transform .2s ease;
+        transform-origin:center center;
+      }
+      #controls{
+        position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
+        display:flex; gap:10px; z-index:10;
+      }
+      #controls button{
+        background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.3);
+        border-radius:8px; padding:10px 16px; font-size:20px; cursor:pointer;
+        backdrop-filter:blur(4px);
+      }
+      #controls button:hover{ background:rgba(255,255,255,.25); }
+      .errmsg{color:#fff;padding:20px;text-align:center;}
+      .errmsg a{color:#f66;}
+    </style>
+  </head><body>
+    <div id="wrap">
+      <img id="slipImg" src="${url}"
+           onerror="document.getElementById('wrap').innerHTML='<p class=errmsg>โหลดรูปไม่ได้ — <a href=${url} download>คลิกเพื่อ Download</a></p>'">
+    </div>
+    <div id="controls">
+      <button onclick="rotateSlip(-90)" title="หมุนซ้าย">↺</button>
+      <button onclick="rotateSlip(90)" title="หมุนขวา">↻</button>
+    </div>
+    <script>
+      let deg = 0;
+      function rotateSlip(delta){
+        deg = (deg + delta) % 360;
+        const img = document.getElementById('slipImg');
+        img.style.transform = 'rotate(' + deg + 'deg)';
+        // สลับ max-width/max-height เมื่อหมุน 90/270 องศา จะได้ไม่ล้นจอ
+        if (Math.abs(deg % 180) === 90){
+          img.style.maxWidth = '90vh';
+          img.style.maxHeight = '90vw';
+        } else {
+          img.style.maxWidth = '90vw';
+          img.style.maxHeight = '90vh';
+        }
+      }
+    <\/script>
+  </body></html>`);
+}
+  async function loadData(){
+  document.getElementById('updatedAt').textContent = 'กำลังโหลด...';
+  const sinceDate = dateNDaysAgo(30)+'T00:00:00';
+
+  // โหลด store names จาก Supabase
+  const {data:storeRows} = await sb.from('stores').select('store_code,store_name');
+  if(storeRows){ storeRows.forEach(s=>{ storeNameMap[s.store_code]=s.store_name||''; }); }
+
+  // ดึงข้อมูลแบบ pagination ทีละ 1000 แถว จนกว่าจะครบ (Supabase จำกัด 1000 แถว/query)
+  let allFetched = [];
+  let from = 0;
+  const pageSize = 1000;
+  let keepGoing = true;
+
+  while (keepGoing) {
+    let query = sb.from('payin_records')
+      .select('id,zone_code,store_code,sales_date,deposit_date,amount,channel,channel_detail,slip_url,submitted_at,duplicate_status,duplicate_group_id,duplicate_reason')
+      .gte('submitted_at', sinceDate)
+      .order('submitted_at',{ascending:false})
+      .range(from, from + pageSize - 1);
+
+    // For DM: filter at DB level — only fetch store codes in their zone
+    if (LOCKED_ZONE && ZONE_BRANCHES[LOCKED_ZONE]) {
+      query = query.in('store_code', ZONE_BRANCHES[LOCKED_ZONE]);
+    }
+
+    const {data:records, error} = await query;
+    if(error){
+      document.getElementById('tableBody').innerHTML=`<tr><td colspan="15" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
+      document.getElementById('updatedAt').textContent = '⚠️ โหลดไม่สำเร็จ';
+      return;
+    }
+
+    allFetched = allFetched.concat(records||[]);
+    keepGoing = (records && records.length === pageSize);
+    from += pageSize;
+  }
+
+  allRecords = allFetched;
+
+  // Populate zone dropdown (Accounting only)
+  if (!LOCKED_ZONE) {
+    const zones = Object.keys(ZONE_BRANCHES).sort();
+    document.getElementById('filterZone').innerHTML = '<option value="">All Districts</option>' +
+      zones.map(z=>`<option value="${z}">Zone ${z}</option>`).join('');
+  }
+
+  document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('th-TH');
+  render();
+}
+
+/* ============================================================
+   XSTORE CASH — ดึงยอด Cash จาก Oracle ผ่าน 2_sales_api.py
+   ============================================================ */
+function getScopeStoreCodes(){
+  // คืนรายชื่อ store_code ตาม zone ที่กำลังดูอยู่ (null = ดูทุกเขต = ดึงทุกสาขา)
+  const zone = LOCKED_ZONE || activeZoneFilter;
+  if(zone && ZONE_BRANCHES[zone]) return ZONE_BRANCHES[zone];
+  return null;
+}
+
+async function loadXstoreCash(dateStr){
+  const storeCodes = getScopeStoreCodes();
+  const scopeKey = storeCodes ? storeCodes.slice().sort().join(',') : 'ALL';
+  const key = `${dateStr}|${scopeKey}`;
+
+  if(xstoreCashLoadedKeys.has(key) || xstoreCashLoadingKeys.has(key)) return;
+  xstoreCashLoadingKeys.add(key);
+  render();  // re-render ทันทีเพื่อโชว์สถานะ "กำลังโหลด" ในตาราง
+
+  try{
+    let url = `${XSTORE_API_BASE}/api/xstore-cash?start=${dateStr}&end=${dateStr}`;
+    if(storeCodes) url += `&store_codes=${storeCodes.join(',')}`;
+    const res = await fetch(url);
+    if(!res.ok){
+      console.warn('โหลด Xstore Cash ไม่สำเร็จ:', res.status);
+      xstoreCashLoadingKeys.delete(key);
+      render();
+      return;
+    }
+    const json = await res.json();
+    (json.data||[]).forEach(rec=>{
+      if(rec.error) return;  // แถวที่ query error ให้ข้ามไป
+      const mapKey = `${rec.store_code}_${rec.sale_date}`;
+      xstoreCashMap[mapKey] = rec;
+    });
+    xstoreCashLoadedKeys.add(key);
+  }catch(e){
+    console.warn('โหลด Xstore Cash error:', e);
+  }
+  xstoreCashLoadingKeys.delete(key);
+  render();  // re-render พอข้อมูลมาถึง
+}
+
+function isCashLoadingFor(dateStr){
+  const storeCodes = getScopeStoreCodes();
+  const scopeKey = storeCodes ? storeCodes.slice().sort().join(',') : 'ALL';
+  return xstoreCashLoadingKeys.has(`${dateStr}|${scopeKey}`);
+}
+
+function getXstoreCash(storeCode, dateStr){
+  const rec = xstoreCashMap[`${storeCode}_${dateStr}`];
+  return rec ? Number(rec.cash) : null;
+}
+
+/* ============================================================
+   STATUS HELPERS
+   ============================================================ */
+  function getStoreStatus(storeCode, salesDate, depositDate){
+  let recs = allRecords.filter(r=>r.store_code===storeCode);
+  const sd = salesDate||today;
+  recs = recs.filter(r=>(r.sales_date||'').slice(0,10)===sd);
+  if(depositDate) recs = recs.filter(r=>(r.deposit_date||'').slice(0,10)===depositDate);
+
+  // deadline = (sales_date + 1 วัน) เวลา 14:00 ไทย (07:00 UTC)
+  const [sy,sm,sd2] = sd.split('-').map(Number);
+  const deadlineUTC = new Date(Date.UTC(sy, sm-1, sd2+1, 7, 0, 0));
+
+  // เวลาปัจจุบัน UTC
+  const nowUTC = new Date();
+  const isPastDeadline = nowUTC >= deadlineUTC;
+
+  // ยังไม่ส่งเลย
+  if(recs.length===0){
+    if(isPastDeadline) return {status:'delay', records:[]};
+    return {status:'missing', records:[]};
+  }
+
+  const latest = recs.reduce((a,b)=>new Date(a.submitted_at)>new Date(b.submitted_at)?a:b);
+
+  // ส่งซ้ำ — คำนวณ totalAmount รวมทุก record
+  if(recs.length>1){
+    const totalAmount = recs.reduce((s,r)=>s+(Number(r.amount)||0), 0);
+    return {status:'duplicate', records:recs, latest, totalAmount};
+  }
+
+  // ตรวจว่าส่งก่อนหรือหลัง deadline
+  const submittedAt = new Date(latest.submitted_at);
+  if(submittedAt > deadlineUTC) return {status:'late', records:recs, latest};
+  return {status:'sent', records:recs, latest};
+}
+
+function countMissedDays(storeCode,days){
+  let missed=0;
+  for(let i=0;i<days;i++){ const d=new Date(); d.setDate(d.getDate()-i); if(getStoreStatus(storeCode,d.toISOString().slice(0,10),'').status==='missing') missed++; }
+  return missed;
+}
+
+/* ============================================================
+   EXPORT TO EXCEL
+   ============================================================ */
+function statusLabelTH(status){
+  return {sent:'Submitted',missing:'Not Submitted',late:'Late',delay:'Delay',duplicate:'Duplicate'}[status]||status;
+}
+
+function exportToExcel(){
+  if(typeof XLSX==='undefined'){ showToast('ไม่สามารถโหลดไลบรารี Export ได้ กรุณาตรวจสอบอินเทอร์เน็ต','err'); return; }
+  if(!lastRenderedRows || lastRenderedRows.length===0){ showToast('ไม่มีข้อมูลให้ Export','warn'); return; }
+
+  const salesDateFilter=(document.getElementById('filterSalesDate')&&document.getElementById('filterSalesDate').value)||today;
+
+  // Sheet 1: All submissions (รวมทุกสาขา ทุกสถานะ)
+  const allData = lastRenderedRows.map(r=>{
+    const rec=r.latest;
+    const amount = r.status==='duplicate' && r.totalAmount!=null ? Number(r.totalAmount) : (rec?Number(rec.amount):'');
+    return {
+      'Store Code': r.store.store_code,
+      'Store Name': r.store.store_name||'',
+      'District': r.store.zone_code,
+      'Status': statusLabelTH(r.status),
+      'Sales Date': rec&&rec.sales_date?rec.sales_date.slice(0,10):'',
+      'Deposit Date': rec&&rec.deposit_date?rec.deposit_date.slice(0,10):'',
+      'Submitted At': rec&&rec.submitted_at?new Date(rec.submitted_at).toLocaleString('th-TH'):'',
+      'Deposit Amount': amount,
+      'Channel': rec&&rec.channel?rec.channel:'',
+      'Channel Detail': rec&&rec.channel_detail?rec.channel_detail:'',
+      'Deposit Delay (days)': r.depositDelay!=null?r.depositDelay:'',
+      'Missed Days (last 7d)': countMissedDays(r.store.store_code,7),
+    };
+  });
+
+  // Sheet 2: Not submitted / Delay only — สาขาที่ยังไม่ส่งหรือเลยกำหนด
+  const notSubmittedData = lastRenderedRows
+    .filter(r=>r.status==='missing'||r.status==='delay')
+    .map(r=>({
+      'Store Code': r.store.store_code,
+      'Store Name': r.store.store_name||'',
+      'District': r.store.zone_code,
+      'Status': statusLabelTH(r.status),
+      'Sales Date': salesDateFilter,
+      'Missed Days (last 7d)': countMissedDays(r.store.store_code,7),
+    }));
+
+  // Sheet 3: Summary by district
+  const zones=Object.keys(ZONE_BRANCHES||{}).sort();
+  const summaryData = zones.map(z=>{
+    const zRows=lastRenderedRows.filter(r=>r.store.zone_code===z);
+    return {
+      'District': 'Zone '+z,
+      'Total Stores': zRows.length,
+      'Submitted': zRows.filter(r=>r.status==='sent').length,
+      'Late': zRows.filter(r=>r.status==='late').length,
+      'Not Submitted': zRows.filter(r=>r.status==='missing').length,
+      'Delay': zRows.filter(r=>r.status==='delay').length,
+      'Duplicate': zRows.filter(r=>r.status==='duplicate').length,
+    };
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.json_to_sheet(allData);
+  ws1['!cols']=[{wch:11},{wch:24},{wch:9},{wch:13},{wch:11},{wch:12},{wch:18},{wch:14},{wch:14},{wch:16},{wch:14},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'All Submissions');
+
+  const ws2 = XLSX.utils.json_to_sheet(notSubmittedData);
+  ws2['!cols']=[{wch:11},{wch:24},{wch:9},{wch:13},{wch:11},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Not Submitted');
+
+  const ws3 = XLSX.utils.json_to_sheet(summaryData);
+  ws3['!cols']=[{wch:12},{wch:12},{wch:10},{wch:8},{wch:13},{wch:8},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'Summary by District');
+
+  XLSX.writeFile(wb, `BATA_Payslip_${salesDateFilter}.xlsx`);
+  showToast('Export Excel สำเร็จ','ok');
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg,type=''){
+  const el=document.getElementById('toastMsg');
+  el.textContent=msg; el.className='show'+(type?' '+type+'-toast':'');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.className='',3500);
+}
+
+/* ============================================================
+   DUPLICATE MODAL
+   ============================================================ */
+async function openDupModal(storeCode,salesDate){
+  dupSelectedId=null; dupCurrentGroupId=null; dupCurrentRecords=[];
+  const storeName=STORE_NAMES[storeCode]||storeCode;
+  document.getElementById('dupModalTitle').textContent=`Duplicate — Store ${storeCode}`;
+  document.getElementById('dupModalSub').textContent=`${storeName} · Sales Date ${salesDate}`;
+  document.getElementById('dupModalReason').innerHTML='<span class="dup-spinner"></span> กำลังโหลด...';
+  document.getElementById('dupModalTbody').innerHTML='';
+  document.getElementById('dupSaveBtn').disabled=true;
+  document.getElementById('dupSaveMsg').style.display='none';
+  document.getElementById('dupModalBackdrop').classList.add('open');
+  const {data,error}=await sb.from('payin_records').select('id,store_code,sales_date,deposit_date,submitted_at,amount,slip_url,duplicate_status,duplicate_group_id,duplicate_reason').eq('store_code',storeCode).eq('sales_date',salesDate).order('submitted_at',{ascending:true});
+  if(error||!data||data.length===0){ document.getElementById('dupModalReason').textContent=error?error.message:'ไม่พบข้อมูล'; return; }
+  dupCurrentRecords=data; dupCurrentGroupId=data.find(r=>r.duplicate_group_id)?.duplicate_group_id||null;
+  const reasons=data[0]?.duplicate_reason||[];
+  const reasonLabel=reasons.includes('same_slip_hash')?'Store Code + Sales Date ซ้ำ และ Slip รูปเดียวกัน':'Store Code + Sales Date ซ้ำกัน';
+  document.getElementById('dupModalReason').innerHTML=`<strong>สาเหตุ:</strong> ${reasonLabel}<br>เลือกรายการที่ <strong>ถูกต้อง</strong> แล้วกด <strong>บันทึก</strong>`;
+  document.getElementById('dupModalTbody').innerHTML=data.map((r,i)=>{
+    const timeStr=new Date(r.submitted_at).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
+    const amtStr=r.amount!=null?Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
+    const slipHtml = r.slip_url ? `<a class="imglink" href="#" onclick="openSlip(event,'${r.slip_url}')">View</a>` : '—';
+    const statusBadge=r.duplicate_status==='correct'?'<span class="tag-correct">✓ Correct</span>':r.duplicate_status==='rejected'?'<span class="tag-rejected">✕ Rejected</span>':'<span class="tag-pending">Pending</span>';
+    const canMark=r.duplicate_status==='pending'||!r.duplicate_status;
+    return `<tr id="duprow-${r.id}"><td>${i+1}</td><td>${timeStr}</td><td>${(r.sales_date||'').slice(0,10)||'—'}</td><td>${(r.deposit_date||'').slice(0,10)||'—'}</td><td style="font-weight:700;color:var(--warn)">${amtStr}</td><td>${slipHtml}</td><td id="dupstatus-${r.id}">${statusBadge}</td><td><button class="btn-mark-correct" id="dupbtn-${r.id}" onclick="selectDupCorrect('${r.id}')" ${canMark?'':'disabled'}>✓ Mark as Correct</button></td></tr>`;
+  }).join('');
+}
+
+function selectDupCorrect(id){
+  dupSelectedId=id;
+  dupCurrentRecords.forEach(r=>{ const row=document.getElementById('duprow-'+r.id); if(!row) return; row.className=''; document.getElementById('dupstatus-'+r.id).innerHTML='<span class="tag-pending">Pending</span>'; });
+  document.getElementById('duprow-'+id).className='dup-row-correct';
+  document.getElementById('dupstatus-'+id).innerHTML='<span class="tag-correct">✓ Correct</span>';
+  dupCurrentRecords.forEach(r=>{ if(r.id!==id){ const row=document.getElementById('duprow-'+r.id); if(row) row.className='dup-row-rejected'; document.getElementById('dupstatus-'+r.id).innerHTML='<span class="tag-rejected">✕ Rejected</span>'; } });
+  document.getElementById('dupSaveBtn').disabled=false;
+  document.getElementById('dupSaveMsg').style.display='none';
+}
+
+async function saveDupResolve(){
+  if(!dupSelectedId) return;
+  const saveBtn=document.getElementById('dupSaveBtn');
+  saveBtn.disabled=true; saveBtn.innerHTML='<span class="dup-spinner"></span>บันทึก...';
+  try{
+    if(!dupCurrentGroupId){ const {error:detectErr}=await sb.rpc('detect_and_group_duplicates'); if(detectErr) throw detectErr; const {data:refreshed}=await sb.from('payin_records').select('id,duplicate_group_id').eq('id',dupSelectedId).single(); dupCurrentGroupId=refreshed?.duplicate_group_id||null; }
+    const {data:{user}}=await sb.auth.getUser();
+    const {error}=await sb.rpc('resolve_duplicate',{p_correct_id:dupSelectedId,p_resolved_by:user?.id||null});
+    if(error) throw error;
+    document.getElementById('dupSaveMsg').style.display='block';
+    saveBtn.innerHTML='บันทึก';
+    document.querySelectorAll('[id^="dupbtn-"]').forEach(b=>b.disabled=true);
+    showToast('✓ บันทึกสำเร็จ','ok');
+    setTimeout(()=>{ closeDupModal(); loadData(); },1200);
+  }catch(e){ showToast('บันทึกไม่สำเร็จ: '+e.message,'err'); saveBtn.disabled=false; saveBtn.innerHTML='บันทึก'; }
+}
+
+function closeDupModal(){
+  document.getElementById('dupModalBackdrop').classList.remove('open');
+  dupSelectedId=null; dupCurrentGroupId=null; dupCurrentRecords=[];
+}
+document.getElementById('dupModalBackdrop').addEventListener('click',function(e){ if(e.target===this) closeDupModal(); });
+
+/* ============================================================
+   STORE HISTORY — ส่งต่อเนื่องกี่วัน / ไม่ส่งต่อเนื่องกี่วัน / Delay สะสม
+   ============================================================ */
+function computeStoreHistory(storeCode){
+  // ไล่ย้อนหลังจาก "เมื่อวาน" (offset 1) ถึง 30 วันก่อน เพราะยอดขายวันนี้ยังไม่ถึง Deadline
+  const days=[];
+  for(let offset=1; offset<=30; offset++){
+    const d=new Date(); d.setDate(d.getDate()-offset);
+    const dateStr=d.toISOString().slice(0,10);
+    const st=getStoreStatus(storeCode, dateStr, '').status;
+    days.push({date:dateStr, status:st});
+  }
+
+  // ส่งแล้ว = sent / late / duplicate | ยังไม่ส่ง = missing / delay
+  const isSubmitted=s=>s==='sent'||s==='late'||s==='duplicate';
+  const isNotSubmitted=s=>s==='missing'||s==='delay';
+
+  let streakSent=0;
+  for(const d of days){ if(isSubmitted(d.status)) streakSent++; else break; }
+
+  let streakMissing=0;
+  for(const d of days){ if(isNotSubmitted(d.status)) streakMissing++; else break; }
+
+  const delayCount30 = days.filter(d=>d.status==='delay').length;
+
+  let lastSubmittedDate=null;
+  for(const d of days){ if(isSubmitted(d.status)){ lastSubmittedDate=d.date; break; } }
+
+  return {days, streakSent, streakMissing, delayCount30, lastSubmittedDate};
+}
+
+function openStoreHistory(storeCode){
+  const storeName=getStoreName(storeCode);
+  document.getElementById('histModalTitle').textContent=`ประวัติการส่งเงิน — Store ${storeCode}`;
+  document.getElementById('histModalSub').textContent=storeName||'';
+
+  const h=computeStoreHistory(storeCode);
+
+  document.getElementById('histStreakSent').textContent = h.streakSent>0 ? h.streakSent : '0';
+  document.getElementById('histStreakMissing').textContent = h.streakMissing>0 ? h.streakMissing : '0';
+  document.getElementById('histDelayCount').textContent = h.delayCount30;
+
+  const lastSubEl=document.getElementById('histLastSubmitted');
+  if(h.streakMissing>0){
+    lastSubEl.textContent = h.lastSubmittedDate
+      ? `ยังไม่ได้ส่งมา ${h.streakMissing} วันติดต่อกัน · ส่งครั้งล่าสุดเมื่อ ${h.lastSubmittedDate}`
+      : `ยังไม่ได้ส่งเลยในช่วง 30 วันที่ผ่านมา`;
+  } else {
+    lastSubEl.textContent = `ส่งต่อเนื่องอยู่ ${h.streakSent} วัน — ยังไม่มีวันขาดส่ง`;
+  }
+
+  document.getElementById('histStrip').innerHTML = h.days.map(d=>{
+    const cls = d.status==='sent'||d.status==='late'||d.status==='duplicate' ? 'sent' : d.status;
+    const dd = d.date.slice(8,10);
+    return `<div class="hist-day ${cls}" title="${d.date} — ${statusLabelTH(d.status)}">${dd}</div>`;
+  }).join('');
+
+  document.getElementById('histModalBackdrop').classList.add('open');
+}
+
+function closeStoreHistory(){
+  document.getElementById('histModalBackdrop').classList.remove('open');
+}
+document.getElementById('histModalBackdrop').addEventListener('click',function(e){ if(e.target===this) closeStoreHistory(); });
+
+/* ============================================================
+   CHARTS
+   ============================================================ */
+function renderTrendChart(stores){
+  const labels=[],sentCounts=[];
+  const totalCount=stores.length;
+  for(let i=activeRange-1;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const dStr=d.toISOString().slice(0,10);
+    labels.push(d.toLocaleDateString('th-TH',{day:'numeric',month:'short'}));
+    sentCounts.push(stores.filter(s=>{ const r=getStoreStatus(s.store_code,dStr,''); return r.status==='sent'||r.status==='duplicate'; }).length);
+  }
+  const label = LOCKED_ZONE ? `Trend — Zone ${LOCKED_ZONE}` : (activeZoneFilter ? `Trend — Zone ${activeZoneFilter}` : 'Submission Trend — All Districts');
+  document.getElementById('trendTitle').textContent = label;
+  if(trendChartInstance) trendChartInstance.destroy();
+  trendChartInstance=new Chart(document.getElementById('trendChart'),{
+    type:'bar',
+    data:{labels,datasets:[{label:'Total stores',data:labels.map(()=>totalCount),type:'line',borderColor:'#D8D4CF',backgroundColor:'#D8D4CF',borderWidth:2,pointRadius:0,borderDash:[4,4],fill:false,order:1},{label:'Submitted on time',data:sentCounts,backgroundColor:'#E11D2E',borderRadius:4,order:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:activeRange>14,maxRotation:45}}}},
+  });
+}
+
+function renderDistrictChart(dateStr){
+  const zones=Object.keys(ZONE_BRANCHES).sort();
+  const submittedData=[],notSubmittedData=[],lateData=[];
+  zones.forEach(z=>{
+    const zoneStores=allStoresList.filter(s=>s.zone_code===z);
+    let sub=0,notSub=0,late=0;
+    zoneStores.forEach(s=>{ const r=getStoreStatus(s.store_code,dateStr,''); if(r.status==='sent'||r.status==='duplicate') sub++; else if(r.status==='late') late++; else notSub++; });
+    submittedData.push(sub); notSubmittedData.push(notSub); lateData.push(late);
+  });
+  document.getElementById('districtTitle').textContent=`By District — ${new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;
+  if(districtChartInstance) districtChartInstance.destroy();
+  districtChartInstance=new Chart(document.getElementById('districtChart'),{
+    type:'bar',
+    data:{labels:zones.map(z=>`Zone ${z}`),datasets:[{label:'Submitted',data:submittedData,backgroundColor:'#0FA968',borderRadius:3},{label:'Not submitted',data:notSubmittedData,backgroundColor:'#D97706',borderRadius:3},{label:'Late',data:lateData,backgroundColor:'#E0263F',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:false,maxRotation:0,font:{size:10}}}}},
+  });
+}
+
+function renderDonutChart(total,sent,missing,dup,late,delay=0,cashMismatch=0){
+  if(donutChartInstance) donutChartInstance.destroy();
+  donutChartInstance=new Chart(document.getElementById('donutChart'),{
+    type:'doughnut',
+    data:{labels:['Submitted','Not submitted','Late','Duplicate','Delay','Cash Mismatch'],datasets:[{data:[sent,missing,late,dup,delay,cashMismatch],backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC','#B91C1C','#E0263F'],borderWidth:0}]},
+    options:{responsive:false,cutout:'72%',plugins:{legend:{display:false}}},
+  });
+  const pct=n=>total>0?((n/total)*100).toFixed(1)+'%':'0%';
+  document.getElementById('donutLegend').innerHTML=[['#0FA968','Submitted',sent],['#D97706','Not submitted',missing],['#E0263F','Late',late],['#7C5CFC','Duplicate',dup],['#B91C1C','Delay',delay],['#E0263F','Cash Mismatch',cashMismatch]]
+    .map(([c,l,n])=>`<div class="donut-legend-row"><div class="leg-left"><span class="dot" style="background:${c};"></span>${l}</div><b>${n} <span style="font-weight:400;color:var(--ink-soft)">(${pct(n)})</span></b></div>`).join('');
+}
+
+/* ============================================================
+   MAIN RENDER
+   ============================================================ */
+function render(){
+  const salesDateFilter = (document.getElementById('filterSalesDate')&&document.getElementById('filterSalesDate').value)||today;
+  const depositDateFilter = (document.getElementById('filterDepositDate')&&document.getElementById('filterDepositDate').value)||'';
+
+  // allStoresList is already filtered to zone for DM — no extra filter needed
+  const stores = activeZoneFilter && !LOCKED_ZONE
+    ? allStoresList.filter(s=>s.zone_code===activeZoneFilter)
+    : allStoresList;
+
+  const rows = stores.map(s=>{
+    const status = getStoreStatus(s.store_code,salesDateFilter,depositDateFilter);
+    let depositDelay=null;
+    if(status.latest&&status.latest.deposit_date&&status.latest.sales_date){
+      const [dy,dm,dd2]=status.latest.deposit_date.slice(0,10).split('-').map(Number);
+      const [sy,sm,sd2]=status.latest.sales_date.slice(0,10).split('-').map(Number);
+      const depMs=Date.UTC(dy,dm-1,dd2);
+      const salMs=Date.UTC(sy,sm-1,sd2);
+      depositDelay=Math.round((depMs-salMs)/(1000*60*60*24));
+    }
+    // เทียบยอด Xstore Cash กับยอดที่สาขาแจ้ง (ใช้ sales_date ของ record ล่าสุด ถ้ามี ไม่งั้นใช้วันที่ที่ filter ไว้)
+    const cashDate = (status.latest&&status.latest.sales_date) ? status.latest.sales_date.slice(0,10) : salesDateFilter;
+    const xstoreCash = getXstoreCash(s.store_code, cashDate);
+    const declaredAmount = status.status==='duplicate' && status.totalAmount!=null
+      ? Number(status.totalAmount)
+      : (status.latest ? Number(status.latest.amount) : null);
+    let cashMatch = null; // null = ไม่มีข้อมูลพอจะเทียบ, true = ตรง, false = ไม่ตรง
+    if(xstoreCash!=null && declaredAmount!=null){
+      cashMatch = Math.abs(xstoreCash - declaredAmount) <= CASH_MISMATCH_THRESHOLD;
+    }
+    return {store:s,...status,depositDelay,xstoreCash,cashMatch,cashDate};
+  });
+  lastRenderedRows = rows;
+
+  renderTrendChart(stores);
+  if(!LOCKED_ZONE) renderDistrictChart(salesDateFilter||today);
+
+  const total   = rows.length;
+  const sent    = rows.filter(r=>r.status==='sent').length;
+  const delay   = rows.filter(r=>r.status==='delay').length;
+  const missing = rows.filter(r=>r.status==='missing').length;
+  const dup     = rows.filter(r=>r.status==='duplicate').length;
+  const late    = rows.filter(r=>r.status==='late').length;
+  const cashMismatch = rows.filter(r=>r.cashMatch===false).length;
+
+  renderDonutChart(total,sent,missing,dup,late,delay,cashMismatch);
+  const _nm=document.getElementById('navCountMissing'); if(_nm) _nm.textContent=missing;
+  const _nd=document.getElementById('navCountDuplicate'); if(_nd) _nd.textContent=dup;
+  const _nl=document.getElementById('navCountLate'); if(_nl) _nl.textContent=late;
+
+  const pct = n => total>0?((n/total)*100).toFixed(2)+'%':'—';
+
+  // Deposit delay stats — คำนวณจาก filteredRows ที่มีข้อมูล
+  const delayRows = rows.filter(r=>r.depositDelay!=null);
+  const delaySum = delayRows.reduce((s,r)=>s+r.depositDelay,0);
+  const delayAvg = delayRows.length>0 ? (delaySum/delayRows.length).toFixed(1)+' วัน' : '—';
+  const delayOver1 = rows.filter(r=>r.depositDelay!=null && r.depositDelay>=2).length;
+  document.getElementById('metricsRow').innerHTML=`
+    <div class="metric" data-filter=""><div class="metric-top"><div class="metric-icon blue">&#128101;</div><div class="metric-label">Total Stores</div></div><div class="metric-value">${total}</div><div class="metric-pct blue">100%</div></div>
+    <div class="metric" data-filter="sent"><div class="metric-top"><div class="metric-icon ok">&#10003;</div><div class="metric-label">Submitted</div></div><div class="metric-value">${sent}</div><div class="metric-pct ok">${pct(sent)}</div></div>
+    <div class="metric" data-filter="missing"><div class="metric-top"><div class="metric-icon warn">&#9888;</div><div class="metric-label">Not Submitted</div></div><div class="metric-value">${missing}</div><div class="metric-pct warn">${pct(missing)}</div></div>
+    <div class="metric" data-filter="duplicate"><div class="metric-top"><div class="metric-icon purple">&#10063;</div><div class="metric-label">Duplicate</div></div><div class="metric-value">${dup}</div><div class="metric-pct purple">${pct(dup)}</div></div>
+    <div class="metric" data-filter="late"><div class="metric-top"><div class="metric-icon err">&#9201;</div><div class="metric-label">Late</div></div><div class="metric-value">${late}</div><div class="metric-pct err">${pct(late)}</div></div>
+    <div class="metric" data-filter="delay"><div class="metric-top"><div class="metric-icon" style="background:#FEE2E2;color:#B91C1C;">&#9201;</div><div class="metric-label">Delay</div></div><div class="metric-value" style="color:#B91C1C;">${delay}</div><div class="metric-pct" style="color:#B91C1C;">${pct(delay)}</div></div>
+    <div class="metric" data-cashfilter="1"><div class="metric-top"><div class="metric-icon" style="background:#FDEBED;color:#E0263F;">&#9888;</div><div class="metric-label">Cash Mismatch</div></div><div class="metric-value" style="color:#E0263F;">${cashMismatch}</div><div class="metric-pct" style="color:#E0263F;">${pct(cashMismatch)}</div></div>
+  `;
+  document.querySelectorAll('.metric').forEach(el=>{
+    const f=el.dataset.filter;
+    const cf=el.dataset.cashfilter;
+    if(f!==undefined && f===activeMetricFilter) el.classList.add('active');
+    if(cf!==undefined && activeCashMismatchOnly) el.classList.add('active');
+    el.addEventListener('click',()=>{
+      if(cf!==undefined){
+        activeCashMismatchOnly=!activeCashMismatchOnly;
+      }else{
+        activeMetricFilter=activeMetricFilter===f?'':f;
+      }
+      currentPage=1; render();
+    });
+  });
+
+  // Zone list (Accounting only)
+  if (!LOCKED_ZONE) {
+    const zones=Object.keys(ZONE_BRANCHES).sort();
+    document.getElementById('zoneList').innerHTML=zones.map(z=>{
+      const zStores=allStoresList.filter(s=>s.zone_code===z);
+      const zRows=zStores.map(s=>getStoreStatus(s.store_code,salesDateFilter,depositDateFilter));
+      const zSent=zRows.filter(r=>r.status!=='missing').length;
+      return `<div class="zone-row ${activeZoneFilter===z?'active':''}" data-zone="${z}"><span class="zone-row-name">Zone ${z}</span><span class="zone-row-stats"><span class="zs-ok">${zSent}</span><span class="zs-sep">/</span><span style="color:var(--ink-soft)">${zStores.length}</span></span></div>`;
+    }).join('');
+    document.querySelectorAll('.zone-row').forEach(el=>{
+      el.addEventListener('click',()=>{ const z=el.dataset.zone; activeZoneFilter=activeZoneFilter===z?'':z; document.getElementById('filterZone').value=activeZoneFilter; currentPage=1; const sdEl2=document.getElementById('filterSalesDate'); loadXstoreCash((sdEl2&&sdEl2.value)||today); render(); });
+    });
+  }
+
+  // Table
+  let filteredRows=rows;
+  if(activeMetricFilter) filteredRows=filteredRows.filter(r=>r.status===activeMetricFilter);
+  if(activeCashMismatchOnly) filteredRows=filteredRows.filter(r=>r.cashMatch===false);
+  if(searchQuery) filteredRows=filteredRows.filter(r=>r.store.store_code.toLowerCase().includes(searchQuery)||(r.store.store_name&&r.store.store_name.toLowerCase().includes(searchQuery)));
+  // depositDelay already in rows
+  filteredRows=[...filteredRows].sort((a,b)=>{
+    let va,vb;
+    if(sortCol==='store_code'){va=a.store.store_code;vb=b.store.store_code;}
+    else if(sortCol==='store_name'){va=a.store.store_name||'';vb=b.store.store_name||'';}
+    else if(sortCol==='zone'){va=a.store.zone_code;vb=b.store.zone_code;}
+    else if(sortCol==='status'){va=a.status;vb=b.status;}
+    else if(sortCol==='sales_date'){va=a.latest?a.latest.sales_date||'':'';vb=b.latest?b.latest.sales_date||'':'';}
+    else if(sortCol==='deposit_date'){va=a.latest?a.latest.deposit_date||'':'';vb=b.latest?b.latest.deposit_date||'':'';}
+    else if(sortCol==='time'){va=a.latest?a.latest.submitted_at:'';vb=b.latest?b.latest.submitted_at:'';}
+    else if(sortCol==='amount'){va=a.latest?Number(a.latest.amount):-1;vb=b.latest?Number(b.latest.amount):-1;}
+    else if(sortCol==='xstore_cash'){va=a.xstoreCash!=null?a.xstoreCash:-1;vb=b.xstoreCash!=null?b.xstoreCash:-1;}
+    else if(sortCol==='cash_match'){
+      // เรียง: ไม่ตรง(false)=0, ตรง(true)=1, ไม่มีข้อมูล(null)=2 — จะได้เจอที่ไม่ตรงก่อนเสมอตอน sort ascending
+      const rank=v=>v===false?0:(v===true?1:2);
+      va=rank(a.cashMatch); vb=rank(b.cashMatch);
+    }
+    else if(sortCol==='slip'){va=a.latest&&a.latest.slip_url?1:0;vb=b.latest&&b.latest.slip_url?1:0;}
+    else if(sortCol==='channel'){va=a.latest&&a.latest.channel?a.latest.channel:'';vb=b.latest&&b.latest.channel?b.latest.channel:'';}
+    else if(sortCol==='channel_detail'){va=a.latest&&a.latest.channel_detail?a.latest.channel_detail:'';vb=b.latest&&b.latest.channel_detail?b.latest.channel_detail:'';}
+    else if(sortCol==='delay'){va=a.depositDelay!=null?a.depositDelay:999;vb=b.depositDelay!=null?b.depositDelay:999;}
+    else{va=a.store.store_code;vb=b.store.store_code;}
+    if(va<vb) return sortDir==='asc'?-1:1;
+    if(va>vb) return sortDir==='asc'?1:-1;
+    return 0;
+  });
+
+  ['store_code','store_name','zone','status','sales_date','deposit_date','time','amount','xstore_cash','cash_match','slip','channel','channel_detail','delay'].forEach(col=>{
+    const th=document.getElementById('th_'+col); if(!th) return;
+    const base={store_code:'Store Code',store_name:'Store Name',zone:'District',status:'Status',sales_date:'Sales Date',deposit_date:'Deposit Date',time:'Submitted At',amount:'Deposit Amount',xstore_cash:'Xstore Cash',cash_match:'Match',slip:'Slip',channel:'Channel',channel_detail:'Channel Detail',delay:'Deposit Delay'}[col];
+    th.textContent=base+(sortCol===col?(sortDir==='asc'?' ▲':' ▼'):' ↕');
+  });
+
+  document.getElementById('tableTitle').textContent=`All submissions (${filteredRows.length})`;
+  const totalPages=Math.max(1,Math.ceil(filteredRows.length/PAGE_SIZE));
+  if(currentPage>totalPages) currentPage=totalPages;
+  const pageRows=filteredRows.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
+
+  if(filteredRows.length===0){
+    document.getElementById('tableBody').innerHTML='<tr><td colspan="15" class="empty-state">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>';
+    document.getElementById('pager').innerHTML=''; return;
+  }
+
+  const badgeMap={
+    sent:'<span class="badge ok">Submitted</span>',
+    missing:'<span class="badge warn">Not Submitted</span>',
+    late:'<span class="badge err">Late</span>',
+    delay:'<span class="badge delay">Delay</span>',
+  };
+
+  document.getElementById('tableBody').innerHTML=pageRows.map(r=>{
+    const rec=r.latest;
+    const salesDateStr=rec&&rec.sales_date?rec.sales_date.slice(0,10):'—';
+    const depositDateStr=rec&&rec.deposit_date?rec.deposit_date.slice(0,10):'—';
+    const timeStr=rec?new Date(rec.submitted_at).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'—';
+    // Duplicate → แสดงยอดรวมทั้งหมด, สถานะอื่น → ยอดของ record นั้น
+    const amountStr = r.status==='duplicate' && r.totalAmount!=null
+      ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
+      : rec ? Number(rec.amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
+    const slipLink = rec && rec.slip_url ? `<a class="imglink" href="#" onclick="openSlip(event,'${rec.slip_url}')">View</a>` : '—';
+    const totalAmt = r.status==='duplicate' && r.totalAmount!=null
+      ? Number(r.totalAmount).toLocaleString('en-US',{minimumFractionDigits:2})
+      : null;
+    const statusBadge=r.status==='duplicate'
+      ?`<button class="badge-dup-btn" onclick="openDupModal('${r.store.store_code}','${salesDateStr}')">⚠ Duplicate (${r.records.length}) ${totalAmt?'฿'+totalAmt:''}</button>`
+      :(badgeMap[r.status]||'');
+    // Channel badge
+    const ch=rec&&rec.channel?rec.channel:'';
+    const chDetail=rec&&rec.channel_detail?rec.channel_detail:'—';
+    const chLower=ch.toLowerCase();
+    let chClass='ch-other';
+    if(chLower.includes('bank')||chLower.includes('ธนาคาร')||chLower.includes('scb')||chLower.includes('bbl')||chLower.includes('bay')||chLower.includes('kbank')) chClass='ch-bank';
+    else if(chLower.includes('7')||chLower.includes('counter')||chLower.includes('lotus')||chLower.includes('big')||chLower.includes('เคาน์')) chClass='ch-counter';
+    const chBadge=ch?`<span class="ch-badge ${chClass}">${ch}</span>`:'<span style="color:var(--ink-faint);font-size:11px;">—</span>';
+    // Deposit delay
+    let delayHtml='<span class="delay-chip delay-none">—</span>';
+    if(r.depositDelay!=null){
+      const dc=r.depositDelay===0?'delay-0':r.depositDelay===1?'delay-1':'delay-2';
+      const label=r.depositDelay===0?'Same Day':`${r.depositDelay} DAY`;
+      delayHtml=`<span class="delay-chip ${dc}">${label}</span>`;
+    }
+    // Xstore Cash + Match
+    const isLoadingCash = isCashLoadingFor(r.cashDate);
+    const xstoreCashStr = r.xstoreCash!=null
+      ? Number(r.xstoreCash).toLocaleString('en-US',{minimumFractionDigits:2})
+      : (isLoadingCash ? '<span style="color:var(--blue);font-size:11px;">⏳ loading...</span>' : '<span style="color:var(--ink-faint);">—</span>');
+    let cashMatchHtml = isLoadingCash
+      ? '<span style="color:var(--blue);font-size:11px;">⏳</span>'
+      : '<span style="color:var(--ink-faint);font-size:11px;">— no data</span>';
+    if(r.cashMatch===true) cashMatchHtml = '<span class="badge ok">✓ Match</span>';
+    else if(r.cashMatch===false) cashMatchHtml = '<span class="badge err">✗ ' + Number(Math.abs((r.xstoreCash||0)-(r.status==='duplicate'&&r.totalAmount!=null?Number(r.totalAmount):(r.latest?Number(r.latest.amount):0))).toFixed(2)).toLocaleString('en-US') + '</span>';
+    return `<tr><td><button class="store-link" onclick="openStoreHistory('${r.store.store_code}')">${r.store.store_code}</button></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${xstoreCashStr}</td><td>${cashMatchHtml}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td><td><button class="badge-dup-btn" style="background:var(--blue-bg);color:var(--blue);" onclick="openStoreHistory('${r.store.store_code}')">📊 ดูประวัติ</button></td></tr>`;
+  }).join('');
+
+  let pagerHtml=`<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
+  for(let p=1;p<=totalPages;p++){
+    if(totalPages>7&&p>2&&p<totalPages-1&&Math.abs(p-currentPage)>1){ if(p===3||p===totalPages-2) pagerHtml+=`<span style="padding:0 4px;color:var(--ink-faint);">…</span>`; continue; }
+    pagerHtml+=`<button class="${p===currentPage?'active':''}" data-page="${p}">${p}</button>`;
+  }
+  pagerHtml+=`<button ${currentPage===totalPages?'disabled':''} data-page="${currentPage+1}">&#8250;</button>`;
+  document.getElementById('pager').innerHTML=pagerHtml;
+  document.querySelectorAll('#pager button[data-page]').forEach(btn=>{ btn.addEventListener('click',()=>{ currentPage=Number(btn.dataset.page); render(); }); });
+}
+
+/* ============================================================
+   START
+   ============================================================ */
+allStoresList = buildStoreList();
+setupAutoRefresh();
+loadData();
+loadXstoreCash(today);
+</script>
+</body>
+</html>
