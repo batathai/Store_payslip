@@ -174,45 +174,6 @@
   .btn-secondary:hover{background:var(--paper);}
   .btn-save{padding:7px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--ink);color:#fff;font-family:var(--font-body);transition:background .12s;}
   .btn-save:hover{background:#2d2d2d;}
-
-  /* Store History Modal */
-  #histModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
-  #histModalBackdrop.open{display:flex;}
-  .hist-modal{background:#fff;border-radius:14px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column;}
-  .hist-modal-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:1;}
-  .hist-modal-header h2{font-size:15px;font-weight:800;color:var(--ink);}
-  .hist-modal-header p{font-size:12px;color:var(--ink-soft);margin-top:3px;}
-  .hist-modal-close{background:none;border:none;font-size:20px;color:var(--ink-faint);cursor:pointer;line-height:1;padding:0 4px;}
-  .hist-modal-close:hover{color:var(--ink);}
-  .hist-modal-body{padding:16px 20px;flex:1;}
-  .hist-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin-bottom:16px;}
-  .hist-stat{border:1.5px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center;}
-  .hist-stat.ok{background:var(--ok-bg);border-color:#bdeed2;}
-  .hist-stat.warn{background:var(--warn-bg);border-color:#fbe0ad;}
-  .hist-stat.purple{background:var(--purple-bg);border-color:#d9cffb;}
-  .hist-stat.err{background:var(--err-bg);border-color:#f9c6cd;}
-  .hist-stat.delay{background:#FEE2E2;border-color:#FECACA;}
-  .hist-stat-icon{font-size:16px;margin-bottom:4px;}
-  .hist-stat-value{font-size:20px;font-weight:800;line-height:1.1;}
-  .hist-stat.ok .hist-stat-value{color:var(--ok);}
-  .hist-stat.warn .hist-stat-value{color:var(--warn);}
-  .hist-stat.purple .hist-stat-value{color:var(--purple);}
-  .hist-stat.err .hist-stat-value{color:var(--err);}
-  .hist-stat.delay .hist-stat-value{color:#B91C1C;}
-  .hist-stat-label{font-size:10px;color:var(--ink-soft);font-weight:700;margin-top:3px;line-height:1.3;text-transform:uppercase;letter-spacing:.02em;}
-  .hist-sub{font-size:11.5px;color:var(--ink-soft);text-align:center;margin-top:16px;margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
-  .hist-strip{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;padding:4px 0 8px;}
-  .hist-day{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex:0 0 auto;cursor:default;}
-  .hist-day.sent{background:var(--ok);}
-  .hist-day.missing{background:var(--warn);}
-  .hist-day.late{background:var(--err);}
-  .hist-day.delay{background:#B91C1C;}
-  .hist-day.duplicate{background:var(--purple);}
-  .hist-legend{display:flex;justify-content:center;gap:14px;font-size:11px;color:var(--ink-soft);margin-top:6px;}
-  .hist-legend span{display:flex;align-items:center;gap:5px;}
-  .hist-legend .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto;}
-  .store-link{color:var(--ink);font-weight:800;background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:inherit;padding:0;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px;}
-  .store-link:hover{color:var(--bata-red);text-decoration-color:var(--bata-red);}
   .btn-save:disabled{opacity:.4;cursor:not-allowed;}
   .dup-spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--ink-soft);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
   @keyframes spin{to{transform:rotate(360deg);}}
@@ -329,11 +290,10 @@
                   <th onclick="sortBy('channel')" id="th_channel">Channel ↕</th>
                   <th onclick="sortBy('channel_detail')" id="th_channel_detail">Channel Detail ↕</th>
                   <th onclick="sortBy('delay')" id="th_delay">Deposit Delay ↕</th>
-                  <th>History</th>
                 </tr>
               </thead>
               <tbody id="tableBody">
-                <tr><td colspan="15" class="empty-state">Loading data...</td></tr>
+                <tr><td colspan="14" class="empty-state">Loading data...</td></tr>
               </tbody>
             </table>
           </div>
@@ -358,58 +318,6 @@
           </div>
           <div class="switch" id="autoRefreshToggle"></div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Store History Modal -->
-<div id="histModalBackdrop">
-  <div class="hist-modal">
-    <div class="hist-modal-header">
-      <div>
-        <h2 id="histModalTitle">ประวัติการส่งเงิน</h2>
-        <p id="histModalSub"></p>
-      </div>
-      <button class="hist-modal-close" onclick="closeStoreHistory()">✕</button>
-    </div>
-    <div class="hist-modal-body">
-      <div class="hist-stat-grid">
-        <div class="hist-stat ok">
-          <div class="hist-stat-icon">✓</div>
-          <div class="hist-stat-value" id="histCountSent">—</div>
-          <div class="hist-stat-label">Submitted</div>
-        </div>
-        <div class="hist-stat warn">
-          <div class="hist-stat-icon">⚠</div>
-          <div class="hist-stat-value" id="histCountMissing">—</div>
-          <div class="hist-stat-label">Not Submitted</div>
-        </div>
-        <div class="hist-stat purple">
-          <div class="hist-stat-icon">⧉</div>
-          <div class="hist-stat-value" id="histCountDuplicate">—</div>
-          <div class="hist-stat-label">Duplicate</div>
-        </div>
-        <div class="hist-stat err">
-          <div class="hist-stat-icon">⏱</div>
-          <div class="hist-stat-value" id="histCountLate">—</div>
-          <div class="hist-stat-label">Late</div>
-        </div>
-        <div class="hist-stat delay">
-          <div class="hist-stat-icon">🔴</div>
-          <div class="hist-stat-value" id="histCountDelay">—</div>
-          <div class="hist-stat-label">Delay</div>
-        </div>
-      </div>
-      <div id="histLastSubmitted" style="text-align:center;font-size:12px;color:var(--ink-soft);margin-bottom:4px;"></div>
-      <div class="hist-sub">30 วันล่าสุด (ล่าสุด → เก่าสุด)</div>
-      <div class="hist-strip" id="histStrip"></div>
-      <div class="hist-legend">
-        <span><span class="dot" style="background:var(--ok);"></span>Submitted</span>
-        <span><span class="dot" style="background:var(--warn);"></span>Not Submitted</span>
-        <span><span class="dot" style="background:var(--purple);"></span>Duplicate</span>
-        <span><span class="dot" style="background:var(--err);"></span>Late</span>
-        <span><span class="dot" style="background:#B91C1C;"></span>Delay</span>
       </div>
     </div>
   </div>
@@ -464,9 +372,8 @@ const DELAY_CUTOFF_HOUR = 14; // เดียวกัน — ถ้าไม่
 const PAGE_SIZE = 25;
 
 // API สำหรับดึงยอด Cash จาก Xstore/Oracle (2_sales_api.py)
-// TODO: ถ้าเปิด dashboard นี้จากคนละเครื่องกับที่รัน 2_sales_api.py
-//       ให้เปลี่ยนกลับเป็น IP ของเครื่องนั้น เช่น 'http://192.1.102.75:5001'
-const XSTORE_API_BASE = 'http://localhost:5001';
+// TODO: ถ้าย้ายเครื่องที่รัน 2_sales_api.py อีก ให้แก้ IP ตรงนี้ตาม `ipconfig` ของเครื่องใหม่
+const XSTORE_API_BASE = 'http://192.1.102.61:5001';
 // ถือว่า "ไม่ตรงกัน" ถ้าส่วนต่างเกินค่านี้ (กันปัดเศษทศนิยม)
 const CASH_MISMATCH_THRESHOLD = 1;
 
@@ -676,7 +583,7 @@ function buildStoreList(){
 
     const {data:records, error} = await query;
     if(error){
-      document.getElementById('tableBody').innerHTML=`<tr><td colspan="15" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
+      document.getElementById('tableBody').innerHTML=`<tr><td colspan="14" class="empty-state">โหลดข้อมูลไม่สำเร็จ: ${error.message}</td></tr>`;
       document.getElementById('updatedAt').textContent = '⚠️ โหลดไม่สำเร็จ';
       return;
     }
@@ -945,57 +852,6 @@ function closeDupModal(){
 document.getElementById('dupModalBackdrop').addEventListener('click',function(e){ if(e.target===this) closeDupModal(); });
 
 /* ============================================================
-   STORE HISTORY — นับตามสถานะจริงของแต่ละวัน (Submitted / Not Submitted / Duplicate / Late / Delay)
-   ============================================================ */
-function computeStoreHistory(storeCode){
-  // ไล่ย้อนหลังจาก "เมื่อวาน" (offset 1) ถึง 30 วันก่อน เพราะยอดขายวันนี้ยังไม่ถึง Deadline
-  const days=[];
-  for(let offset=1; offset<=30; offset++){
-    const d=new Date(); d.setDate(d.getDate()-offset);
-    const dateStr=d.toISOString().slice(0,10);
-    const st=getStoreStatus(storeCode, dateStr, '').status;
-    days.push({date:dateStr, status:st});
-  }
-
-  const counts = {sent:0, missing:0, duplicate:0, late:0, delay:0};
-  days.forEach(d=>{ if(counts[d.status]!=null) counts[d.status]++; });
-
-  // วันล่าสุดที่มีข้อมูล (สำหรับสรุปบรรทัดบน)
-  const latestDay = days[0];
-
-  return {days, counts, latestDay};
-}
-
-function openStoreHistory(storeCode){
-  const storeName=getStoreName(storeCode);
-  document.getElementById('histModalTitle').textContent=`ประวัติการส่งเงิน — Store ${storeCode}`;
-  document.getElementById('histModalSub').textContent=storeName||'';
-
-  const h=computeStoreHistory(storeCode);
-
-  document.getElementById('histCountSent').textContent = h.counts.sent;
-  document.getElementById('histCountMissing').textContent = h.counts.missing;
-  document.getElementById('histCountDuplicate').textContent = h.counts.duplicate;
-  document.getElementById('histCountLate').textContent = h.counts.late;
-  document.getElementById('histCountDelay').textContent = h.counts.delay;
-
-  const lastSubEl=document.getElementById('histLastSubmitted');
-  lastSubEl.textContent = `เมื่อวาน (${h.latestDay.date}) — ${statusLabelTH(h.latestDay.status)}`;
-
-  document.getElementById('histStrip').innerHTML = h.days.map(d=>{
-    const dd = d.date.slice(8,10);
-    return `<div class="hist-day ${d.status}" title="${d.date} — ${statusLabelTH(d.status)}">${dd}</div>`;
-  }).join('');
-
-  document.getElementById('histModalBackdrop').classList.add('open');
-}
-
-function closeStoreHistory(){
-  document.getElementById('histModalBackdrop').classList.remove('open');
-}
-document.getElementById('histModalBackdrop').addEventListener('click',function(e){ if(e.target===this) closeStoreHistory(); });
-
-/* ============================================================
    CHARTS
    ============================================================ */
 function renderTrendChart(stores){
@@ -1188,7 +1044,7 @@ function render(){
   const pageRows=filteredRows.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
 
   if(filteredRows.length===0){
-    document.getElementById('tableBody').innerHTML='<tr><td colspan="15" class="empty-state">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>';
+    document.getElementById('tableBody').innerHTML='<tr><td colspan="14" class="empty-state">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>';
     document.getElementById('pager').innerHTML=''; return;
   }
 
@@ -1240,7 +1096,7 @@ function render(){
       : '<span style="color:var(--ink-faint);font-size:11px;">— no data</span>';
     if(r.cashMatch===true) cashMatchHtml = '<span class="badge ok">✓ Match</span>';
     else if(r.cashMatch===false) cashMatchHtml = '<span class="badge err">✗ ' + Number(Math.abs((r.xstoreCash||0)-(r.status==='duplicate'&&r.totalAmount!=null?Number(r.totalAmount):(r.latest?Number(r.latest.amount):0))).toFixed(2)).toLocaleString('en-US') + '</span>';
-    return `<tr><td><button class="store-link" onclick="openStoreHistory('${r.store.store_code}')">${r.store.store_code}</button></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${xstoreCashStr}</td><td>${cashMatchHtml}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td><td><button class="badge-dup-btn" style="background:var(--blue-bg);color:var(--blue);" onclick="openStoreHistory('${r.store.store_code}')">📊 ดูประวัติ</button></td></tr>`;
+    return `<tr><td><b>${r.store.store_code}</b></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${xstoreCashStr}</td><td>${cashMatchHtml}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td></tr>`;
   }).join('');
 
   let pagerHtml=`<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
