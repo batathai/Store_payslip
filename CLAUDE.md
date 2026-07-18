@@ -1,0 +1,1 @@
+$(cat /home/claude/CLAUDE.md)
