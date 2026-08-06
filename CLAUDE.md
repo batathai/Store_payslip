@@ -48,7 +48,7 @@ Store_payslip/
   - Anon key hardcode อยู่ใน `<script>` ของทั้ง `index.html` และ `dashboard/index.html` (ไม่ใช่ความลับระดับสูง เพราะออกแบบมาให้ใช้ client-side ได้ แต่ต้องพึ่ง RLS policy คุมสิทธิ์)
 - **Storage**: Supabase Storage bucket ชื่อ `payin-slips` สำหรับเก็บรูปสลิป (มีการบีบอัดรูปฝั่ง client ก่อนอัปโหลด — resize ให้กว้างไม่เกิน 1280px และแปลงเป็น JPEG quality 0.75 เพื่อลดขนาดไฟล์)
 - **Chart/Export ใน Dashboard**: [Chart.js 4.4.1](https://www.chartjs.org/) (กราฟ trend/district/donut), [SheetJS (xlsx) 0.18.5](https://sheetjs.com/) (export Excel) — โหลดจาก `cdnjs`
-- **External API**: Xstore/Oracle Cash API ภายนอก (`https://192.1.36.59:5001`) — Flask/Python API ชื่อ `2_sales_api.py` (ไม่ได้อยู่ใน repo นี้) ที่ dashboard เรียกไปเทียบยอดเงินสดจริงในระบบ POS กับยอดที่สาขากรอก
+- **External API**: Xstore/Oracle Cash — `2_sales_api.py` (Flask/Python, ไม่ได้อยู่ใน repo นี้) รันบน server ภายในองค์กร (`192.1.36.59:5001`) query Oracle โดยตรงแล้ว **push ยอด Cash เข้าตาราง `xstore_cash_daily` ใน Supabase อัตโนมัติทุก ~3 นาที ผ่าน background thread** (อัปเดต 2026-08-06 — ดูหัวข้อ 8) `dashboard/index.html` อ่านค่าจากตาราง `xstore_cash_daily` นี้ผ่าน Supabase client เหมือนตารางอื่นๆ **ไม่ได้ fetch ตรงไปที่ `2_sales_api.py` อีกต่อไป**
 - **Automation ภายนอก**: [Pipedream](https://pipedream.com) รัน scheduled workflow เรียก Supabase + LINE Messaging API เพื่อแจ้งเตือนสาขาที่ยังไม่ส่งยอด (ดูหัวข้อ 6)
 - **ไม่มี**: build tool, package manager (npm/yarn), test suite, CI/CD ใดๆ — deploy คือ push ไฟล์ HTML ขึ้น GitHub Pages ตรงๆ
 
@@ -66,7 +66,7 @@ Store_payslip/
 
 6. **รูปสลิปถูกบีบอัดฝั่ง client ก่อนอัปโหลดเสมอ** (`compressImage()`) เพื่อลด storage/bandwidth และแปลงเป็น `.jpg` เสมอไม่ว่าไฟล์ต้นทางเป็นนามสกุลอะไร — ถ้า browser บีบอัดไม่ได้ (พบบ่อยกับไฟล์ HEIC จาก iPhone) จะแจ้ง error ให้ผู้ใช้ถ่ายใหม่แทนที่จะพยายามอัปโหลดไฟล์ดิบ
 
-7. **Xstore Cash API ใช้ HTTPS self-signed certificate** — ผู้ใช้ dashboard ต้องเปิด `https://192.1.36.59:5001/api/health` ในเบราว์เซอร์อย่างน้อย 1 ครั้งเพื่อกด "Advanced → Proceed" ยอมรับ certificate ก่อน ไม่งั้นการเรียก fetch จาก dashboard จะถูกเบราว์เซอร์บล็อกเงียบๆ (ดู comment ในโค้ด `dashboard/index.html`)
+7. **(เดิม — ไม่ใช้แล้วตั้งแต่ 2026-08-06) Xstore Cash API ใช้ HTTPS self-signed certificate** — เดิมผู้ใช้ dashboard ต้องเปิด `https://192.1.36.59:5001/api/health` ในเบราว์เซอร์อย่างน้อย 1 ครั้งเพื่อกด "Advanced → Proceed" ยอมรับ certificate ก่อน ไม่งั้นการเรียก fetch จาก dashboard จะถูกเบราว์เซอร์บล็อกเงียบๆ ทำให้คอลัมน์ Xstore Cash ว่างเปล่าบนเครื่องที่ไม่เคยกด accept — **แก้แล้วโดยเปลี่ยนให้ `2_sales_api.py` push ข้อมูลเข้า Supabase เอง แทนที่ dashboard จะ fetch ตรง** ดูหัวข้อ 8 (Changelog) และหัวข้อ 6.4 (อัปเดตแล้ว)
 
 8. **จำกัดวันย้อนหลังที่กรอกได้ไม่เกิน 7 วัน** (`MAX_BACKDATE_DAYS`) ในฟอร์ม `index.html` เพื่อกันการกรอกข้อมูลเก่าเกินไป
 
@@ -80,7 +80,7 @@ Store_payslip/
 
 3. **โค้ด schema ของฐานข้อมูล/ฟังก์ชัน RPC (`resolve_duplicate`, `detect_and_group_duplicates`) ไม่ได้เก็บเป็นไฟล์ migration ใน repo นี้** — อยู่ในฝั่ง Supabase เท่านั้น ถ้าต้อง reproduce ฐานข้อมูลใหม่หรือ debug logic การจับ duplicate จะต้องเข้าถึง Supabase Dashboard/SQL Editor โดยตรง
 
-4. **Xstore Cash API (`192.1.36.59:5001`) เป็น IP ภายในองค์กร ใช้ self-signed certificate** — ถ้าเปลี่ยนเครื่อง/เปลี่ยน IP ต้องแก้ `XSTORE_API_BASE` ใน `dashboard/index.html` และแจ้งผู้ใช้ให้ไป accept certificate ใหม่อีกครั้ง มิฉะนั้นคอลัมน์ Xstore Cash ในหน้า dashboard จะไม่ขึ้นข้อมูล (เงียบๆ ไม่มี error ชัดเจนให้ผู้ใช้ทั่วไปเห็น)
+4. **(อัปเดต 2026-08-06) Xstore Cash ตอนนี้พึ่งพา 2 อย่าง: (ก) `2_sales_api.py` ต้องรันอยู่ตลอดเวลาบน server ภายในองค์กร (`192.1.36.59`) เพื่อให้ background sync thread push ข้อมูลเข้า Supabase ทุก ~3 นาที ถ้า process ตาย ข้อมูลจะหยุดอัปเดต (แต่ข้อมูลเก่าที่เคย sync ไว้ยังอยู่ ไม่หายไปทันที) และ (ข) ต้องตั้งค่า environment variable `SUPABASE_SERVICE_ROLE_KEY` บนเครื่องที่รัน server นั้นก่อนสตาร์ท ไม่งั้น sync thread จะไม่ถูกสร้างขึ้นเลย (ดู log ตอนสตาร์ท: `[xstore-sync] ข้ามการ sync อัตโนมัติ...`)** — ถ้าเปลี่ยนเครื่อง/ย้าย server ต้องตั้งค่า `SUPABASE_SERVICE_ROLE_KEY` ใหม่บนเครื่องนั้นด้วย (ไม่ต้องแก้อะไรใน `dashboard/index.html` อีกแล้ว เพราะ dashboard อ่านจาก Supabase ไม่ได้ผูกกับ IP ของ server นี้โดยตรง) service_role key **ห้ามใส่ในโค้ด client-side (`index.html`/`dashboard/index.html`) เด็ดขาด**
 
 5. **รายชื่อ/รหัสสาขาใน `ZONE_BRANCHES`/`STORE_NAMES` ต่างกันเล็กน้อยระหว่าง `index.html` และ `dashboard/index.html`** (ดูหัวข้อ 5.9) — เป็นความเสี่ยงที่ข้อมูลจะ drift ห่างกันมากขึ้นเรื่อยๆ ถ้าไม่มี process อัปเดตพร้อมกันทั้ง 2 ไฟล์
 
@@ -115,6 +115,12 @@ GitHub Pages ใช้ git history ปกติ — ถ้า deploy แล้�
 
 ## 8. Changelog
 
+- **2026-08-06** — เพิ่มฟีเจอร์ Zoom ในหน้าดูรูปสลิป (`openSlip()` ใน `dashboard/index.html`) ใช้งานร่วมกับ Rotate เดิมได้: ปุ่ม +/− (50%-600%), scroll wheel, ลากภาพ (drag) ตอนซูมเข้า, ดับเบิลคลิก/ปุ่ม ⤾ เพื่อรีเซ็ต
+- **2026-08-06** — เปลี่ยนสถาปัตยกรรม Xstore Cash เพื่อแก้ปัญหา "คอลัมน์ Xstore Cash ไม่ขึ้นข้อมูลบนเครื่องใหม่" (สาเหตุเดิม: ต้อง accept self-signed certificate เองทุกเครื่อง — ดูหัวข้อ 5.7 เดิม):
+  - `2_sales_api.py` (นอก repo นี้) เพิ่ม background thread (`xstore_cash_sync_loop`) query Oracle เองทุก 3 นาที แล้ว push เข้าตาราง `xstore_cash_daily` ใน Supabase ผ่าน REST API (ต้องตั้งค่า env var `SUPABASE_SERVICE_ROLE_KEY` บนเครื่องที่รัน server)
+  - สร้างตาราง `xstore_cash_daily` ใหม่ใน Supabase (SQL อยู่ใน `xstore_cash_daily_setup.sql` ที่ส่งให้เจ้าของโปรเจกต์แยกจาก repo นี้ — เปิด RLS อ่านได้อย่างเดียวด้วย anon key, เขียนได้เฉพาะ service_role)
+  - `dashboard/index.html`: `loadXstoreCash()` และ `openHistoryModal()` เปลี่ยนจาก `fetch()` ตรงไปที่ `XSTORE_API_BASE` (ลบ constant นี้ทิ้งแล้ว) เป็น query ตาราง `xstore_cash_daily` ผ่าน Supabase client (`sb`) แทน — ผลคือเครื่องใหม่ใช้งานได้ทันทีโดยไม่ต้อง accept certificate เอง เพราะไม่ได้คุยกับ `192.1.36.59:5001` ตรงๆ อีกต่อไป
+  - endpoint `/api/xstore-cash` ใน `2_sales_api.py` ยังอยู่เหมือนเดิม (ใช้ debug/เรียกเองเฉพาะกิจได้) แต่ dashboard ไม่เรียกแล้ว
 - **2026-07-18** — ย้าย `docs/BATA_LINE_แจ้งเตือนยอดขาย_คู่มืออ้างอิง.md` ออกมาไว้ที่ root ของ repo แล้วลบโฟลเดอร์ `docs/` ทิ้ง (เป็นไฟล์สุดท้ายที่เหลืออยู่ในนั้น) ตามคำขอของเจ้าของโปรเจกต์
 - **2026-07-18** — ลบ `code.gs`, `SETUP_GUIDE.md` (root), `docs/SETUP_GUIDE.md` (สำเนา) — ตรวจสอบ git history แล้วพบว่าทั้ง 3 ไฟล์ถูกอัปโหลดครั้งเดียวเมื่อ 17 มิ.ย. 2569 และไม่เคยถูกแก้ไขอีกเลย ขณะที่ `index.html` เวอร์ชัน Supabase ที่ใช้งานจริงเริ่มพัฒนาแยกต่างหากตั้งแต่ 19 มิ.ย. 2569 (2 วันถัดมา) และถูกพัฒนาต่อเนื่องเรื่อยมาโดยไม่เคยอ้างอิง Google Apps Script เลย สรุปว่าเป็นแนวทางแรกเริ่ม (Google Sheets/Drive) ที่ถูกทิ้งเพื่อมาใช้ Supabase แทน จึงลบตามคำขอของเจ้าของโปรเจกต์
 - **2026-07-18** — ลบไฟล์เอกสารเก่าที่ไม่เกี่ยวกับระบบนี้ 6 ไฟล์ออกจาก `docs/`: `PROJECT_CONTEXT.md`, `DATABASE.md`, `DEPLOYMENT.md`, `README.md`, `CHANGELOG.md`, `TODO.md` — ทั้งหมดบรรยายระบบแจกจ่าย Invoice ไปสาขาแฟรนไชส์ผ่าน Foxpro/Xstore POS (repo `Supply-franchise`, Supabase project `ohoropbhdypmomgsqjwt.supabase.co`) ซึ่งเป็นคนละโปรเจกต์กับ `Store_payslip` นี้โดยสิ้นเชิง สันนิษฐานว่าถูก copy มาผิด repo จึงลบทิ้งตามคำขอของเจ้าของโปรเจกต์

@@ -402,11 +402,16 @@ const LATE_CUTOFF_HOUR = 14;  // บ่าย 2 โมง
 const DELAY_CUTOFF_HOUR = 14; // เดียวกัน — ถ้าไม่ส่งหลังบ่าย 2 = Delay
 const PAGE_SIZE = 25;
 
-// API สำหรับดึงยอด Cash จาก Xstore/Oracle (2_sales_api.py)
-// ใช้ HTTPS (self-signed cert) เพราะเว็บนี้เป็น HTTPS แล้ว — เบราว์เซอร์บล็อกการยิงไป HTTP (Mixed Content)
-// สำคัญ: ผู้ใช้แต่ละคนต้องเปิด https://192.1.36.59:5001/api/health ครั้งแรกก่อน
-// แล้วกด "Advanced" > "Proceed" เพื่อยอมรับ certificate ก่อนถึงจะใช้งาน dashboard ได้
-const XSTORE_API_BASE = 'https://192.1.36.59:5001';
+// ยอด Cash จาก Xstore/Oracle (อัปเดต 2026-08-06):
+// เดิม dashboard ยิง fetch ตรงไปที่ 2_sales_api.py (https://192.1.36.59:5001) ซึ่งใช้
+// self-signed certificate — ผู้ใช้แต่ละเครื่อง/เบราว์เซอร์ต้องเปิด .../api/health เอง
+// 1 ครั้งเพื่อกด "Advanced > Proceed" ยอมรับ cert ก่อน ไม่งั้น fetch จะถูกบล็อกเงียบๆ
+// และคอลัมน์ Xstore Cash จะว่างเปล่าบนเครื่องที่ไม่เคยกด accept
+//
+// ตอนนี้ 2_sales_api.py มี background thread คอย query Oracle เองทุกๆ ไม่กี่นาที
+// แล้ว push ผลลัพธ์เข้าตาราง `xstore_cash_daily` ใน Supabase (server-to-server,
+// ไม่ผ่านเบราว์เซอร์ผู้ใช้) — dashboard จึงอ่านค่าจากตารางนี้ผ่าน Supabase client (sb)
+// เหมือนตารางอื่นๆ แทน ไม่ต้อง accept cert เองอีกต่อไปบนเครื่องใหม่
 // ถือว่า "ไม่ตรงกัน" ถ้าส่วนต่างเกินค่านี้ (กันปัดเศษทศนิยม)
 const CASH_MISMATCH_THRESHOLD = 1;
 
@@ -558,6 +563,12 @@ function buildStoreList(){
         backdrop-filter:blur(4px);
       }
       #controls button:hover{ background:rgba(255,255,255,.25); }
+      #zoomLevel{
+        display:flex; align-items:center; color:#fff; font-size:13px;
+        padding:0 4px; min-width:42px; justify-content:center; user-select:none;
+      }
+      #slipImg.zoomed{ cursor:grab; }
+      #slipImg.zoomed.dragging{ cursor:grabbing; }
       .errmsg{color:#fff;padding:20px;text-align:center;}
       .errmsg a{color:#f66;}
     </style>
@@ -569,13 +580,24 @@ function buildStoreList(){
     <div id="controls">
       <button onclick="rotateSlip(-90)" title="หมุนซ้าย">↺</button>
       <button onclick="rotateSlip(90)" title="หมุนขวา">↻</button>
+      <button onclick="zoomSlip(-0.25)" title="ซูมออก">−</button>
+      <span id="zoomLevel">100%</span>
+      <button onclick="zoomSlip(0.25)" title="ซูมเข้า">+</button>
+      <button onclick="resetView()" title="รีเซ็ต">⤾</button>
     </div>
     <script>
-      let deg = 0;
+      let deg = 0, scale = 1, panX = 0, panY = 0;
+      const MIN_SCALE = 0.5, MAX_SCALE = 6;
+      const img = document.getElementById('slipImg');
+
+      function applyTransform(){
+        img.style.transform = 'translate(' + panX + 'px,' + panY + 'px) rotate(' + deg + 'deg) scale(' + scale + ')';
+        img.classList.toggle('zoomed', scale > 1);
+        document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+      }
+
       function rotateSlip(delta){
         deg = (deg + delta) % 360;
-        const img = document.getElementById('slipImg');
-        img.style.transform = 'rotate(' + deg + 'deg)';
         // สลับ max-width/max-height เมื่อหมุน 90/270 องศา จะได้ไม่ล้นจอ
         if (Math.abs(deg % 180) === 90){
           img.style.maxWidth = '90vh';
@@ -584,7 +606,51 @@ function buildStoreList(){
           img.style.maxWidth = '90vw';
           img.style.maxHeight = '90vh';
         }
+        applyTransform();
       }
+
+      function zoomSlip(delta){
+        scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, +(scale + delta).toFixed(2)));
+        if (scale === 1){ panX = 0; panY = 0; }
+        applyTransform();
+      }
+
+      function resetView(){
+        deg = 0; scale = 1; panX = 0; panY = 0;
+        img.style.maxWidth = '90vw';
+        img.style.maxHeight = '90vh';
+        applyTransform();
+      }
+
+      // Scroll wheel เพื่อ zoom
+      img.addEventListener('wheel', function(e){
+        e.preventDefault();
+        zoomSlip(e.deltaY < 0 ? 0.25 : -0.25);
+      }, { passive:false });
+
+      // ลากภาพเพื่อดูส่วนที่ล้นจอตอนซูมเข้า
+      let dragging = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+      img.addEventListener('mousedown', function(e){
+        if (scale <= 1) return;
+        dragging = true;
+        img.classList.add('dragging');
+        startX = e.clientX; startY = e.clientY;
+        startPanX = panX; startPanY = panY;
+        e.preventDefault();
+      });
+      window.addEventListener('mousemove', function(e){
+        if (!dragging) return;
+        panX = startPanX + (e.clientX - startX);
+        panY = startPanY + (e.clientY - startY);
+        applyTransform();
+      });
+      window.addEventListener('mouseup', function(){
+        dragging = false;
+        img.classList.remove('dragging');
+      });
+
+      // ดับเบิลคลิกเพื่อรีเซ็ตซูม/หมุนกลับตำแหน่งเดิม
+      img.addEventListener('dblclick', resetView);
     <\/script>
   </body></html>`);
 }
@@ -659,18 +725,16 @@ async function loadXstoreCash(dateStr){
   render();  // re-render ทันทีเพื่อโชว์สถานะ "กำลังโหลด" ในตาราง
 
   try{
-    let url = `${XSTORE_API_BASE}/api/xstore-cash?start=${dateStr}&end=${dateStr}`;
-    if(storeCodes) url += `&store_codes=${storeCodes.join(',')}`;
-    const res = await fetch(url);
-    if(!res.ok){
-      console.warn('โหลด Xstore Cash ไม่สำเร็จ:', res.status);
+    let query = sb.from('xstore_cash_daily').select('store_code,sale_date,cash,total').eq('sale_date', dateStr);
+    if(storeCodes) query = query.in('store_code', storeCodes);
+    const {data, error} = await query;
+    if(error){
+      console.warn('โหลด Xstore Cash ไม่สำเร็จ:', error.message);
       xstoreCashLoadingKeys.delete(key);
       render();
       return;
     }
-    const json = await res.json();
-    (json.data||[]).forEach(rec=>{
-      if(rec.error) return;  // แถวที่ query error ให้ข้ามไป
+    (data||[]).forEach(rec=>{
       const mapKey = `${rec.store_code}_${rec.sale_date}`;
       xstoreCashMap[mapKey] = rec;
     });
@@ -971,13 +1035,15 @@ async function openHistoryModal(storeCode, storeName){
   // แสดงตารางทันที (สถานะ/ยอดแจ้ง มาจาก allRecords ที่มีอยู่แล้ว ไม่ต้องรอเน็ตเวิร์ก)
   renderRows();
 
-  // แล้วค่อยดึงยอด Xstore Cash ตามหลัง (อาจใช้เวลานานเพราะ query 30 วันต่อเนื่อง)
+  // แล้วค่อยดึงยอด Xstore Cash ตามหลัง (อ่านจากตาราง xstore_cash_daily ใน Supabase)
   try{
-    const url = `${XSTORE_API_BASE}/api/xstore-cash?store_code=${storeCode}&start=${startStr}&end=${endStr}`;
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const json = await res.json();
-    (json.data||[]).forEach(rec=>{ if(!rec.error) cashByDate[rec.sale_date]=Number(rec.cash); });
+    const {data, error} = await sb.from('xstore_cash_daily')
+      .select('sale_date,cash')
+      .eq('store_code', storeCode)
+      .gte('sale_date', startStr)
+      .lte('sale_date', endStr);
+    if(error) throw error;
+    (data||[]).forEach(rec=>{ cashByDate[rec.sale_date]=Number(rec.cash); });
     cashLoadState = 'done';
   }catch(e){
     console.warn('โหลด Xstore Cash สำหรับ History ไม่สำเร็จ:', e);
