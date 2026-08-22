@@ -684,6 +684,9 @@ function buildStoreList(){
       if(s.active===false) inactiveStores.add(s.store_code);
     });
   }
+  // allStoresList ถูกสร้างครั้งแรกตอนโหลดสคริปต์ (ก่อน storeNameMap มีข้อมูล) ต้อง build ใหม่
+  // ตรงนี้เพื่อให้ชื่อสาขาอัปเดตตามตาราง stores จริง (เช่น ชื่อที่มี "(C) - วันที่ปิด")
+  allStoresList = buildStoreList();
 
   // ดึงข้อมูลแบบ pagination ทีละ 1000 แถว จนกว่าจะครบ (Supabase จำกัด 1000 แถว/query)
   let allFetched = [];
