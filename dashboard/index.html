@@ -544,6 +544,19 @@ function getStoreName(code){
   return storeNameMap[code] || STORE_NAMES[code] || '';
 }
 
+// แยก "(C) - DD/MM/YY" ออกจากชื่อสาขา เพื่อโชว์เป็นบรรทัดเล็กใต้ชื่อแทนการต่อรวมในบรรทัดเดียว
+function splitStoreName(name){
+  const m = (name||'').match(/^(.*?)\s*(\(C\)\s*-\s*\d{2}\/\d{2}\/\d{2,4})\s*$/);
+  if(m) return {base: m[1].trim(), closedNote: m[2]};
+  return {base: name||'', closedNote: ''};
+}
+function formatStoreNameHTML(name){
+  const {base, closedNote} = splitStoreName(name);
+  if(!base && !closedNote) return '—';
+  if(!closedNote) return base;
+  return `${base||'—'}<br><span style="font-size:11px;color:var(--ink-soft);">${closedNote}</span>`;
+}
+
 function buildStoreList(){
   const list=[];
   const zones = LOCKED_ZONE ? [LOCKED_ZONE] : Object.keys(ZONE_BRANCHES).sort();
@@ -1354,7 +1367,7 @@ function render(){
       xstoreCashCell = '<span style="color:var(--ink-faint);">—</span>';
     }
     const historyBtn = `<button class="badge-dup-btn" onclick="openHistoryModal('${r.store.store_code}','${(r.store.store_name||'').replace(/'/g,"\\'")}')">🕐 History</button>`;
-    return `<tr><td><b>${r.store.store_code}</b></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.store.store_name}">${r.store.store_name||'—'}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${xstoreCashCell}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td><td>${historyBtn}</td></tr>`;
+    return `<tr><td><b>${r.store.store_code}</b></td><td style="max-width:160px;overflow:hidden;" title="${r.store.store_name}">${formatStoreNameHTML(r.store.store_name)}</td><td>${r.store.zone_code}</td><td>${statusBadge}</td><td>${salesDateStr}</td><td>${depositDateStr}</td><td>${timeStr}</td><td>${amountStr}</td><td>${xstoreCashCell}</td><td>${slipLink}</td><td>${chBadge}</td><td style="color:var(--ink-soft);font-size:12px;">${chDetail}</td><td>${delayHtml}</td><td>${historyBtn}</td></tr>`;
   }).join('');
 
   let pagerHtml=`<button ${currentPage===1?'disabled':''} data-page="${currentPage-1}">&#8249;</button>`;
