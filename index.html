@@ -650,7 +650,7 @@ const formScreen   = document.getElementById('formScreen');
 const statusScreen = document.getElementById('statusScreen');
 
 /* ==================== DATE LIMIT (ย้อนหลังได้ไม่เกิน 7 วัน) ==================== */
-const MAX_BACKDATE_DAYS = 7;
+const MAX_BACKDATE_DAYS = 60;
 function setupDateLimits(){
   const todayStr = new Date().toLocaleDateString('sv-SE'); // YYYY-MM-DD ตาม local timezone
   const minDate = new Date();
