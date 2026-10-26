@@ -308,7 +308,6 @@
   @keyframes lgPulse{0%{transform:translateZ(3px) scale(.35);opacity:.9}100%{transform:translateZ(3px) scale(1.5);opacity:0}}
   @keyframes lgRise{0%{transform:translateY(24px);opacity:0}25%{opacity:1}75%{opacity:1}100%{transform:translateY(-34px);opacity:0}}
   @keyframes lgFloaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-  @media (max-height:760px){#loginScreen .stage3{transform:scale(.8);}}
   @media (max-width:900px){
     #loginScreen{flex-direction:column;}
     #loginScreen .lg-left{display:none;}
@@ -318,6 +317,47 @@
     #loginScreen .lg-right{justify-content:flex-start;padding:28px 20px 40px;}
     #loginScreen h1{font-size:32px;}
   }
+  /* ---- โฉมใหม่สำหรับจอคอม (26 ต.ค.) ---- */
+  #loginScreen .lg-left{width:50%;max-width:none;padding:48px clamp(40px,5vw,80px);
+    background:radial-gradient(120% 80% at 20% 0%,#E0263F 0%,rgba(224,38,63,0) 55%),radial-gradient(90% 70% at 90% 100%,#8F0E1F 0%,rgba(143,14,31,0) 60%),#C8102E;}
+  #loginScreen .lg-left::before{content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1.2px);background-size:22px 22px;
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.2) 70%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.2) 70%,transparent 100%);}
+  #loginScreen .lg-left > *{position:relative;}
+  #loginScreen .lg-headline{font-size:clamp(34px,2.6vw,46px);}
+  #loginScreen .lg-sub{font-size:clamp(16px,1.05vw,18px);}
+  #loginScreen .lg-right{position:relative;align-items:center;justify-content:center;gap:20px;background:#F6F4F5;padding:40px clamp(24px,4vw,64px);}
+  #loginScreen .lg-form{max-width:460px;background:#FFFFFF;border-radius:22px;padding:40px 40px 36px;gap:22px;
+    box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 0 0 1px #EEE6E8,0 30px 60px -28px rgba(60,10,20,.28),0 12px 24px -16px rgba(60,10,20,.16);
+    animation:riseIn .6s var(--ease-out) .05s both;}
+  #loginScreen h1{font-size:34px;}
+  #loginScreen .lg-desc{font-size:15px;}
+  #loginScreen .lg-ico{position:absolute;left:16px;color:#A8979A;pointer-events:none;transition:color .15s;}
+  #loginScreen .lg-input-wrap:focus-within .lg-ico{color:#C8102E;}
+  #loginScreen .lg-input{height:54px;padding-left:48px;font-size:17px;background:#FBFAFA;border-color:#E3D8DA;}
+  #loginScreen .lg-input:hover{border-color:#CDBFC1;}
+  #loginScreen .lg-input:focus{background:#FFFFFF;}
+  #loginScreen .lg-cta{height:54px;font-size:18px;box-shadow:0 10px 20px -10px rgba(200,16,46,.65),0 4px 0 #8F0E1F;}
+  #loginScreen .lg-cta:hover{transform:translateY(-1px);box-shadow:0 14px 26px -12px rgba(200,16,46,.7),0 4px 0 #8F0E1F;}
+  #loginScreen .lg-cta:active{transform:translateY(3px);box-shadow:0 1px 0 #8F0E1F;}
+  #loginScreen .lg-foot{text-align:center;font-size:13px;color:#8C7B7E;animation:fadeIn .6s ease .3s both;}
+  #loginScreen .lg-headline,#loginScreen .lg-sub{animation:riseIn .7s var(--ease-out) .15s both;}
+  #loginScreen .lg-stage-wrap{animation:fadeIn .9s ease both;}
+  /* แผงแดงกว้างขึ้น ฝั่งฟอร์มพอดีกับช่องกรอก ฉาก 3D ใหญ่ขึ้น (26 ต.ค.) */
+  #loginScreen .lg-left{flex:1;width:auto;}
+  #loginScreen .lg-right{flex:none;width:clamp(460px,34vw,560px);padding:32px 36px;}
+  #loginScreen .lg-form{max-width:440px;padding:36px 34px 32px;}
+  #loginScreen .lg-desc{font-size:14px;}
+  #loginScreen .stage3{transform:scale(1.2);}
+  @media (min-width:1600px){#loginScreen .stage3{transform:scale(1.38);}}
+  @media (max-height:820px){#loginScreen .stage3{transform:scale(1.05);}}
+  @media (max-height:700px){#loginScreen .stage3{transform:scale(.9);}}
+  @media (max-width:900px){
+    #loginScreen .lg-right{background:#FFFFFF;justify-content:flex-start;}
+    #loginScreen .lg-form{box-shadow:none;padding:0;border-radius:0;}
+  }
+  @media (prefers-reduced-motion: reduce){#loginScreen .lg-form,#loginScreen .lg-foot,#loginScreen .lg-headline,#loginScreen .lg-sub,#loginScreen .lg-stage-wrap{animation:none!important;}}
+
   /* ผู้ใช้ที่ login แล้ว (topbar) */
   .user-chip{display:flex;align-items:center;gap:10px;margin-left:10px;padding:4px 4px 4px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;}
   .user-chip-name{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.2;}
@@ -350,11 +390,12 @@
       <div>
         <div class="lg-eyebrow">STORE PAYSLIP · OFFICE</div>
         <h1 id="lgTitle">เข้าสู่ระบบ</h1>
-        <p class="lg-desc">สำหรับทีม Internal Audit, IT, Account และ Retail ใช้ชื่อผู้ใช้ของแผนก</p>
+        <p class="lg-desc">สำหรับทีม Internal Audit, IT, Account และ Retail</p>
       </div>
       <div class="lg-field-row">
         <label for="lgUser">ชื่อผู้ใช้</label>
         <div class="lg-input-wrap">
+          <svg class="lg-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           <input id="lgUser" class="lg-input" type="text" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" required>
           <span class="lg-suffix">@bata.co.th</span>
         </div>
@@ -365,7 +406,10 @@
           <label for="lgPw">รหัสผ่าน</label>
           <button class="lg-ghost" type="button" id="lgPwToggle" aria-pressed="false" aria-controls="lgPw">แสดง</button>
         </div>
-        <input id="lgPw" class="lg-input" type="password" autocomplete="current-password" required>
+        <div class="lg-input-wrap">
+          <svg class="lg-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          <input id="lgPw" class="lg-input" type="password" autocomplete="current-password" required>
+        </div>
       </div>
       <div class="lg-remember">
         <input id="lgRemember" type="checkbox" checked>
@@ -373,8 +417,8 @@
       </div>
       <button class="lg-cta" type="submit" id="lgSubmit">เข้าสู่ระบบ</button>
       <div class="lg-msg" id="lgMsg" role="alert"></div>
-      <div class="lg-foot">ลืมรหัสผ่านหรือเข้าไม่ได้ ติดต่อทีม IT</div>
     </form>
+    <div class="lg-foot">ลืมรหัสผ่านหรือเข้าไม่ได้ ติดต่อทีม IT · © BATA Thailand</div>
   </div>
 </div>
 
