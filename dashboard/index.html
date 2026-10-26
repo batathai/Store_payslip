@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BATA Store Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bata-red:#E11D2E;--bata-red-dark:#8F0E1F;--ink:#15171C;--ink-soft:#6B7280;--ink-faint:#9CA3AF;
@@ -148,6 +151,13 @@
   #dupModalBackdrop.open{display:flex;}
   #histModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
   #histModalBackdrop.open{display:flex;}
+  /* Export popup */
+  #exportModalBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px;}
+  #exportModalBackdrop.open{display:flex;}
+  #exportModalBackdrop .dup-modal{max-width:400px;}
+  .exp-range{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .exp-range input{flex:1;min-width:140px;border:1.5px solid var(--line);border-radius:8px;background:#fff;padding:8px 10px;font-size:13px;font-family:var(--font-body);font-weight:600;color:var(--ink);}
+  .exp-range span{font-size:12px;color:var(--ink-soft);}
   .dup-modal{background:#fff;border-radius:14px;width:100%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column;}
   #histModalBackdrop .dup-modal{max-width:1000px;}
   .dup-modal-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:1;}
@@ -193,9 +203,181 @@
   .delay-1{background:var(--warn-bg);color:var(--warn);}
   .delay-2{background:#FEE2E2;color:#B91C1C;}
   .delay-none{background:var(--paper);color:var(--ink-faint);}
+
+  /* ============ MOTION ============
+     - เข้าหน้าครั้งแรก: การ์ด/กราฟ/ตาราง ค่อยๆ ลอยขึ้นทีละชิ้น (เฉพาะตอนโหลดครั้งแรก ไม่เล่นซ้ำตอนกรอง/ค้นหา)
+     - ตัวเลข KPI นับขึ้นเฉพาะตอนค่าเปลี่ยน
+     - การ์ดลอยเมื่อชี้, popup เด้งเข้า, จุดสถานะ live
+     - ผู้ใช้ที่ตั้ง "ลดการเคลื่อนไหว" ในเครื่อง จะไม่เห็นแอนิเมชันเลย */
+  :root{--ease-out:cubic-bezier(.22,1,.36,1);}
+  @keyframes riseIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes popIn{from{opacity:0;transform:translateY(10px) scale(.96);}to{opacity:1;transform:none;}}
+  @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(15,169,104,.55);}70%{box-shadow:0 0 0 7px rgba(15,169,104,0);}100%{box-shadow:0 0 0 0 rgba(15,169,104,0);}}
+  @keyframes toastIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+  body.is-entering .metric{animation:riseIn .55s var(--ease-out) both;}
+  body.is-entering .metric:nth-child(1){animation-delay:.02s}
+  body.is-entering .metric:nth-child(2){animation-delay:.07s}
+  body.is-entering .metric:nth-child(3){animation-delay:.12s}
+  body.is-entering .metric:nth-child(4){animation-delay:.17s}
+  body.is-entering .metric:nth-child(5){animation-delay:.22s}
+  body.is-entering .metric:nth-child(6){animation-delay:.27s}
+  body.is-entering .metric:nth-child(7){animation-delay:.32s}
+  body.is-entering .charts-row .card{animation:riseIn .6s var(--ease-out) .25s both;}
+  body.is-entering .charts-row > div:nth-child(2) .card{animation-delay:.33s;}
+  body.is-entering .table-wrap{animation:riseIn .6s var(--ease-out) .4s both;}
+  body.is-entering .right-panel .rp-section{animation:riseIn .6s var(--ease-out) both;}
+  body.is-entering .right-panel .rp-section:nth-child(1){animation-delay:.15s}
+  body.is-entering .right-panel .rp-section:nth-child(2){animation-delay:.25s}
+  body.is-entering .right-panel .rp-section:nth-child(3){animation-delay:.35s}
+  body.is-entering tbody#tableBody tr{animation:fadeIn .5s ease .5s both;}
+
+  .metric{transition:border-color .2s,box-shadow .25s var(--ease-out),transform .25s var(--ease-out);}
+  .metric:hover{transform:translateY(-3px);box-shadow:0 10px 24px -12px rgba(21,23,28,.25);}
+  .metric:active{transform:translateY(-1px) scale(.985);}
+  .metric-value{font-variant-numeric:tabular-nums;}
+  .card,.table-wrap{transition:box-shadow .3s var(--ease-out);}
+  .card:hover{box-shadow:0 8px 28px -16px rgba(21,23,28,.22);}
+  .zone-row{transition:background .15s,transform .2s var(--ease-out);}
+  .zone-row:hover{transform:translateX(3px);}
+
+  #dupModalBackdrop.open,#histModalBackdrop.open,#exportModalBackdrop.open{animation:fadeIn .2s ease both;}
+  #dupModalBackdrop.open .dup-modal,#histModalBackdrop.open .dup-modal,#exportModalBackdrop.open .dup-modal{animation:popIn .32s var(--ease-out) both;}
+  #toastMsg.show{animation:toastIn .3s var(--ease-out) both;}
+
+  #updatedAt.live::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:7px;vertical-align:1px;animation:livePulse 2s infinite;}
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+
+  /* ============ LOGIN (ออฟฟิต) — ตามแบบร่าง "BATA Login" artboard Office ============ */
+  body.auth-locked{overflow:hidden;}
+  body.auth-locked .shell{visibility:hidden;}
+  #loginScreen{position:fixed;inset:0;z-index:300;display:none;background:#FFFFFF;color:#2A1A1D;font-family:'Sarabun','Noto Sans Thai',system-ui,sans-serif;}
+  body.auth-locked #loginScreen{display:flex;}
+  #loginScreen .lg-left{position:relative;width:46%;max-width:640px;flex:none;box-sizing:border-box;padding:48px 56px;display:flex;flex-direction:column;justify-content:space-between;background:#C8102E;color:#FFFFFF;overflow:hidden;}
+  #loginScreen .lg-brand{display:flex;align-items:baseline;gap:12px;}
+  #loginScreen .lg-brand b{font-family:'Prompt',sans-serif;font-weight:700;font-size:30px;letter-spacing:.22em;}
+  #loginScreen .lg-brand span{font-size:13px;letter-spacing:.3em;opacity:.9;}
+  #loginScreen .lg-stage-wrap{flex:1;display:flex;align-items:center;justify-content:center;perspective:1300px;min-height:0;}
+  #loginScreen .lg-headline{font-family:'Prompt',sans-serif;font-weight:600;font-size:38px;line-height:1.2;text-wrap:balance;}
+  #loginScreen .lg-sub{font-size:17px;line-height:1.5;opacity:.92;max-width:460px;margin-top:10px;}
+  #loginScreen .lg-right{flex:1;min-width:0;box-sizing:border-box;padding:32px clamp(24px,7vw,88px);display:flex;flex-direction:column;justify-content:center;gap:26px;overflow-y:auto;}
+  #loginScreen .lg-form{width:100%;max-width:440px;display:flex;flex-direction:column;gap:26px;}
+  #loginScreen .lg-eyebrow{font-size:13px;font-weight:600;letter-spacing:.22em;color:#C8102E;}
+  #loginScreen h1{margin:8px 0 0;font-family:'Prompt',sans-serif;font-weight:600;font-size:40px;line-height:1.15;}
+  #loginScreen .lg-desc{margin:10px 0 0;font-size:16px;line-height:1.55;color:#5E4F52;}
+  #loginScreen label{font-size:15px;font-weight:600;}
+  #loginScreen .lg-field-row{display:flex;flex-direction:column;gap:8px;}
+  #loginScreen .lg-input-wrap{position:relative;display:flex;align-items:center;}
+  #loginScreen .lg-input{width:100%;height:56px;box-sizing:border-box;padding:0 18px;border:1.5px solid #CDBFC1;border-radius:12px;font-size:18px;color:#2A1A1D;background:#FFFFFF;font-family:'Prompt','Sarabun',sans-serif;outline:none;transition:border-color .15s,box-shadow .15s;}
+  #loginScreen .lg-input:focus{border-color:#C8102E;box-shadow:0 0 0 4px rgba(200,16,46,.16);}
+  #loginScreen .lg-suffix{position:absolute;right:16px;font-size:15px;color:#8C7B7E;pointer-events:none;}
+  #loginScreen #lgUser{padding-right:130px;}
+  #loginScreen .lg-hint{font-size:14px;color:#5E4F52;min-height:20px;}
+  #loginScreen .lg-pw-head{display:flex;justify-content:space-between;align-items:center;}
+  #loginScreen .lg-ghost{border:0;background:transparent;padding:6px 4px;font-family:inherit;font-size:15px;font-weight:600;color:#8A0B20;cursor:pointer;}
+  #loginScreen .lg-remember{display:flex;align-items:center;gap:12px;}
+  #loginScreen .lg-remember input{width:22px;height:22px;margin:0;accent-color:#C8102E;}
+  #loginScreen .lg-remember label{font-weight:400;font-size:16px;}
+  #loginScreen .lg-cta{height:58px;border:0;border-radius:14px;background:#C8102E;color:#FFFFFF;font-family:'Prompt',sans-serif;font-size:19px;font-weight:600;letter-spacing:.02em;box-shadow:0 5px 0 rgba(0,0,0,.28);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,opacity .15s;}
+  #loginScreen .lg-cta:hover{transform:translateY(-1px);}
+  #loginScreen .lg-cta:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.28);}
+  #loginScreen .lg-cta:disabled{opacity:.6;cursor:wait;transform:none;}
+  #loginScreen .lg-cta:focus-visible,#loginScreen .lg-ghost:focus-visible{outline:3px solid #2A1A1D;outline-offset:3px;}
+  #loginScreen .lg-msg{display:none;padding:12px 16px;border-radius:10px;font-size:15px;font-weight:600;line-height:1.5;}
+  #loginScreen .lg-msg.show{display:block;animation:fadeIn .2s ease both;}
+  #loginScreen .lg-msg.err{background:#FDE8EB;color:#8A0B20;}
+  #loginScreen .lg-msg.info{background:#E2F3EC;color:#0B4F38;}
+  #loginScreen .lg-foot{font-size:14px;color:#5E4F52;}
+  #loginScreen .lg-mobile-brand{display:none;}
+  /* ฉาก 3D (คัดจากแบบร่าง) */
+  #loginScreen .f{position:absolute;display:block;}
+  #loginScreen .coin{position:relative;width:70px;height:70px;transform-style:preserve-3d;animation:lgSpin 9s linear infinite;}
+  #loginScreen .face{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;font-family:'Prompt',sans-serif;font-weight:700;font-size:32px;background:#FFFFFF;color:#C8102E;box-shadow:0 18px 30px -8px rgba(60,0,10,.45),inset 0 0 0 5px #FBE3E6;}
+  #loginScreen .back{transform:rotateY(180deg);}
+  #loginScreen .fly{position:absolute;left:0;top:0;animation:lgFly 3.9s linear infinite;}
+  #loginScreen .pulse{position:absolute;box-sizing:border-box;border:3px solid rgba(255,255,255,.85);border-radius:50%;animation:lgPulse 3.2s ease-out infinite;}
+  #loginScreen .rise{animation:lgRise 2.4s ease-in-out infinite;}
+  #loginScreen .floaty{animation:lgFloaty 4s ease-in-out infinite;}
+  #loginScreen #lgWorld{transition:transform .25s ease-out;}
+  @keyframes lgSpin{to{transform:rotateY(360deg)}}
+  @keyframes lgFly{0%{transform:translate3d(-105px,70px,40px) rotateZ(-20deg) scale(1);opacity:0}15%{opacity:1}50%{transform:translate3d(-66px,52px,118px) rotateZ(-8deg) scale(.95)}85%{opacity:1}100%{transform:translate3d(-25px,36px,44px) rotateZ(0deg) scale(.6);opacity:0}}
+  @keyframes lgPulse{0%{transform:translateZ(3px) scale(.35);opacity:.9}100%{transform:translateZ(3px) scale(1.5);opacity:0}}
+  @keyframes lgRise{0%{transform:translateY(24px);opacity:0}25%{opacity:1}75%{opacity:1}100%{transform:translateY(-34px);opacity:0}}
+  @keyframes lgFloaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @media (max-height:760px){#loginScreen .stage3{transform:scale(.8);}}
+  @media (max-width:900px){
+    #loginScreen{flex-direction:column;}
+    #loginScreen .lg-left{display:none;}
+    #loginScreen .lg-mobile-brand{display:flex;align-items:baseline;gap:10px;background:#C8102E;color:#fff;padding:18px 24px;flex:none;}
+    #loginScreen .lg-mobile-brand b{font-family:'Prompt',sans-serif;font-weight:700;font-size:22px;letter-spacing:.2em;}
+    #loginScreen .lg-mobile-brand span{font-size:11px;letter-spacing:.3em;opacity:.9;}
+    #loginScreen .lg-right{justify-content:flex-start;padding:28px 20px 40px;}
+    #loginScreen h1{font-size:32px;}
+  }
+  /* ผู้ใช้ที่ login แล้ว (topbar) */
+  .user-chip{display:flex;align-items:center;gap:10px;margin-left:10px;padding:4px 4px 4px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;}
+  .user-chip-name{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.2;}
+  .user-chip-role{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:5px;display:inline-block;margin-top:2px;}
+  .user-chip-role.editor{background:var(--ok-bg);color:var(--ok);}
+  .user-chip-role.viewer{background:var(--blue-bg);color:var(--blue);}
+  .btn-logout{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-body);}
+  .btn-logout:hover{background:#ECEDF1;}
+  /* Can View: ซ่อนปุ่มยืนยันรายการซ้ำ (ฐานข้อมูลตรวจซ้ำอีกชั้น) */
+  body.role-viewer .btn-mark-correct, body.role-viewer #dupSaveBtn{display:none!important;}
+  @media (prefers-reduced-motion: reduce){#loginScreen .coin,#loginScreen .fly,#loginScreen .pulse,#loginScreen .rise,#loginScreen .floaty{animation:none!important;}}
 </style>
 </head>
-<body>
+<body class="auth-locked">
+<!-- ============ LOGIN (ออฟฟิต) ============ -->
+<div id="loginScreen" role="main" aria-labelledby="lgTitle">
+  <div class="lg-mobile-brand"><b>BATA</b><span>THAILAND</span></div>
+  <div class="lg-left" id="lgLeft">
+    <div class="lg-brand"><b>BATA</b><span>THAILAND</span></div>
+    <div class="lg-stage-wrap" aria-hidden="true">
+<div class="stage3" style="position:relative;width:460px;height:460px;perspective:1300px;transform-style:preserve-3d"><div style="position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;transform:translateY(26px) rotateX(62deg) rotateZ(-38deg)" id="lgWorld"><i class="f" style="left:-175px;top:-175px;width:350px;height:350px;border-radius:50%;background:#4A0614;transform:translateZ(-10px)"></i><i class="f" style="left:-175px;top:-175px;width:350px;height:350px;border-radius:50%;background:#5E0716;transform:translateZ(-7px)"></i><i class="f" style="left:-175px;top:-175px;width:350px;height:350px;border-radius:50%;background:#6F0A1B;transform:translateZ(-4px)"></i><i class="f" style="left:-175px;top:-175px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,#B3122C 0%,#9A0F25 55%,#7E0B1E 100%);box-shadow:0 0 0 5px rgba(255,255,255,.16),0 0 90px 12px rgba(255,255,255,.22)"></i><i class="f" style="left:-135px;top:-135px;width:270px;height:270px;box-sizing:border-box;border-radius:50%;border:2px dashed rgba(255,255,255,.32);transform:translateZ(1px)"></i><div class="pulse" style="left:-110px;top:-107px;width:170px;height:170px"></div><div class="pulse" style="left:-110px;top:-107px;width:170px;height:170px;animation-delay:1.6s"></div><div style="position:absolute;left:-125px;top:-95px;width:200px;height:140px;transform-style:preserve-3d;transform:translateZ(0px)"><i class="f" style="left:0;top:0;width:200px;height:140px;transform:translateZ(8px);background:#F3C9CF"></i><i class="f" style="left:0;top:140px;width:200px;height:8px;transform-origin:0 0;transform:rotateX(90deg);background:#E9AEB7"></i><i class="f" style="left:0;top:0;width:200px;height:8px;transform-origin:0 0;transform:rotateX(90deg);background:#E9AEB7"></i><i class="f" style="left:200px;top:0;width:140px;height:8px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#D98F9B"></i><i class="f" style="left:0;top:0;width:140px;height:8px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#D98F9B"></i></div><div style="position:absolute;left:-100px;top:-70px;width:150px;height:96px;transform-style:preserve-3d;transform:translateZ(8px)"><i class="f" style="left:0;top:0;width:150px;height:96px;transform:translateZ(62px);background:#FFFFFF"></i><i class="f" style="left:0;top:96px;width:150px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:linear-gradient(#5A0F1C,#5A0F1C) 50% 100%/26px 38px no-repeat,linear-gradient(#FBF3F4,#FBF3F4)"></i><i class="f" style="left:0;top:0;width:150px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:linear-gradient(#5A0F1C,#5A0F1C) 50% 100%/26px 38px no-repeat,linear-gradient(#FBF3F4,#FBF3F4)"></i><i class="f" style="left:150px;top:0;width:96px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#E9D6D9"></i><i class="f" style="left:0;top:0;width:96px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#E9D6D9"></i></div><div style="position:absolute;left:-87px;top:30px;width:11px;height:11px;transform-style:preserve-3d;transform:translateZ(8px)"><i class="f" style="left:0;top:0;width:11px;height:11px;transform:translateZ(62px);background:#FFFFFF"></i><i class="f" style="left:0;top:11px;width:11px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:#F6E9EB"></i><i class="f" style="left:0;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:#F6E9EB"></i><i class="f" style="left:11px;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#DCC3C7"></i><i class="f" style="left:0;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#DCC3C7"></i></div><div style="position:absolute;left:-49px;top:30px;width:11px;height:11px;transform-style:preserve-3d;transform:translateZ(8px)"><i class="f" style="left:0;top:0;width:11px;height:11px;transform:translateZ(62px);background:#FFFFFF"></i><i class="f" style="left:0;top:11px;width:11px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:#F6E9EB"></i><i class="f" style="left:0;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:#F6E9EB"></i><i class="f" style="left:11px;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#DCC3C7"></i><i class="f" style="left:0;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#DCC3C7"></i></div><div style="position:absolute;left:-11px;top:30px;width:11px;height:11px;transform-style:preserve-3d;transform:translateZ(8px)"><i class="f" style="left:0;top:0;width:11px;height:11px;transform:translateZ(62px);background:#FFFFFF"></i><i class="f" style="left:0;top:11px;width:11px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:#F6E9EB"></i><i class="f" style="left:0;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:#F6E9EB"></i><i class="f" style="left:11px;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#DCC3C7"></i><i class="f" style="left:0;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#DCC3C7"></i></div><div style="position:absolute;left:27px;top:30px;width:11px;height:11px;transform-style:preserve-3d;transform:translateZ(8px)"><i class="f" style="left:0;top:0;width:11px;height:11px;transform:translateZ(62px);background:#FFFFFF"></i><i class="f" style="left:0;top:11px;width:11px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:#F6E9EB"></i><i class="f" style="left:0;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateX(90deg);background:#F6E9EB"></i><i class="f" style="left:11px;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#DCC3C7"></i><i class="f" style="left:0;top:0;width:11px;height:62px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#DCC3C7"></i></div><div style="position:absolute;left:-113px;top:-81px;width:176px;height:122px;transform-style:preserve-3d;transform:translateZ(70px)"><i class="f" style="left:0;top:0;width:176px;height:122px;transform:translateZ(8px);background:#E9AEB7"></i><i class="f" style="left:0;top:122px;width:176px;height:8px;transform-origin:0 0;transform:rotateX(90deg);background:#F3C9CF"></i><i class="f" style="left:0;top:0;width:176px;height:8px;transform-origin:0 0;transform:rotateX(90deg);background:#F3C9CF"></i><i class="f" style="left:176px;top:0;width:122px;height:8px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#D98F9B"></i><i class="f" style="left:0;top:0;width:122px;height:8px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#D98F9B"></i></div><div style="position:absolute;left:-113px;top:-81px;width:176px;height:122px;transform-style:preserve-3d;transform:translateZ(78px)"><i class="f" style="left:0;top:61px;width:176px;height:69.8px;transform-origin:0 0;transform:translateZ(34px) rotateX(-29.1deg);background:#F3C9CF"><b style="position:absolute;left:71px;top:17px;width:34px;height:34px;border-radius:50%;background:#C8102E;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:19px">฿</b></i><i class="f" style="left:0;top:-8.8px;width:176px;height:69.8px;transform-origin:0 100%;transform:translateZ(34px) rotateX(29.1deg);background:#E9AEB7"></i><i class="f" style="left:0px;top:0;width:122px;height:34px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#FBE3E6;clip-path:polygon(0 0,100% 0,50% 100%)"></i><i class="f" style="left:176px;top:0;width:122px;height:34px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:#FBE3E6;clip-path:polygon(0 0,100% 0,50% 100%)"></i></div><div style="position:absolute;left:-140px;top:52px;width:78px;height:44px;transform-style:preserve-3d;transform:translateZ(0px)"><i class="f" style="left:0;top:0;width:78px;height:44px;transform:translateZ(30px);background:linear-gradient(90deg,#F6E7B8 0 36%,#3B0A12 36% 64%,#F6E7B8 64% 100%)"></i><i class="f" style="left:0;top:44px;width:78px;height:30px;transform-origin:0 0;transform:rotateX(90deg);background:linear-gradient(90deg,transparent 36%,#3B0A12 36%,#3B0A12 64%,transparent 64%),repeating-linear-gradient(180deg,#F6E7B8 0 3px,#E3C06B 3px 4px)"></i><i class="f" style="left:0;top:0;width:78px;height:30px;transform-origin:0 0;transform:rotateX(90deg);background:linear-gradient(90deg,transparent 36%,#3B0A12 36%,#3B0A12 64%,transparent 64%),repeating-linear-gradient(180deg,#F6E7B8 0 3px,#E3C06B 3px 4px)"></i><i class="f" style="left:78px;top:0;width:44px;height:30px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:repeating-linear-gradient(180deg,#E9D49A 0 3px,#C9A24F 3px 4px)"></i><i class="f" style="left:0;top:0;width:44px;height:30px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:repeating-linear-gradient(180deg,#E9D49A 0 3px,#C9A24F 3px 4px)"></i></div><div style="position:absolute;left:-52px;top:62px;width:64px;height:38px;transform-style:preserve-3d;transform:translateZ(0px)"><i class="f" style="left:0;top:0;width:64px;height:38px;transform:translateZ(18px);background:linear-gradient(90deg,#F6E7B8 0 36%,#3B0A12 36% 64%,#F6E7B8 64% 100%)"></i><i class="f" style="left:0;top:38px;width:64px;height:18px;transform-origin:0 0;transform:rotateX(90deg);background:linear-gradient(90deg,transparent 36%,#3B0A12 36%,#3B0A12 64%,transparent 64%),repeating-linear-gradient(180deg,#F6E7B8 0 3px,#E3C06B 3px 4px)"></i><i class="f" style="left:0;top:0;width:64px;height:18px;transform-origin:0 0;transform:rotateX(90deg);background:linear-gradient(90deg,transparent 36%,#3B0A12 36%,#3B0A12 64%,transparent 64%),repeating-linear-gradient(180deg,#F6E7B8 0 3px,#E3C06B 3px 4px)"></i><i class="f" style="left:64px;top:0;width:38px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:repeating-linear-gradient(180deg,#E9D49A 0 3px,#C9A24F 3px 4px)"></i><i class="f" style="left:0;top:0;width:38px;height:18px;transform-origin:0 0;transform:rotateZ(90deg) rotateX(90deg);background:repeating-linear-gradient(180deg,#E9D49A 0 3px,#C9A24F 3px 4px)"></i></div><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(0px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(1px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(2px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(3px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;box-sizing:border-box;border-radius:50%;background:#F2C14E;border:3px solid #E0A82E;transform:translateZ(4px);display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:18px;color:#B8892A"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(5px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(6px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(7px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(8px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;box-sizing:border-box;border-radius:50%;background:#F2C14E;border:3px solid #E0A82E;transform:translateZ(9px);display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:18px;color:#B8892A"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(10px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(11px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(12px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(13px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;box-sizing:border-box;border-radius:50%;background:#F2C14E;border:3px solid #E0A82E;transform:translateZ(14px);display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:18px;color:#B8892A"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(15px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(16px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(17px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(18px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;box-sizing:border-box;border-radius:50%;background:#F2C14E;border:3px solid #E0A82E;transform:translateZ(19px);display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:18px;color:#B8892A"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(20px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(21px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(22px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(23px)"></i><i class="f" style="left:60px;top:56px;width:40px;height:40px;box-sizing:border-box;border-radius:50%;background:#F2C14E;border:3px solid #E0A82E;transform:translateZ(24px);display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:18px;color:#B8892A">฿</i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(0px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(1px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(2px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(3px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;box-sizing:border-box;border-radius:50%;background:#F2C14E;border:3px solid #E0A82E;transform:translateZ(4px);display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:18px;color:#B8892A"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(5px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(6px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(7px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(8px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;box-sizing:border-box;border-radius:50%;background:#F2C14E;border:3px solid #E0A82E;transform:translateZ(9px);display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:18px;color:#B8892A"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(10px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(11px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(12px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;border-radius:50%;background:#B8892A;transform:translateZ(13px)"></i><i class="f" style="left:112px;top:22px;width:40px;height:40px;box-sizing:border-box;border-radius:50%;background:#F2C14E;border:3px solid #E0A82E;transform:translateZ(14px);display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:18px;color:#B8892A">฿</i><div class="fly" style="animation-delay:0s"><div style="width:66px;height:32px;border-radius:5px;background:#F6E7B8;box-shadow:inset 0 0 0 3px #E8C97A;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;border-radius:50%;background:#C8102E;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:12px">฿</span></div></div><div class="fly" style="animation-delay:1.3s"><div style="width:66px;height:32px;border-radius:5px;background:#F6E7B8;box-shadow:inset 0 0 0 3px #E8C97A;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;border-radius:50%;background:#C8102E;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:12px">฿</span></div></div><div class="fly" style="animation-delay:2.6s"><div style="width:66px;height:32px;border-radius:5px;background:#F6E7B8;box-shadow:inset 0 0 0 3px #E8C97A;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;border-radius:50%;background:#C8102E;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Prompt,sans-serif;font-weight:700;font-size:12px">฿</span></div></div><div class="lg-bb" style="position:absolute;left:-43px;top:-40px;width:36px;height:36px;transform:translateZ(122px) rotateZ(38deg) rotateX(-62deg)"><div class="rise" style="width:36px;height:36px;border-radius:50%;background:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 16px rgba(40,0,8,.35)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></div></div><div class="lg-bb" style="position:absolute;left:-125px;top:-52px;width:200px;height:60px;transform:translateZ(178px) rotateZ(38deg) rotateX(-62deg)"><div class="floaty" style="box-sizing:border-box;width:200px;height:60px;padding:0 16px;border-radius:16px;background:#3B0A12;color:#FFFFFF;box-shadow:0 20px 30px -8px rgba(40,0,8,.6);display:flex;align-items:center;gap:12px"><span style="width:34px;height:34px;border-radius:50%;background:#FFFFFF;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3B0A12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="display:flex;flex-direction:column;gap:1px"><span style="font-family:Prompt,sans-serif;font-weight:600;font-size:18px">ส่งแล้ว</span><span style="font-size:13px;opacity:.85">ก่อน 10:00 น.</span></span></div></div><div class="lg-bb" style="position:absolute;left:92px;top:-120px;width:70px;height:70px;transform-style:preserve-3d;transform:translateZ(86px) rotateZ(38deg) rotateX(-62deg)"><div class="floaty" style="transform-style:preserve-3d;width:70px;height:70px"><div class="coin"><div class="face">฿</div><div class="face back">฿</div></div></div></div></div></div>
+    </div>
+    <div>
+      <div class="lg-headline">ติดตามยอดฝาก<br>ของทุกสาขาในที่เดียว</div>
+      <div class="lg-sub">ดูสถานะการส่งสลิปและตรวจยอดฝากของแต่ละสาขา สำหรับทีมออฟฟิต BATA Thailand</div>
+    </div>
+  </div>
+  <div class="lg-right">
+    <form class="lg-form" id="lgForm" novalidate>
+      <div>
+        <div class="lg-eyebrow">STORE PAYSLIP · OFFICE</div>
+        <h1 id="lgTitle">เข้าสู่ระบบ</h1>
+        <p class="lg-desc">สำหรับทีม Internal Audit, IT, Account และ Retail ใช้ชื่อผู้ใช้ของแผนก</p>
+      </div>
+      <div class="lg-field-row">
+        <label for="lgUser">ชื่อผู้ใช้</label>
+        <div class="lg-input-wrap">
+          <input id="lgUser" class="lg-input" type="text" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" required>
+          <span class="lg-suffix">@bata.co.th</span>
+        </div>
+        <div class="lg-hint" id="lgUserHint">พิมพ์ชื่อแผนก เช่น retail (ไม่ต้องพิมพ์ @bata.co.th)</div>
+      </div>
+      <div class="lg-field-row">
+        <div class="lg-pw-head">
+          <label for="lgPw">รหัสผ่าน</label>
+          <button class="lg-ghost" type="button" id="lgPwToggle" aria-pressed="false" aria-controls="lgPw">แสดง</button>
+        </div>
+        <input id="lgPw" class="lg-input" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="lg-remember">
+        <input id="lgRemember" type="checkbox" checked>
+        <label for="lgRemember">จำเครื่องนี้ไว้ ไม่ต้องกรอกทุกวัน</label>
+      </div>
+      <button class="lg-cta" type="submit" id="lgSubmit">เข้าสู่ระบบ</button>
+      <div class="lg-msg" id="lgMsg" role="alert"></div>
+      <div class="lg-foot">ลืมรหัสผ่านหรือเข้าไม่ได้ ติดต่อทีม IT</div>
+    </form>
+  </div>
+</div>
+
 
 <div class="shell"><div class="main">
     <div class="topbar">
@@ -212,6 +394,7 @@
       </div>
       <div class="topbar-controls">
         <select id="filterZone"><option value="">All Districts</option></select>
+        <div class="user-chip" id="userChip" style="display:none"></div>
       </div>
     </div>
 
@@ -263,7 +446,7 @@
           <div class="table-head-bar">
             <div class="table-title" id="tableTitle">All submissions</div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <button id="exportExcelBtn" onclick="exportToExcel()" style="display:flex;align-items:center;gap:6px;background:var(--ok);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--font-body);">⬇ Export Excel</button>
+              <button id="exportExcelBtn" onclick="openExportModal()" style="display:flex;align-items:center;gap:6px;background:var(--ok);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--font-body);">⬇ Export Excel</button>
               <div style="display:flex;align-items:center;gap:6px;background:#F4F5F7;border:1.5px solid var(--line);border-radius:8px;padding:3px 10px;">
                 <label style="font-size:11px;font-weight:700;color:var(--ink-soft);white-space:nowrap;">Sales Date</label>
                 <input type="date" id="filterSalesDate" style="border:none;background:transparent;padding:3px 0;font-size:12px;font-family:var(--font-body);font-weight:600;color:var(--ink);outline:none;cursor:pointer;">
@@ -386,6 +569,29 @@
   </div>
 </div>
 
+<!-- Export Excel popup: รายวัน (ของเดิม) หรือ ช่วงวันที่ -->
+<div id="exportModalBackdrop">
+  <div class="dup-modal" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
+    <div class="dup-modal-header">
+      <div>
+        <h2 id="exportModalTitle">Export Excel</h2>
+      </div>
+      <button class="dup-modal-close" onclick="closeExportModal()" aria-label="ปิด">✕</button>
+    </div>
+    <div class="dup-modal-body">
+      <div class="exp-range">
+        <input type="date" id="exportFrom" aria-label="จากวันที่">
+        <span>ถึง</span>
+        <input type="date" id="exportTo" aria-label="ถึงวันที่">
+      </div>
+    </div>
+    <div class="dup-modal-footer">
+      <button class="btn-secondary" onclick="closeExportModal()">ยกเลิก</button>
+      <button class="btn-save" id="exportRangeBtn" onclick="runExport()" style="background:var(--ok);">⬇ Export</button>
+    </div>
+  </div>
+</div>
+
 <div id="toastMsg"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -397,7 +603,20 @@
    ============================================================ */
 const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// session ของ Dashboard เก็บแยกจากหน้าฟอร์มสาขา (storageKey ของตัวเอง)
+// "จำเครื่องนี้ไว้" = เก็บใน localStorage, ไม่ติ๊ก = sessionStorage (ปิดเบราว์เซอร์แล้วต้อง login ใหม่)
+const AUTH_REMEMBER_KEY = 'bata_dashboard_remember';
+const authStorage = {
+  getItem(k){ try{ return localStorage.getItem(k) ?? sessionStorage.getItem(k); }catch(e){ return null; } },
+  setItem(k,v){ try{
+    if(localStorage.getItem(AUTH_REMEMBER_KEY) === '0'){ sessionStorage.setItem(k,v); localStorage.removeItem(k); }
+    else { localStorage.setItem(k,v); sessionStorage.removeItem(k); }
+  }catch(e){} },
+  removeItem(k){ try{ localStorage.removeItem(k); sessionStorage.removeItem(k); }catch(e){} },
+};
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth:{ storage: authStorage, storageKey:'bata-dashboard-auth', persistSession:true, autoRefreshToken:true, detectSessionInUrl:false }
+});
 const LATE_CUTOFF_HOUR = 14;  // บ่าย 2 โมง
 const DELAY_CUTOFF_HOUR = 14; // เดียวกัน — ถ้าไม่ส่งหลังบ่าย 2 = Delay
 const PAGE_SIZE = 25;
@@ -535,6 +754,7 @@ document.getElementById('rangeToggle').querySelectorAll('button').forEach(btn=>{
 document.getElementById('autoRefreshToggle').addEventListener('click',()=>{
   autoRefreshOn=!autoRefreshOn;
   document.getElementById('autoRefreshToggle').classList.toggle('off',!autoRefreshOn);
+  const _ua=document.getElementById('updatedAt'); if(_ua.textContent.startsWith('Last updated')) _ua.classList.toggle('live',autoRefreshOn);
   setupAutoRefresh();
 });
 
@@ -694,6 +914,7 @@ function buildStoreList(){
 }
   async function loadData(){
   document.getElementById('updatedAt').textContent = 'กำลังโหลด...';
+  document.getElementById('updatedAt').classList.remove('live');
   const sinceDate = dateNDaysAgo(30)+'T00:00:00';
 
   // โหลด store names จาก Supabase
@@ -749,7 +970,9 @@ function buildStoreList(){
   }
 
   document.getElementById('updatedAt').textContent = 'Last updated ' + new Date().toLocaleString('th-TH');
+  document.getElementById('updatedAt').classList.toggle('live', autoRefreshOn);
   render();
+  endEntrance();
 }
 
 /* ============================================================
@@ -925,6 +1148,113 @@ function exportToExcel(){
 }
 
 /* ============================================================
+   EXPORT ช่วงวันที่ (ตาม sales_date)
+   1 แถว = 1 รายการที่ส่ง ดึงจาก Supabase ตรงแบบแบ่งหน้า
+   (ไม่ใช้ allRecords ที่โหลดไว้แค่ 30 วัน)
+   ============================================================ */
+const EXPORT_MAX_DAYS = 366;
+
+function addDaysStr(dateStr, n){
+  const d = new Date(dateStr + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0,10);
+}
+
+(function initExportRange(){
+  const fromEl = document.getElementById('exportFrom');
+  const toEl   = document.getElementById('exportTo');
+  if(!fromEl || !toEl) return;
+  fromEl.value = today.slice(0,8) + '01'; // วันที่ 1 ของเดือนนี้
+  toEl.value   = today;
+  fromEl.max = today; toEl.max = today;
+})();
+
+function openExportModal(){
+  document.getElementById('exportModalBackdrop').classList.add('open');
+}
+function closeExportModal(){
+  const btn = document.getElementById('exportRangeBtn');
+  if(btn && btn.disabled) return; // กำลังโหลดอยู่ ไม่ปิดกลางทาง
+  document.getElementById('exportModalBackdrop').classList.remove('open');
+}
+document.getElementById('exportModalBackdrop').addEventListener('click', function(e){ if(e.target===this) closeExportModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && document.getElementById('exportModalBackdrop').classList.contains('open')) closeExportModal(); });
+
+async function runExport(){
+  const ok = await exportRangeToExcel();
+  if(ok) closeExportModal();
+}
+
+async function exportRangeToExcel(){
+  if(typeof XLSX==='undefined'){ showToast('ไม่สามารถโหลดไลบรารี Export ได้ กรุณาตรวจสอบอินเทอร์เน็ต','err'); return false; }
+
+  const from = document.getElementById('exportFrom').value;
+  const to   = document.getElementById('exportTo').value;
+  if(!from || !to){ showToast('กรุณาเลือกวันที่เริ่มต้นและวันที่สิ้นสุด','warn'); return false; }
+  if(from > to){ showToast('วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด','warn'); return false; }
+  const days = Math.round((new Date(to) - new Date(from)) / 86400000) + 1;
+  if(days > EXPORT_MAX_DAYS){ showToast(`เลือกได้ไม่เกิน ${EXPORT_MAX_DAYS} วันต่อครั้ง`,'warn'); return false; }
+
+  const btn = document.getElementById('exportRangeBtn');
+  const btnText = btn.textContent;
+  btn.disabled = true; btn.style.opacity = '.6'; btn.textContent = 'กำลังโหลด...';
+
+  try{
+    // ใช้ < วันถัดไป แทน <= วันสุดท้าย เผื่อ sales_date เป็น timestamp
+    const toExclusive = addDaysStr(to, 1);
+    const pageSize = 1000;
+    let rows = [];
+    for(let start = 0; ; start += pageSize){
+      let q = sb.from('payin_records')
+        .select('id,zone_code,store_code,sales_date,deposit_date,amount,channel,channel_detail,submitted_at,duplicate_status')
+        .gte('sales_date', from)
+        .lt('sales_date', toExclusive)
+        .order('sales_date', {ascending:true})
+        .order('store_code', {ascending:true})
+        .order('id', {ascending:true})
+        .range(start, start + pageSize - 1);
+      // DM: เฉพาะสาขาในเขตตัวเอง (เหมือนตอนโหลดหน้า)
+      if(LOCKED_ZONE && ZONE_BRANCHES[LOCKED_ZONE]) q = q.in('store_code', ZONE_BRANCHES[LOCKED_ZONE]);
+
+      const {data, error} = await q;
+      if(error) throw error;
+      rows = rows.concat(data || []);
+      btn.textContent = `กำลังโหลด... ${rows.length.toLocaleString('th-TH')}`;
+      if(!data || data.length < pageSize) break;
+    }
+
+    if(rows.length === 0){ showToast(`ไม่มีรายการในช่วง ${from} ถึง ${to}`,'warn'); return false; }
+
+    const data = rows.map(r=>({
+      'Sales Date':       r.sales_date ? String(r.sales_date).slice(0,10) : '',
+      'Store Code':       r.store_code,
+      'Store Name':       storeNameMap[r.store_code] || (typeof STORE_NAMES!=='undefined' && STORE_NAMES[r.store_code]) || '',
+      'District':         r.zone_code || '',
+      'Deposit Date':     r.deposit_date ? String(r.deposit_date).slice(0,10) : '',
+      'Deposit Amount':   r.amount!=null ? Number(r.amount) : '',
+      'Channel':          r.channel || '',
+      'Channel Detail':   r.channel_detail || '',
+      'Submitted At':     r.submitted_at ? new Date(r.submitted_at).toLocaleString('th-TH') : '',
+      'Duplicate Status': r.duplicate_status || '',
+    }));
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(data);
+    ws['!cols'] = [{wch:11},{wch:11},{wch:26},{wch:9},{wch:12},{wch:14},{wch:14},{wch:18},{wch:20},{wch:15}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Submissions');
+    const zoneSuffix = LOCKED_ZONE ? `_Zone${LOCKED_ZONE}` : '';
+    XLSX.writeFile(wb, `BATA_Payslip_${from}_to_${to}${zoneSuffix}.xlsx`);
+    showToast(`Export สำเร็จ ${rows.length.toLocaleString('th-TH')} รายการ`,'ok');
+    return true;
+  }catch(err){
+    showToast('Export ไม่สำเร็จ: ' + (err && err.message ? err.message : err),'err');
+    return false;
+  }finally{
+    btn.disabled = false; btn.style.opacity = ''; btn.textContent = btnText;
+  }
+}
+
+/* ============================================================
    TOAST
    ============================================================ */
 function showToast(msg,type=''){
@@ -952,6 +1282,7 @@ async function openDupModal(storeCode,salesDate){
   const reasons=data[0]?.duplicate_reason||[];
   const reasonLabel=reasons.includes('same_slip_hash')?'Store Code + Sales Date ซ้ำ และ Slip รูปเดียวกัน':'Store Code + Sales Date ซ้ำกัน';
   document.getElementById('dupModalReason').innerHTML=`<strong>สาเหตุ:</strong> ${reasonLabel}<br>เลือกรายการที่ <strong>ถูกต้อง</strong> (เลือกได้มากกว่า 1 รายการ ถ้ายอดรวมกันแล้วตรงกับยอดปิดวัน) แล้วกด <strong>บันทึก</strong>`;
+  if(CURRENT_ROLE!=='editor') document.getElementById('dupModalReason').innerHTML=`<strong>สาเหตุ:</strong> ${reasonLabel}<br>ดูอย่างเดียว · ยืนยันรายการซ้ำได้เฉพาะทีม Internal Audit, IT และ Account`;
   document.getElementById('dupModalTbody').innerHTML=data.map((r,i)=>{
     const timeStr=new Date(r.submitted_at).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
     const amtStr=r.amount!=null?Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2}):'—';
@@ -985,6 +1316,7 @@ function toggleDupCorrect(id){
 }
 
 async function saveDupResolve(){
+  if(CURRENT_ROLE!=='editor'){ showToast('บัญชีนี้ดูได้อย่างเดียว ยืนยันรายการซ้ำไม่ได้','warn'); return; }
   if(dupSelectedIds.size===0) return;
   const idsArray = Array.from(dupSelectedIds);
   const saveBtn=document.getElementById('dupSaveBtn');
@@ -1136,7 +1468,7 @@ function renderTrendChart(stores){
   trendChartInstance=new Chart(document.getElementById('trendChart'),{
     type:'bar',
     data:{labels,datasets:[{label:'Total stores',data:labels.map(()=>totalCount),type:'line',borderColor:'#D8D4CF',backgroundColor:'#D8D4CF',borderWidth:2,pointRadius:0,borderDash:[4,4],fill:false,order:1},{label:'Submitted on time',data:sentCounts,backgroundColor:'#E11D2E',borderRadius:4,order:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:activeRange>14,maxRotation:45}}}},
+    options:{responsive:true,maintainAspectRatio:false,animation:chartAnim('trend',[labels,sentCounts,totalCount]),plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:activeRange>14,maxRotation:45}}}},
   });
 }
 
@@ -1154,7 +1486,7 @@ function renderDistrictChart(dateStr){
   districtChartInstance=new Chart(document.getElementById('districtChart'),{
     type:'bar',
     data:{labels:zones.map(z=>`Zone ${z}`),datasets:[{label:'Submitted',data:submittedData,backgroundColor:'#0FA968',borderRadius:3},{label:'Not submitted',data:notSubmittedData,backgroundColor:'#D97706',borderRadius:3},{label:'Late',data:lateData,backgroundColor:'#E0263F',borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:false,maxRotation:0,font:{size:10}}}}},
+    options:{responsive:true,maintainAspectRatio:false,animation:chartAnim('district',[dateStr,submittedData,notSubmittedData,lateData]),plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:false,maxRotation:0,font:{size:10}}}}},
   });
 }
 
@@ -1163,11 +1495,54 @@ function renderDonutChart(total,sent,missing,dup,late,delay=0,cashMismatch=0){
   donutChartInstance=new Chart(document.getElementById('donutChart'),{
     type:'doughnut',
     data:{labels:['Submitted','Not submitted','Late','Duplicate','Delay','Cash Mismatch'],datasets:[{data:[sent,missing,late,dup,delay,cashMismatch],backgroundColor:['#0FA968','#D97706','#E0263F','#7C5CFC','#B91C1C','#E0263F'],borderWidth:0}]},
-    options:{responsive:false,cutout:'72%',plugins:{legend:{display:false}}},
+    options:{responsive:false,cutout:'72%',animation:chartAnim('donut',[sent,missing,late,dup,delay,cashMismatch],{animateRotate:true,duration:1000}),plugins:{legend:{display:false}}},
   });
   const pct=n=>total>0?((n/total)*100).toFixed(1)+'%':'0%';
   document.getElementById('donutLegend').innerHTML=[['#0FA968','Submitted',sent],['#D97706','Not submitted',missing],['#E0263F','Late',late],['#7C5CFC','Duplicate',dup],['#B91C1C','Delay',delay],['#E0263F','Cash Mismatch',cashMismatch]]
     .map(([c,l,n])=>`<div class="donut-legend-row"><div class="leg-left"><span class="dot" style="background:${c};"></span>${l}</div><b>${n} <span style="font-weight:400;color:var(--ink-soft)">(${pct(n)})</span></b></div>`).join('');
+}
+
+/* ============================================================
+   MOTION HELPERS
+   ============================================================ */
+const REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ปิดแอนิเมชันเข้าหน้า หลังข้อมูลชุดแรกแสดงแล้ว (ไม่ให้เล่นซ้ำตอนกรอง/ค้นหา/รีเฟรช)
+function endEntrance(){
+  if(!document.body.classList.contains('is-entering')) return;
+  setTimeout(()=>document.body.classList.remove('is-entering'), 1400);
+}
+
+// กราฟเคลื่อนไหวเฉพาะตอนข้อมูลเปลี่ยน (เปลี่ยนวัน/เขต/รีเฟรชได้ยอดใหม่) ไม่ใช่ทุกครั้งที่พิมพ์ค้นหาหรือเรียงคอลัมน์
+const _chartSig = {};
+function chartAnim(key, data, extra){
+  const sig = JSON.stringify(data);
+  const changed = _chartSig[key] !== sig;
+  _chartSig[key] = sig;
+  if(REDUCED_MOTION || !changed) return false;
+  return Object.assign({duration:900, easing:'easeOutQuart'}, extra||{});
+}
+
+// ตัวเลข KPI นับจากค่าเดิมไปค่าใหม่ เฉพาะตอนค่าเปลี่ยน
+const _metricPrev = {};
+function animateMetricValues(){
+  document.querySelectorAll('#metricsRow .metric').forEach((card,i)=>{
+    const el = card.querySelector('.metric-value');
+    if(!el) return;
+    const to = Number(el.textContent);
+    if(!Number.isFinite(to)) return;
+    const key = card.dataset.filter!==undefined ? 'f:'+card.dataset.filter : 'c:'+i;
+    const from = _metricPrev[key]!==undefined ? _metricPrev[key] : 0;
+    _metricPrev[key] = to;
+    if(REDUCED_MOTION || from===to) return;
+    const dur = 700, t0 = performance.now();
+    el.textContent = from;
+    (function step(t){
+      const p = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-p,3);
+      el.textContent = Math.round(from + (to-from)*e);
+      if(p<1 && el.isConnected) requestAnimationFrame(step);
+    })(t0);
+  });
 }
 
 /* ============================================================
@@ -1240,6 +1615,7 @@ function render(){
     <div class="metric" data-filter="delay"><div class="metric-top"><div class="metric-icon" style="background:#FEE2E2;color:#B91C1C;">&#9201;</div><div class="metric-label">Delay</div></div><div class="metric-value" style="color:#B91C1C;">${delay}</div><div class="metric-pct" style="color:#B91C1C;">${pct(delay)}</div></div>
     <div class="metric" data-cashfilter="1"><div class="metric-top"><div class="metric-icon" style="background:#FDEBED;color:#E0263F;">&#9888;</div><div class="metric-label">Cash Mismatch</div></div><div class="metric-value" style="color:#E0263F;">${cashMismatch}</div><div class="metric-pct" style="color:#E0263F;">${pct(cashMismatch)}</div></div>
   `;
+  animateMetricValues();
   document.querySelectorAll('.metric').forEach(el=>{
     const f=el.dataset.filter;
     const cf=el.dataset.cashfilter;
@@ -1392,9 +1768,163 @@ function render(){
    START
    ============================================================ */
 allStoresList = buildStoreList();
-setupAutoRefresh();
-loadData();
-loadXstoreCash(today);
+
+/* ============================================================
+   AUTH — Login ออฟฟิต (บัญชีรายแผนก)
+   role อ่านจาก app_metadata.role (ผู้ใช้แก้เองไม่ได้)
+     editor = Can Edit (Internal Audit, IT, Account) — ยืนยันรายการซ้ำได้
+     viewer = Can View (Retail) — ดูอย่างเดียว
+   บัญชีสาขา (role store) หรือบัญชีที่ไม่มี role เข้า Dashboard ไม่ได้
+   ============================================================ */
+const OFFICE_ROLES = { editor:'Can Edit', viewer:'Can View' };
+const DEPT_LABEL   = { audit:'Internal Audit', it:'IT', account:'Account', retail:'Retail' };
+const LOGIN_DOMAIN = '@bata.co.th';
+let CURRENT_ROLE = null;
+let dashboardStarted = false;
+
+function lgMsg(text, type){
+  const el = document.getElementById('lgMsg');
+  if(!text){ el.className = 'lg-msg'; el.textContent = ''; return; }
+  el.textContent = text; el.className = 'lg-msg show ' + (type || 'err');
+}
+
+function showLogin(msg, type){
+  document.body.classList.add('auth-locked');
+  if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+  lgMsg(msg || '', type);
+  const u = document.getElementById('lgUser');
+  setTimeout(()=>{ (u.value ? document.getElementById('lgPw') : u).focus(); }, 50);
+}
+
+function renderUserChip(user){
+  const local = String(user.email || '').split('@')[0];
+  const name = DEPT_LABEL[local] || local;
+  const role = CURRENT_ROLE;
+  document.getElementById('userChip').innerHTML =
+    `<div><div class="user-chip-name"></div><span class="user-chip-role ${role}">${OFFICE_ROLES[role]}</span></div>` +
+    `<button class="btn-logout" type="button" onclick="logout()">ออกจากระบบ</button>`;
+  document.querySelector('#userChip .user-chip-name').textContent = name;
+  document.getElementById('userChip').style.display = 'flex';
+}
+
+async function acceptSession(session){
+  const role = session && session.user && session.user.app_metadata && session.user.app_metadata.role;
+  if(!OFFICE_ROLES[role]){
+    await sb.auth.signOut();
+    showLogin('บัญชีนี้ใช้เข้า Dashboard ไม่ได้ กรุณาใช้บัญชีของแผนก', 'err');
+    return false;
+  }
+  CURRENT_ROLE = role;
+  document.body.classList.toggle('role-viewer', role === 'viewer');
+  renderUserChip(session.user);
+  document.body.classList.remove('auth-locked');
+  startDashboard();
+  return true;
+}
+
+function startDashboard(){
+  if(dashboardStarted) return;
+  dashboardStarted = true;
+  document.body.classList.add('is-entering');
+  setupAutoRefresh();
+  loadData();
+  loadXstoreCash(today);
+}
+
+async function logout(){
+  try{ await sb.auth.signOut(); }catch(e){}
+  location.reload();
+}
+
+async function initAuth(){
+  let session = null;
+  try{ ({ data:{ session } } = await sb.auth.getSession()); }catch(e){}
+  if(session){ if(await acceptSession(session)) return; else return; }
+  showLogin();
+}
+
+// ถ้า session หมดอายุ/ถูกออกจากระบบจากที่อื่น กลับหน้า Login
+sb.auth.onAuthStateChange((event)=>{
+  if(event === 'SIGNED_OUT' && dashboardStarted) location.reload();
+});
+
+(function wireLoginForm(){
+  const form = document.getElementById('lgForm');
+  const userEl = document.getElementById('lgUser');
+  const pwEl = document.getElementById('lgPw');
+  const hint = document.getElementById('lgUserHint');
+  const toggle = document.getElementById('lgPwToggle');
+  const remember = document.getElementById('lgRemember');
+  const submit = document.getElementById('lgSubmit');
+
+  try{ remember.checked = localStorage.getItem(AUTH_REMEMBER_KEY) !== '0'; }catch(e){}
+
+  userEl.addEventListener('input', ()=>{
+    const v = userEl.value.trim().toLowerCase().replace(LOGIN_DOMAIN,'');
+    if(!v){ hint.textContent = 'พิมพ์ชื่อแผนก เช่น retail (ไม่ต้องพิมพ์ @bata.co.th)'; hint.style.color=''; }
+    else if(!/^[a-z0-9._-]+$/.test(v)){ hint.textContent = 'ใช้ได้เฉพาะตัวอักษรอังกฤษ ตัวเลข จุด และขีด'; hint.style.color='#A10E24'; }
+    else { hint.textContent = DEPT_LABEL[v] ? `แผนก ${DEPT_LABEL[v]}` : 'พิมพ์ชื่อแผนก เช่น retail (ไม่ต้องพิมพ์ @bata.co.th)'; hint.style.color = DEPT_LABEL[v] ? '#0B4F38' : ''; }
+    lgMsg('');
+  });
+  pwEl.addEventListener('input', ()=>lgMsg(''));
+  toggle.addEventListener('click', ()=>{
+    const show = pwEl.type === 'password';
+    pwEl.type = show ? 'text' : 'password';
+    toggle.textContent = show ? 'ซ่อน' : 'แสดง';
+    toggle.setAttribute('aria-pressed', String(show));
+  });
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const local = userEl.value.trim().toLowerCase().replace(LOGIN_DOMAIN,'');
+    if(!local){ lgMsg('กรอกชื่อผู้ใช้ก่อนเข้าสู่ระบบ'); userEl.focus(); return; }
+    if(!/^[a-z0-9._-]+$/.test(local)){ lgMsg('ชื่อผู้ใช้ใช้ได้เฉพาะตัวอักษรอังกฤษ ตัวเลข จุด และขีด'); userEl.focus(); return; }
+    if(!pwEl.value){ lgMsg('กรอกรหัสผ่านก่อนเข้าสู่ระบบ'); pwEl.focus(); return; }
+
+    try{ localStorage.setItem(AUTH_REMEMBER_KEY, remember.checked ? '1' : '0'); }catch(e){}
+    submit.disabled = true; submit.textContent = 'กำลังเข้าสู่ระบบ...';
+    lgMsg('');
+    try{
+      const { data, error } = await sb.auth.signInWithPassword({ email: local + LOGIN_DOMAIN, password: pwEl.value });
+      if(error){
+        const m = String(error.message || '').toLowerCase();
+        if(error.status === 429 || m.includes('rate')) lgMsg('ลองเข้าสู่ระบบหลายครั้งเกินไป รอสักครู่แล้วลองใหม่');
+        else if(m.includes('invalid')) lgMsg('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+        else lgMsg('เข้าสู่ระบบไม่สำเร็จ: ' + error.message);
+        pwEl.select();
+        return;
+      }
+      pwEl.value = '';
+      await acceptSession(data.session);
+    }catch(err){
+      lgMsg('เชื่อมต่อระบบไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่');
+    }finally{
+      submit.disabled = false; submit.textContent = 'เข้าสู่ระบบ';
+    }
+  });
+
+  // ฉาก 3D เอียงตามเมาส์ (ตามแบบร่าง)
+  const left = document.getElementById('lgLeft');
+  const world = document.getElementById('lgWorld');
+  const bbs = Array.from(document.querySelectorAll('#loginScreen .lg-bb'));
+  bbs.forEach(el=>{ el.dataset.base = el.style.transform.replace(/rotateZ\([^)]*\)\s*rotateX\([^)]*\)/,'').trim(); });
+  function tilt(rx, ry){
+    const wx = 62 + (rx - 8), wz = -38 + (ry + 22);
+    world.style.transform = `translateY(26px) rotateX(${wx}deg) rotateZ(${wz}deg)`;
+    const inv = `rotateZ(${-wz}deg) rotateX(${-wx}deg)`;
+    bbs.forEach(el=>{ el.style.transform = el.dataset.base + ' ' + inv; });
+  }
+  if(!REDUCED_MOTION && left && world){
+    left.addEventListener('mousemove', (e)=>{
+      const r = left.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width - 0.5, ny = (e.clientY - r.top) / r.height - 0.5;
+      tilt(8 - ny * 12, -22 + nx * 18);
+    });
+    left.addEventListener('mouseleave', ()=>tilt(8, -22));
+  }
+})();
+
+initAuth();
 </script>
 </body>
 </html>
