@@ -1213,8 +1213,9 @@ function addDaysStr(dateStr, n){
   const fromEl = document.getElementById('exportFrom');
   const toEl   = document.getElementById('exportTo');
   if(!fromEl || !toEl) return;
-  fromEl.value = today.slice(0,8) + '01'; // วันที่ 1 ของเดือนนี้
-  toEl.value   = today;
+  const yesterday = addDaysStr(today, -1); // ยอดขายวันนี้ยังไม่ถึงกำหนดส่ง
+  fromEl.value = yesterday.slice(0,8) + '01'; // วันที่ 1 ของเดือน
+  toEl.value   = yesterday;
   fromEl.max = today; toEl.max = today;
 })();
 
@@ -1291,6 +1292,8 @@ async function exportRangeToExcel(){
 
     const summary = [];
     const daySheets = [];
+    const zoneCnt = {};   // zone -> {sent,late,delay,missing,duplicate}
+    const issues = {};    // zone|code|status -> {zone, code, name, status, dates[]}
     dates.forEach(d=>{
       const cnt = {sent:0, late:0, delay:0, missing:0, duplicate:0};
       let amount = 0;
@@ -1300,15 +1303,15 @@ async function exportRangeToExcel(){
         if(recs.length===0 && inactiveStores.has(st.store_code)) return; // สาขาปิดแล้ว ไม่นับว่าไม่ส่ง
         const res = statusFromRecords(recs, d);
         cnt[res.status] = (cnt[res.status]||0) + 1;
+        const zc = (zoneCnt[st.zone_code] = zoneCnt[st.zone_code] || {sent:0,late:0,delay:0,missing:0,duplicate:0});
+        zc[res.status] = (zc[res.status]||0) + 1;
+        if(res.status !== 'sent' && res.status !== 'missing'){ // Not Submitted = ยังไม่ถึงกำหนด ไม่ต้องติดตาม
+          const ik = st.zone_code + '|' + st.store_code + '|' + res.status;
+          (issues[ik] = issues[ik] || {zone:st.zone_code, code:st.store_code, name:nameOf(st), status:res.status, dates:[]}).dates.push(fmtDate(d).slice(0,5));
+        }
         const rec = res.latest;
         const amt = res.status==='duplicate' ? res.totalAmount : (rec ? Number(rec.amount)||0 : null);
         if(amt) amount += amt;
-        let delayDays = '';
-        if(rec && rec.deposit_date && rec.sales_date){
-          const [dy,dm,dd2] = String(rec.deposit_date).slice(0,10).split('-').map(Number);
-          const [sy,sm,sd2] = String(rec.sales_date).slice(0,10).split('-').map(Number);
-          delayDays = Math.round((Date.UTC(dy,dm-1,dd2) - Date.UTC(sy,sm-1,sd2)) / 86400000);
-        }
         dayRows.push({
           'Store Code': st.store_code,
           'Store Name': nameOf(st),
@@ -1319,8 +1322,6 @@ async function exportRangeToExcel(){
           'Deposit Amount': amt!=null ? amt : '',
           'Channel': rec && rec.channel ? rec.channel : '',
           'Channel Detail': rec && rec.channel_detail ? rec.channel_detail : '',
-          'Deposit Delay (days)': delayDays,
-          'Records': recs.length,
         });
       });
       summary.push([fmtDate(d), dayRows.length, cnt.sent, cnt.late, cnt.delay, cnt.missing, cnt.duplicate, amount]);
@@ -1334,20 +1335,37 @@ async function exportRangeToExcel(){
       [`BATA Daily Payslip — สรุปตามวันที่ยอดขาย ${fmtDate(from)} ถึง ${fmtDate(to)}`],
       [`ขอบเขต: ${scope} · ออกรายงาน ${new Date().toLocaleString('th-TH')}`],
       [],
+      ['สรุปรายวัน'],
       ['Sales Date','Total Stores','Submitted','Late','Delay','Not Submitted','Duplicate','Total Deposit Amount'],
       ...summary,
       tot,
+      [],
+      [dates.length > 1 ? `สรุปรายเขต (นับเป็นสาขา × วัน รวม ${dates.length} วัน)` : 'สรุปรายเขต'],
+      ['District','Total','Submitted','Late','Delay','Not Submitted','Duplicate'],
     ];
+    Object.keys(zoneCnt).sort().forEach(z=>{
+      const c = zoneCnt[z];
+      aoa.push([`Zone ${z}`, c.sent+c.late+c.delay+c.missing+c.duplicate, c.sent, c.late, c.delay, c.missing, c.duplicate]);
+    });
+    aoa.push([]);
+    aoa.push(['สาขาที่ต้องติดตาม (Delay, Late, Duplicate) · กดลูกศรที่หัวตารางเพื่อกรองตามเขตหรือสถานะ']);
+    const issueHeaderRow = aoa.length;
+    aoa.push(['District','Store Code','Store Name','Status','จำนวนวัน','วันที่']);
+    const ORDER = {delay:0, late:1, duplicate:2};
+    const issueRows = Object.values(issues).sort((a,b)=> a.zone.localeCompare(b.zone) || ORDER[a.status]-ORDER[b.status] || a.code.localeCompare(b.code));
+    issueRows.forEach(it=> aoa.push([`Zone ${it.zone}`, it.code, it.name, statusLabelTH(it.status), it.dates.length, it.dates.join(', ')]));
+    if(issueRows.length === 0) aoa.push(['ทุกสาขาส่งครบและตรงเวลา']);
     const wb = XLSX.utils.book_new();
     const wsSum = XLSX.utils.aoa_to_sheet(aoa);
-    wsSum['!cols'] = [{wch:14},{wch:13},{wch:11},{wch:8},{wch:8},{wch:14},{wch:11},{wch:22}];
+    wsSum['!cols'] = [{wch:14},{wch:13},{wch:28},{wch:14},{wch:10},{wch:30},{wch:11},{wch:22}];
+    if(issueRows.length) wsSum['!autofilter'] = { ref: XLSX.utils.encode_range({s:{r:issueHeaderRow,c:0}, e:{r:issueHeaderRow+issueRows.length,c:5}}) };
     wsSum['!merges'] = [{s:{r:0,c:0},e:{r:0,c:7}},{s:{r:1,c:0},e:{r:1,c:7}}];
     XLSX.utils.book_append_sheet(wb, wsSum, 'Summary');
 
     // ---- 1 ชีตต่อวัน ----
     daySheets.forEach(ds=>{
       const ws = XLSX.utils.json_to_sheet(ds.rows);
-      ws['!cols'] = [{wch:11},{wch:26},{wch:9},{wch:14},{wch:12},{wch:20},{wch:15},{wch:13},{wch:18},{wch:12},{wch:9}];
+      ws['!cols'] = [{wch:11},{wch:26},{wch:9},{wch:14},{wch:12},{wch:20},{wch:15},{wch:13},{wch:18}];
       XLSX.utils.book_append_sheet(wb, ws, ds.name);
     });
 
