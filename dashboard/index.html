@@ -1079,6 +1079,11 @@ function getXstoreCash(storeCode, dateStr){
   const sd = salesDate||today;
   recs = recs.filter(r=>(r.sales_date||'').slice(0,10)===sd);
   if(depositDate) recs = recs.filter(r=>(r.deposit_date||'').slice(0,10)===depositDate);
+  return statusFromRecords(recs, sd);
+}
+
+// สถานะของ 1 สาขาใน 1 วัน จากรายการของวันนั้น (ใช้ทั้งหน้า Dashboard และ Export ช่วงวันที่)
+function statusFromRecords(recs, sd){
 
   // deadline = (sales_date + 1 วัน) เวลา 14:00 ไทย (07:00 UTC)
   const [sy,sm,sd2] = sd.split('-').map(Number);
@@ -1196,7 +1201,7 @@ function exportToExcel(){
    1 แถว = 1 รายการที่ส่ง ดึงจาก Supabase ตรงแบบแบ่งหน้า
    (ไม่ใช้ allRecords ที่โหลดไว้แค่ 30 วัน)
    ============================================================ */
-const EXPORT_MAX_DAYS = 366;
+const EXPORT_MAX_DAYS = 31; // 1 ชีตต่อวัน จึงจำกัดไม่เกิน 1 เดือนต่อไฟล์
 
 function addDaysStr(dateStr, n){
   const d = new Date(dateStr + 'T00:00:00Z');
@@ -1267,28 +1272,88 @@ async function exportRangeToExcel(){
       if(!data || data.length < pageSize) break;
     }
 
-    if(rows.length === 0){ showToast(`ไม่มีรายการในช่วง ${from} ถึง ${to}`,'warn'); return false; }
+    // ---- จัดกลุ่มรายการตามวัน + สาขา ----
+    const byKey = {};
+    rows.forEach(r=>{
+      const k = String(r.sales_date||'').slice(0,10) + '|' + r.store_code;
+      (byKey[k] = byKey[k] || []).push(r);
+    });
+    // รายชื่อสาขา: ตามหน้า Dashboard (DM = เขตตัวเอง) + สาขาที่มีรายการแต่ไม่อยู่ในรายชื่อ
+    const stores = allStoresList.map(st=>({...st}));
+    const known = new Set(stores.map(st=>st.store_code));
+    rows.forEach(r=>{ if(!known.has(r.store_code)){ known.add(r.store_code); stores.push({store_code:r.store_code, zone_code:r.zone_code||'', store_name:getStoreName(r.store_code)}); } });
+    stores.sort((a,b)=> (a.zone_code+a.store_code).localeCompare(b.zone_code+b.store_code));
 
-    const data = rows.map(r=>({
-      'Sales Date':       r.sales_date ? String(r.sales_date).slice(0,10) : '',
-      'Store Code':       r.store_code,
-      'Store Name':       storeNameMap[r.store_code] || (typeof STORE_NAMES!=='undefined' && STORE_NAMES[r.store_code]) || '',
-      'District':         r.zone_code || '',
-      'Deposit Date':     r.deposit_date ? String(r.deposit_date).slice(0,10) : '',
-      'Deposit Amount':   r.amount!=null ? Number(r.amount) : '',
-      'Channel':          r.channel || '',
-      'Channel Detail':   r.channel_detail || '',
-      'Submitted At':     r.submitted_at ? new Date(r.submitted_at).toLocaleString('th-TH') : '',
-      'Duplicate Status': r.duplicate_status || '',
-    }));
+    const dates = [];
+    for(let d = from; d <= to; d = addDaysStr(d,1)) dates.push(d);
+    const fmtDate = d => { const [y,m,dd] = d.split('-'); return `${dd}/${m}/${y}`; };
+    const nameOf = st => storeNameMap[st.store_code] || st.store_name || '';
 
+    const summary = [];
+    const daySheets = [];
+    dates.forEach(d=>{
+      const cnt = {sent:0, late:0, delay:0, missing:0, duplicate:0};
+      let amount = 0;
+      const dayRows = [];
+      stores.forEach(st=>{
+        const recs = byKey[d + '|' + st.store_code] || [];
+        if(recs.length===0 && inactiveStores.has(st.store_code)) return; // สาขาปิดแล้ว ไม่นับว่าไม่ส่ง
+        const res = statusFromRecords(recs, d);
+        cnt[res.status] = (cnt[res.status]||0) + 1;
+        const rec = res.latest;
+        const amt = res.status==='duplicate' ? res.totalAmount : (rec ? Number(rec.amount)||0 : null);
+        if(amt) amount += amt;
+        let delayDays = '';
+        if(rec && rec.deposit_date && rec.sales_date){
+          const [dy,dm,dd2] = String(rec.deposit_date).slice(0,10).split('-').map(Number);
+          const [sy,sm,sd2] = String(rec.sales_date).slice(0,10).split('-').map(Number);
+          delayDays = Math.round((Date.UTC(dy,dm-1,dd2) - Date.UTC(sy,sm-1,sd2)) / 86400000);
+        }
+        dayRows.push({
+          'Store Code': st.store_code,
+          'Store Name': nameOf(st),
+          'District': st.zone_code,
+          'Status': statusLabelTH(res.status),
+          'Deposit Date': rec && rec.deposit_date ? String(rec.deposit_date).slice(0,10) : '',
+          'Submitted At': rec && rec.submitted_at ? new Date(rec.submitted_at).toLocaleString('th-TH') : '',
+          'Deposit Amount': amt!=null ? amt : '',
+          'Channel': rec && rec.channel ? rec.channel : '',
+          'Channel Detail': rec && rec.channel_detail ? rec.channel_detail : '',
+          'Deposit Delay (days)': delayDays,
+          'Records': recs.length,
+        });
+      });
+      summary.push([fmtDate(d), dayRows.length, cnt.sent, cnt.late, cnt.delay, cnt.missing, cnt.duplicate, amount]);
+      daySheets.push({name: fmtDate(d).replace(/\//g,'-'), rows: dayRows});
+    });
+
+    // ---- ชีตแรก: สรุปทั้งไฟล์ ----
+    const tot = summary.reduce((a,r)=>a.map((v,i)=> i===0 ? 'รวม' : v + r[i]), ['รวม',0,0,0,0,0,0,0]);
+    const scope = LOCKED_ZONE ? `Zone ${LOCKED_ZONE}` : 'All Districts';
+    const aoa = [
+      [`BATA Daily Payslip — สรุปตามวันที่ยอดขาย ${fmtDate(from)} ถึง ${fmtDate(to)}`],
+      [`ขอบเขต: ${scope} · ออกรายงาน ${new Date().toLocaleString('th-TH')}`],
+      [],
+      ['Sales Date','Total Stores','Submitted','Late','Delay','Not Submitted','Duplicate','Total Deposit Amount'],
+      ...summary,
+      tot,
+    ];
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(data);
-    ws['!cols'] = [{wch:11},{wch:11},{wch:26},{wch:9},{wch:12},{wch:14},{wch:14},{wch:18},{wch:20},{wch:15}];
-    XLSX.utils.book_append_sheet(wb, ws, 'Submissions');
+    const wsSum = XLSX.utils.aoa_to_sheet(aoa);
+    wsSum['!cols'] = [{wch:14},{wch:13},{wch:11},{wch:8},{wch:8},{wch:14},{wch:11},{wch:22}];
+    wsSum['!merges'] = [{s:{r:0,c:0},e:{r:0,c:7}},{s:{r:1,c:0},e:{r:1,c:7}}];
+    XLSX.utils.book_append_sheet(wb, wsSum, 'Summary');
+
+    // ---- 1 ชีตต่อวัน ----
+    daySheets.forEach(ds=>{
+      const ws = XLSX.utils.json_to_sheet(ds.rows);
+      ws['!cols'] = [{wch:11},{wch:26},{wch:9},{wch:14},{wch:12},{wch:20},{wch:15},{wch:13},{wch:18},{wch:12},{wch:9}];
+      XLSX.utils.book_append_sheet(wb, ws, ds.name);
+    });
+
     const zoneSuffix = LOCKED_ZONE ? `_Zone${LOCKED_ZONE}` : '';
     XLSX.writeFile(wb, `BATA_Payslip_${from}_to_${to}${zoneSuffix}.xlsx`);
-    showToast(`Export สำเร็จ ${rows.length.toLocaleString('th-TH')} รายการ`,'ok');
+    showToast(`Export สำเร็จ ${dates.length} วัน · ${rows.length.toLocaleString('th-TH')} รายการ`,'ok');
     return true;
   }catch(err){
     showToast('Export ไม่สำเร็จ: ' + (err && err.message ? err.message : err),'err');
@@ -1843,9 +1908,8 @@ function showLogin(msg, type){
 function renderUserChip(user){
   const local = String(user.email || '').split('@')[0];
   const name = DEPT_LABEL[local] || local;
-  const role = CURRENT_ROLE;
   document.getElementById('userChip').innerHTML =
-    `<div><div class="user-chip-name"></div><span class="user-chip-role ${role}">${OFFICE_ROLES[role]}</span></div>` +
+    `<div class="user-chip-name"></div>` +
     `<button class="btn-logout" type="button" onclick="logout()">ออกจากระบบ</button>`;
   document.querySelector('#userChip .user-chip-name').textContent = name;
   document.getElementById('userChip').style.display = 'flex';
