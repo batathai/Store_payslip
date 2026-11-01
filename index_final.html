@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="noindex">
+<title>BATA Store — ส่ง Payslip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#C8102E;
+  --red-dark:#8A0B20;
+  --ink:#2A1A1D;
+  --muted:#5E4F52;
+  --line:#CDBFC1;
+  --paper:#F6F1F1;
+  --card:#FFFFFF;
+  --pink:#F3C9CF;
+  --pink-bg:#FDF1F3;
+  --ok:#0B4F38;
+  --ok-bg:#E2F3EC;
+  --err:#A10E24;
+  --err-bg:#FDE8EB;
+  --f-head:'Prompt','Sarabun',system-ui,sans-serif;
+  --f-body:'Sarabun','Noto Sans Thai',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+button{font-family:inherit}
+.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;background:var(--paper)}
+
+/* ================= LOGIN ================= */
+#loginScreen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--red)}
+.lg-top{padding:20px 24px 44px;color:#fff;display:flex;flex-direction:column;gap:8px}
+.logo{display:flex;align-items:baseline;gap:10px}
+.logo b{font:700 24px var(--f-head);letter-spacing:.22em}
+.logo span{font-size:11px;letter-spacing:.3em;opacity:.9}
+.tagline{font:600 22px/1.3 var(--f-head)}
+.sceneBox{height:190px;display:flex;align-items:center;justify-content:center;perspective:1100px;overflow:visible}
+.sceneScale{width:380px;height:380px;margin:-95px;transform:scale(.5);flex:none}
+.scene{position:relative;width:380px;height:380px;transform-style:preserve-3d;transform:rotateX(8deg) rotateY(-22deg)}
+.layer{position:absolute;transform-style:preserve-3d;transform:translate3d(0,0,var(--z));animation:bob 6s ease-in-out infinite}
+.layer > div{position:absolute}
+@keyframes bob{0%,100%{transform:translate3d(0,0,var(--z))}50%{transform:translate3d(0,-8px,calc(var(--z) + 14px))}}
+.coin{position:relative;width:70px;height:70px;transform-style:preserve-3d;animation:spin 9s linear infinite}
+.face{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;font:700 32px var(--f-head);background:#fff;color:var(--red);box-shadow:0 18px 30px -8px rgba(60,0,10,.45),inset 0 0 0 5px #FBE3E6}
+.face.back{transform:rotateY(180deg)}
+@keyframes spin{to{transform:rotateY(360deg)}}
+.bill{position:absolute;width:150px;height:72px;border-radius:8px;background:#F6E7B8;box-shadow:inset 0 0 0 3px #E8C97A,0 6px 10px -4px rgba(40,0,8,.35)}
+.bill i{position:absolute;left:12px;top:12px;width:48px;height:48px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font:700 24px var(--f-head);font-style:normal}
+.bill u{position:absolute;left:72px;height:8px;border-radius:4px;background:#E8C97A}
+@media (prefers-reduced-motion:reduce){.layer,.coin{animation:none}}
+
+.sheet{flex:1;margin-top:-28px;padding:28px 24px 28px;border-radius:28px 28px 0 0;background:#fff;display:flex;flex-direction:column;gap:16px}
+.sheet h1{margin:0;font:600 28px/1.2 var(--f-head)}
+.sheet .lead{margin:4px 0 0;font-size:15px;line-height:1.5;color:var(--muted)}
+.f-lbl{font-size:15px;font-weight:600}
+.fgroup{display:flex;flex-direction:column;gap:6px}
+.field{width:100%;min-width:0;height:54px;border:1.5px solid var(--line);border-radius:12px;padding:0 16px;font:500 22px var(--f-head);color:var(--ink);background:#fff;-webkit-appearance:none;appearance:none}
+.field:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 4px rgba(200,16,46,.16)}
+.field.code{letter-spacing:.14em;font-variant-numeric:tabular-nums}
+.field.pwd{letter-spacing:.1em}
+.found-row{min-height:28px;display:flex;align-items:center}
+.chip-ok{display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 6px;border-radius:999px;background:var(--ok-bg);color:var(--ok);font-size:14px;font-weight:600}
+.no{font-size:14px;font-weight:600;color:var(--err)}
+.idle{font-size:14px;color:var(--muted)}
+.pwhead{display:flex;justify-content:space-between;align-items:center}
+.ghost{min-height:44px;border:0;background:transparent;padding:0 4px;font-size:15px;font-weight:600;color:var(--red-dark);cursor:pointer}
+.link-u{align-self:flex-start;font-size:14px;color:var(--muted);text-decoration:underline}
+.pwrow{display:flex;gap:8px}
+.prefix{display:flex;align-items:center;height:54px;padding:0 14px;border:1.5px solid var(--line);border-radius:12px;background:#F7EEEF;font:600 20px var(--f-head);color:var(--muted);flex:none}
+.rem{display:flex;align-items:center;gap:12px;min-height:44px;font-size:16px}
+.rem input{width:24px;height:24px;margin:0;accent-color:var(--red)}
+.cta{width:100%;height:58px;border:0;border-radius:14px;background:var(--red);color:#fff;font:600 19px var(--f-head);letter-spacing:.02em;box-shadow:0 5px 0 rgba(0,0,0,.28);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.cta:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.28)}
+.cta:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.ghost:focus-visible,.cta:focus-visible,.opt:focus-visible,.sb:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.alert{padding:10px 14px;border-radius:10px;background:var(--err-bg);color:var(--red-dark);font-size:14px;font-weight:600;line-height:1.5}
+.alert.ok{background:var(--ok-bg);color:var(--ok)}
+.help{font-size:14px;color:var(--muted);text-align:center}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;margin-right:8px;vertical-align:-2px}
+@keyframes rot{to{transform:rotate(360deg)}}
+#bootScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--red);color:#fff;font:600 16px var(--f-head)}
+
+/* ================= FORM ================= */
+.fm-top{position:sticky;top:0;z-index:5;padding:12px 20px 16px;background:var(--red);color:#fff;display:flex;flex-direction:column;gap:6px}
+.fm-top .r1{display:flex;align-items:center;justify-content:space-between}
+.fm-top .logo b{font-size:20px;letter-spacing:.2em}
+.fm-top .logo span{font-size:12px;letter-spacing:0;opacity:.9}
+.fm-top .out{color:#fff;text-decoration:underline}
+.fm-top .r2{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fm-top .r2 b{font:600 17px var(--f-head)}
+.fm-top .r2 span{font-size:14px;opacity:.9}
+.fm-body{padding:16px 16px 32px;display:flex;flex-direction:column;gap:12px}
+.c{padding:16px;border-radius:16px;background:var(--card);display:flex;flex-direction:column;gap:8px}
+.c.req{box-shadow:0 0 0 2px var(--pink)}
+.c .t{font-size:15px;font-weight:600}
+.c .t em{color:var(--red);font-style:normal}
+.dates{flex-direction:row;gap:12px}
+.dates > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.inp{width:100%;min-width:0;height:50px;border:1.5px solid var(--line);border-radius:12px;padding:0 10px;font:500 16px var(--f-body);color:var(--ink);background:#fff}
+.inp:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 4px rgba(200,16,46,.16)}
+.inp.amt{height:54px;font-size:22px;font-variant-numeric:tabular-nums;padding:0 16px}
+.inp.invalid{border-color:var(--err)}
+.nd{flex-direction:row;align-items:center;gap:12px;cursor:pointer}
+.nd input{width:24px;height:24px;margin:0;accent-color:var(--red);flex:none}
+.nd b{display:block;font-size:16px;font-weight:600}
+.nd small{font-size:13px;color:var(--muted)}
+.nd.on{box-shadow:0 0 0 2px var(--red);background:var(--pink-bg)}
+.grp{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--muted);margin-top:4px}
+.opt{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.opt.sel{border:2px solid var(--red);background:var(--pink-bg);padding:11.5px}
+.logo-c{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}
+.opt .tx{min-width:0;display:flex;flex-direction:column}
+.opt .tx b{font-size:16px;font-weight:600}
+.opt .tx small{font-size:13px;color:var(--muted)}
+.opt .ck{margin-left:auto;flex:none;visibility:hidden}
+.opt.sel .ck{visibility:visible}
+.subs{display:flex;flex-direction:column;gap:6px;padding:4px 0 6px 52px}
+.subs .sl{font-size:12px;font-weight:600;color:var(--muted)}
+.sb{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;width:100%;min-height:44px}
+.sb.sel{border-color:var(--red);background:var(--pink-bg)}
+.sb small{margin-left:auto;color:var(--muted);font-weight:400}
+.up{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:150px;border:2px dashed var(--line);border-radius:14px;background:#FBF6F6;cursor:pointer;width:100%;font:inherit;color:inherit}
+.up b{font-size:16px;font-weight:600}
+.up small{font-size:13px;color:var(--muted)}
+#fileInput{display:none}
+.prev{display:flex;align-items:center;gap:12px;border:1.5px solid #BFE3D2;background:#F2FAF6;border-radius:12px;padding:10px}
+.prev img{width:56px;height:56px;object-fit:cover;border-radius:8px;flex:none}
+.prev span{flex:1;min-width:0;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.x{border:0;background:#EFE6E7;color:var(--muted);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;flex:none}
+.err{color:var(--err);font-size:13.5px;font-weight:600}
+.foot{text-align:center;font-size:12px;color:var(--muted);margin:4px 0 0}
+
+/* status */
+.ok-ic{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:4px auto 10px;font:700 32px var(--f-head)}
+.ok-ic.ok{background:var(--ok-bg);color:var(--ok)}
+.ok-ic.warn{background:#FFF3DC;color:#8A4B00}
+.ok-ic.err{background:var(--err-bg);color:var(--err)}
+.st h2{text-align:center;margin:0;font:600 24px var(--f-head)}
+.st p{text-align:center;color:var(--muted);margin:0;font-size:15px;line-height:1.7}
+.btn2{width:100%;height:52px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font:600 16px var(--f-head);color:var(--ink);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ================= BOOT ================= -->
+<div id="bootScreen">กำลังโหลด...</div>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen" hidden>
+  <div class="lg-top">
+    <div class="logo"><b>BATA</b><span>THAILAND</span></div>
+    <div class="sceneBox" aria-hidden="true">
+      <div class="sceneScale">
+        <div class="scene">
+          <div class="layer" style="--z:0px;left:14px;top:10px;width:290px;height:232px;border-radius:18px;background:#FFFFFF;box-shadow:0 30px 40px -12px rgba(60,0,10,.45)">
+            <div style="left:45px;top:22px;width:200px;height:56px;background:#F3C9CF;clip-path:polygon(50% 0,100% 100%,0 100%)"></div>
+            <div style="left:125px;top:40px;width:40px;height:40px;border-radius:50%;background:#C8102E;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font:700 22px 'Prompt',sans-serif">฿</div>
+            <div style="left:40px;top:82px;width:210px;height:10px;border-radius:3px;background:#C8102E"></div>
+            <div style="left:56px;top:98px;width:26px;height:82px;border-radius:3px;background:#F3C9CF;box-shadow:inset -6px 0 0 #E9AEB7"></div>
+            <div style="left:98px;top:98px;width:26px;height:82px;border-radius:3px;background:#F3C9CF;box-shadow:inset -6px 0 0 #E9AEB7"></div>
+            <div style="left:166px;top:98px;width:26px;height:82px;border-radius:3px;background:#F3C9CF;box-shadow:inset -6px 0 0 #E9AEB7"></div>
+            <div style="left:208px;top:98px;width:26px;height:82px;border-radius:3px;background:#F3C9CF;box-shadow:inset -6px 0 0 #E9AEB7"></div>
+            <div style="left:36px;top:184px;width:218px;height:10px;border-radius:3px;background:#C8102E"></div>
+            <div style="left:24px;top:198px;width:242px;height:10px;border-radius:3px;background:#E9AEB7"></div>
+          </div>
+          <div class="layer" style="--z:100px;left:100px;top:128px;width:250px;height:150px;border-radius:16px;background:#FFFFFF;color:#2A1A1D;box-shadow:0 30px 40px -12px rgba(60,0,10,.5)">
+            <div style="left:20px;top:16px;right:20px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:15px;font-weight:600;color:#5E4F52">สลิปฝากเงิน</span><span style="font-size:12px;padding:3px 10px;border-radius:999px;background:#FBE3E6;color:#8A0B20;font-weight:600">ตัวอย่าง</span></div>
+            <div style="left:20px;top:50px;font:600 32px 'Prompt',sans-serif;font-variant-numeric:tabular-nums">฿ 48,250.00</div>
+            <div style="left:20px;top:102px;width:150px;height:8px;border-radius:4px;background:#EADFE0"></div>
+            <div style="left:20px;top:120px;width:100px;height:8px;border-radius:4px;background:#EADFE0"></div>
+          </div>
+          <div class="layer" style="--z:180px;left:4px;top:232px;width:170px;height:130px;filter:drop-shadow(0 20px 20px rgba(40,0,8,.45))">
+            <div class="bill" style="left:4px;top:52px"><i>฿</i><u style="top:16px;width:60px"></u><u style="top:32px;width:44px"></u><u style="top:48px;width:52px"></u></div>
+            <div class="bill" style="left:10px;top:34px"><i>฿</i><u style="top:16px;width:60px"></u><u style="top:32px;width:44px"></u><u style="top:48px;width:52px"></u></div>
+            <div class="bill" style="left:16px;top:16px"><i>฿</i><u style="top:16px;width:60px"></u><u style="top:32px;width:44px"></u><u style="top:48px;width:52px"></u></div>
+            <div style="left:62px;top:6px;width:34px;height:88px;border-radius:4px;background:#3B0A12;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font:700 16px 'Prompt',sans-serif">฿</div>
+          </div>
+          <div class="layer" style="--z:230px;left:176px;top:304px;width:204px;height:64px;padding:0 16px;border-radius:16px;background:#3B0A12;color:#FFFFFF;box-shadow:0 24px 34px -10px rgba(40,0,8,.6);display:flex;align-items:center;gap:12px">
+            <div style="position:relative;width:36px;height:36px;border-radius:50%;background:#FFFFFF;display:flex;align-items:center;justify-content:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B0A12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+            <div style="position:relative;display:flex;flex-direction:column;gap:1px"><span style="font:600 18px 'Prompt',sans-serif">ส่งแล้ว</span><span style="font-size:13px;opacity:.85">ก่อน 10:00 น.</span></div>
+          </div>
+          <div class="layer" style="--z:260px;left:296px;top:6px;width:70px;height:70px">
+            <div class="coin" style="position:relative"><div class="face">฿</div><div class="face back">฿</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tagline">ส่งสลิปฝากเงิน ก่อน 10:00 น. ทุกวัน</div>
+  </div>
+
+  <form class="sheet" id="loginForm" novalidate>
+    <div><h1>เข้าสู่ระบบ</h1><p class="lead">กรอกรหัสสาขา 5 หลัก ระบบพาไปหน้าส่งสลิปให้เอง</p></div>
+    <div class="fgroup">
+      <label class="f-lbl" for="codeIn">รหัสสาขา</label>
+      <input id="codeIn" class="field code" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="username" maxlength="5">
+      <div class="found-row" id="foundRow"></div>
+    </div>
+    <div class="fgroup">
+      <div class="pwhead"><label class="f-lbl" for="pwIn">รหัสผ่าน</label><button class="ghost" type="button" id="showBtn" aria-pressed="false">แสดง</button></div>
+      <div class="pwrow"><div class="prefix" id="pwPrefix">bata#</div><input id="pwIn" class="field pwd" type="password" inputmode="numeric" autocomplete="current-password"></div>
+    </div>
+    <label class="rem"><input id="rememberIn" type="checkbox" checked> จำเครื่องนี้ไว้ ไม่ต้องกรอกทุกวัน</label>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <button class="cta" type="submit" id="loginBtn">เข้าสู่ระบบ</button>
+      <div id="loginMsg" aria-live="polite"></div>
+    </div>
+    <div class="help">ลืมรหัสผ่าน ทักทีมงาน DM ได้เลย</div>
+  </form>
+</div>
+
+<!-- ================= FORM ================= -->
+<div id="formScreen" hidden>
+  <div class="fm-top">
+    <div class="r1"><div class="logo"><b>BATA</b><span>ส่ง Payslip</span></div><button class="ghost out" type="button" id="logoutBtn">ออกจากระบบ</button></div>
+    <div class="r2">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      <b id="hdrStore"></b><span id="hdrZone"></span>
+    </div>
+  </div>
+
+  <div class="fm-body">
+    <div class="c dates">
+      <div><label class="t" for="depositDate">วันที่นำฝาก <em>*</em></label><input class="inp" type="date" id="depositDate"><span class="err" id="err-depositDate" hidden></span></div>
+      <div><label class="t" for="salesDate">ยอดขายวันที่ <em>*</em></label><input class="inp" type="date" id="salesDate"><span class="err" id="err-salesDate" hidden></span></div>
+    </div>
+
+    <label class="c nd" id="noDepositCard"><input type="checkbox" id="noDepositCheck"><span><b>ไม่มีเงินนำส่งวันนี้</b><small>ติ๊กถ้าไม่มียอดฝาก ระบบบันทึกยอด 0 บาท</small></span></label>
+
+    <div class="c" id="depositSection">
+      <label class="t" for="amount">มูลค่าที่ฝาก (บาท) <em>*</em></label>
+      <input class="inp amt" type="text" id="amount" inputmode="decimal" placeholder="เช่น 12500">
+      <span class="err" id="err-amount" hidden>กรุณากรอกมูลค่าที่ฝากให้ถูกต้อง</span>
+    </div>
+
+    <div class="c req" id="channelSection">
+      <span class="t">ช่องทางที่ทำการฝากเงิน <em>*</em></span>
+      <div id="channelList" style="display:flex;flex-direction:column;gap:8px"></div>
+      <input class="inp" type="text" id="channelDetail" placeholder="ระบุรายละเอียดช่องทางอื่นๆ" aria-label="รายละเอียดช่องทางอื่นๆ" hidden>
+      <span class="err" id="err-channel" hidden>กรุณาเลือกช่องทางที่ฝากเงิน</span>
+    </div>
+
+    <div class="c req" id="slipSection">
+      <span class="t">รูปสลิป (Pay-in Slip) <em>*</em></span>
+      <button class="up" type="button" id="uploadBox">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <b id="uploadText">แตะเพื่อถ่าย / เลือกรูป</b><small>JPG, PNG ไม่เกิน 10MB</small>
+      </button>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" capture="environment">
+      <div class="prev" id="previewWrap" hidden>
+        <img id="previewImg" src="" alt="ตัวอย่างรูปสลิป">
+        <span id="fileName"></span>
+        <button class="x" id="removeFile" type="button" aria-label="ลบรูป">✕</button>
+      </div>
+      <span class="err" id="err-file" hidden>กรุณาแนบรูปสลิป</span>
+    </div>
+
+    <button class="cta" id="submitBtn" type="button">ส่งข้อมูล</button>
+    <p class="foot">BATA Thailand · Store Operations Portal</p>
+  </div>
+</div>
+
+<!-- ================= STATUS ================= -->
+<div id="statusScreen" hidden>
+  <div class="fm-top">
+    <div class="r1"><div class="logo"><b>BATA</b><span>ส่ง Payslip</span></div></div>
+    <div class="r2">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      <b id="stStore"></b><span id="stZone"></span>
+    </div>
+  </div>
+  <div class="fm-body">
+    <div class="c st">
+      <div class="ok-ic" id="statusIcon"></div>
+      <h2 id="statusTitle"></h2>
+      <p id="statusMsg"></p>
+    </div>
+    <button class="cta" id="sendAnotherBtn" type="button">ส่งรายการใหม่</button>
+    <button class="btn2" id="logoutBtn2" type="button">ออกจากระบบ</button>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ==================== CONFIG ==================== */
+const SUPABASE_URL = 'https://hdgwhhimqugfhhwjakkb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ3doaGltcXVnZmhod2pha2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjE2NzMsImV4cCI6MjA5NzMzNzY3M30.alUGwvgdSN-ixpfwD6vLFSxsYh8Kkqupyn7XxGnoSE0';
+const EMAIL_DOMAIN = '@bata.co.th';
+const PW_PREFIX = 'bata#';
+const MAX_FAIL = 5;
+const LOCK_MINUTES = 10;
+
+/* "จำเครื่องนี้" = เก็บ session ใน localStorage, ไม่จำ = sessionStorage (ปิดแท็บแล้วต้องเข้าใหม่)
+   key แยกจาก Dashboard (bata-dashboard-auth) จึงไม่ชนกัน */
+const REM_KEY = 'bata-store-remember';
+function isRemembered(){ try{ return localStorage.getItem(REM_KEY) !== '0'; }catch(e){ return true; } }
+const authStorage = {
+  getItem(k){ try{ return localStorage.getItem(k) ?? sessionStorage.getItem(k); }catch(e){ return null; } },
+  setItem(k, v){ try{
+    if(isRemembered()){ localStorage.setItem(k, v); sessionStorage.removeItem(k); }
+    else { sessionStorage.setItem(k, v); localStorage.removeItem(k); }
+  }catch(e){} },
+  removeItem(k){ try{ localStorage.removeItem(k); sessionStorage.removeItem(k); }catch(e){} }
+};
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { storage: authStorage, storageKey: 'bata-store-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+});
+
+/* ==================== STORE NAMES (ใช้แสดงชื่อก่อน login) ==================== */
+const ZONE_BRANCHES = {
+  '511': ['51426','51428','51436','51438','51450','51508','51510','51511','51514','51518','51521','51524','51530','51534','51542','51546','51549','51550','51905','51944','51960','51968','51906'],
+  '512': ['51403','51404','51407','51409','51415','51416','51418','51419','51425','51430','51446','51498','51520','51533','51535','51540','51903','51938','51939','51946','51948','51965'],
+  '513': ['51002','51406','51427','51431','51435','51439','51548','53947','54005','54007','54016','54021','54023','54029','54030','54046','54048','71205','54026','51501','54096','51512','54004','51201'],
+  '520': ['52002','52005','52007','52010','52017','52018','52019','52021','52023','52025','52026','52031','52032','52033','52036','52037','52040','52042','52048','52098','52901','52902','52942','52943','72007','72011'],
+  '530': ['52043','53002','53006','53011','53012','53021','53022','53023','53026','53029','53030','53032','53036','53037','53046','53048','53049','53905','53955','73005','53001','53035','53038','53958'],
+  '540': ['51091','51434','51506','53003','53008','53009','53010','53020','53024','53031','53040','53041','53043','53045','53047','53953','54013','54019','54038','54039','54044','54045','73015','53018','53948'],
+  '550': ['51132','51433','51517','51532','52003','54001','54011','54012','54014','54017','54018','54022','54027','54032','54035','54040','54042','54094','54097','54945','54960','55001','55044','74023','54095','54947','54024','74014'],
+  '560': ['55005','55008','55009','55010','55012','55018','55019','55023','55024','55030','55031','55033','55035','55036','55038','55040','55041','55042','55043','55046','55049','55901','55902','55906','55949','55950','55951','75011','75012','75014'],
+};
+const STORE_NAMES = {
+  '51002': 'เซ็นทรัลวิจเลจ','51091': 'เทอร์มินอล 21 โคราชแฟร์','51132': 'บิ๊กซี ลพบุรี','51403': 'ฟิวเจอร์พาร์ค','51404': 'แฟชั่นไอส์แลนด์','51407': 'มอลล์ 6','51409': 'ไอทีสแควร์ หลักสี่','51406': 'เซนทรัลบางนา 26','51415': 'เซ็นทรัล รามอินทรา','51416': 'มอลล์ 8','51418': 'โลตัส รังสิต คลอง 7','51419': 'โลตัส นวนคร','51425': 'เซ็นทรัล แจ้งวัฒนะ','51426': 'บิ๊กซี ราชดำริ','51427': 'พาราไดซ์พาร์ค','51428': 'มาบุญครอง 2','51430': 'เซ็นทรัล พระราม 9','51431': 'เมกาบางนา','51433': 'เซ็นทรัล ศาลายา','51434': 'สุขุมวิท 15','51435': 'โฮมโปร สุวรรณภูมิ','51436': 'เซ็นทรัล เวสท์เกต','51438': 'เซ็นทรัลปิ่นเกล้า','51439': 'โรบินสัน ลาดกระบัง','51446': 'โลตัส รังสิตคลอง 4','51450': 'เซ็นทรัลเวสต์วิลล์','51498': 'มีนบุรีเอาท์เล็ท','51506': 'อิมพีเรียลเวิลด์ สำโรง','51508': 'ท่าพระจันทร์','51510': 'เยาวราช','51511': 'มอลล์ 7','51512': 'ซีคอนสแควร์','51514': 'บิ๊กซี พระราม 4','51517': 'โลตัส ศาลายา','51518': 'เซ็นทรัล พระราม 3','51520': 'โรบินสัน ศรีสมาน','51521': 'โลตัส บางประกอก','51524': 'โลตัส จรัญสนิทวงศ์','51530': 'บิ๊กซี เพชรเกษม 2','51532': 'บิ๊กซี อ้อมใหญ่','51533': 'โลตัส ลำลูกกา','51534': 'บิ๊กซี บางปะกอก','51535': 'บิ๊กซี สุวินทวงศ์','51540': 'บิ๊กซี รามอินทรา','51542': 'สุพรีม สามเสน','51545': 'โรบินสัน สมุทรปราการ','51546': 'โลตัส บางใหญ่','51548': 'บิ๊กซีบางพลี','51549': 'บิ๊กซี บางใหญ่','51550': 'บิ๊กซี สุขสวัสดิ์','51903': 'อิมพีเรียล ลาดพร้าว','51905': 'เซ็นทรัล พระราม 2','51906': 'ซีคอน บางแค','51938': 'โลตัส ลาดพร้าว','51939': 'โลตัส แจ้งวัฒนะ','51944': 'มาบุญครอง','51946': 'บิ๊กซี รังสิต','51948': 'โลตัส หลักสี่','51960': 'บิ๊กซี พระราม 2','51965': 'โลตัส บางกะปิ','51968': 'โลตัส พระราม 4','52002': 'เซ็นทรัล เชียงราย','52003': 'อยุธยาพาร์ค','52005': 'บิ๊กซี เชียงใหม่','52007': 'โลตัส เชียงใหม่','52010': 'เซ็นทรัล พิษณุโลก','52017': 'โลตัส แม่สอด','52018': 'โรบินสัน กำแพงเพชร','52019': 'โลตัส พะเยา','52021': 'เซ็นทรัล แอร์พอร์ต','52023': 'แพร่','52025': 'เมญ่า เชียงใหม่','52026': 'เซ็นทรัล นครสวรรค์','52031': 'เซ็นทรัล ลำปาง','52032': 'โลตัส พิษณุโลก 2','52033': 'แฮปปี้พลาซ่า','52036': 'โลตัส รวมโชค','52037': 'เซ็นทรัล เชียงใหม่','52040': 'บิ๊กซี พิษณุโลก','52042': 'อุตรดิตถ์','52043': 'บิ๊กซี เพชรบูรณ์','52048': 'โลตัส น่าน','52098': 'เชียงใหม่ เอาท์เล็ท','52901': 'บิ๊กซี กำแพงเพชร','52902': 'บิ๊กซี เชียงใหม่ 2','52942': 'บิ๊กซี เชียงราย','52943': 'บิ๊กซี ลำปาง','53002': 'บิ๊กซี อุดร','53003': 'ทวีกิจ บุรีรัมย์ 2','53006': 'โลตัส ท่าบ่อ หนองคาย','53008': 'โลตัส เดชอุดม','53009': 'มอลล์ โคราช','53010': 'สุรินทร์พลาซ่า','53011': 'กาฬสินธุ์พลาซ่า','53012': 'เซ็นทรัล อุดร','53018': 'บิ๊กซี วารินชำราบ','53020': 'บิ๊กซี ศรีสะเกษ','53021': 'โลตัส อุดร','53022': 'เซ็นทรัล ขอนแก่น','53023': 'ท็อปส์ พลาซ่า พล','53024': 'บิ๊กซี ปากช่อง','53026': 'แฟรี่ขอนแก่น','53029': 'เสริมไทย คอมเพล็กซ์','53030': 'บิ๊กซี ร้อยเอ็ด','53031': 'เซ็นทรัล อุบล','53032': 'โรบินสัน สกลนคร','53035': 'โรบินสัน ร้อยเอ็ด','53036': 'โรบินสัน มุกดาหาร','53037': 'อัศวรรณ 2 หนองคาย','53038': 'โลตัส ขอนแก่น','53040': 'บิ๊กชี โคราช 2','53041': 'เซ็นทรัล โคราช','53043': 'บิ๊กชี อำนาจเจริญ','53045': 'โลตัส นางรอง','53046': 'โลตัส ขอนแก่น 2','53047': 'โลตัส อุบล','53048': 'โลตัส ชุมแพ','53049': 'โรบินสัน ชัยภูมิ','53905': 'บิ๊กซี เลย','53947': 'บิ๊กซี ระยอง','53948': 'บิ๊กซี โคราช','53953': 'บิ๊กซี อุบล','53955': 'โลตัส หนองคาย','53958': 'บิ๊กซี ขอนแก่น','54001': 'เพชรบุรี','54004': 'บิ๊กซี พัทยา','54005': 'เซ็นทรัลศรีราชา','54007': 'โลตัส พัทยาเหนือ','54011': 'เซ็นทรัล อยุธยา','54012': 'บิ๊กซี เพชรบุรี','54013': 'บิ๊กซี ฉะเชิงเทรา 2','54014': 'โลตัส บ้านโป่ง','54016': 'บิ๊กซี ชลบุรี 2','54017': 'โรบินสัน กาญจนบุรี','54018': 'บิ๊กซี อยุธยา','54019': 'บิ๊กซี สระแก้ว','54021': 'เซ็นทรัล พัทยาบีช','54022': 'เซ็นทรัล มหาชัย','54023': 'เซ็นทรัล ชลบุรี','54026': 'บิ๊กซี พัทยา 2','54027': 'บิ๊กซี มหาชัย','54029': 'ฮาเบอร์มอลล์','54030': 'บิ๊กซี ชลบุรี','54032': 'สุขอนันต์ปาร์ค','54035': 'โรบินสัน สระบุรี','54038': 'บิ๊กซี ศรีมหาโพธิ์','54039': 'โลตัส นครนายก','54040': 'โรบินสัน สุพรรณบุรี','54042': 'นครปฐม','54044': 'โรบินสัน ฉะเชิงเทรา','54045': 'โรบินสัน ปราจีนบุรี','54046': 'เซ็นทรัล ระยอง','54048': 'เซ็นทรัล มารีนา พัทยา','54094': 'เซ็นทรัลนครปฐม','54095': 'โลตัสสระบุรี','54945': 'โลตัส สุพรรณบุรี','54947': 'Lotus Nakornpatom','54960': 'โลตัส ราชบุรี','55001': 'หัวหินมาร์เก็ต','55005': 'โลตัส สุราษฎร์','55008': 'จังซีลอน','55009': 'บิ๊กซี หาดใหญ่ 2','55010': 'โลตัส กระบี่','55012': 'เซ็นทรัล ภูเก็ต','55018': 'โลตัส พัทลุง','55019': 'โลตัส สมุย ละไม','55023': 'ปัตตานี','55024': 'โลตัส หาดใหญ่ 2','55030': 'เซ็นทรัล สุราษฎร์','55031': 'บิ๊กซี ภูเก็ต','55033': 'โลตัสเวียงสระ','55035': 'เซ็นทรัล หาดใหญ่','55036': 'บิ๊กซี ตรัง','55038': 'เซ็นทรัล สมุย','55040': 'โลตัส จะนะ','55041': 'โลตัส หาดใหญ่ 1','55042': 'โลตัสสงขลา','55043': 'เซ็นทรัล นครศรีธรรมราช','55044': 'บูลพอร์ต','55046': 'บิ๊กซี พังงา','55049': 'Lotus Yala','55901': 'โรบินสัน ตรัง','55902': 'บิ๊กซี นครศรี','55906': 'บิ๊กซี สตูล','55949': 'บิ๊กซี สุราษฎร์','55950': 'โลตัส ภูเก็ต','55951': 'บิ๊กซี หาดใหญ่','71205': 'อินฟินิท ปากน้ำ','72007': 'ชัยพงษ์ พิจิตร','72011': 'เจริญภัณฑ์ พะเยา','73005': 'ร้อยเอ็ดพลาซ่า','73015': 'ซุ่นเฮง ศรีสะเกษ','74014': 'Sahathai Petchburi','74023': 'กนกกาญจน์','75011': 'สิริบรรณ ตรัง','75012': 'โวค กระบี่','75014': 'โอเชียน ชุมพร','51501': 'โรบินสัน สมุทรปราการ 26','53001': 'โลตัส ขอนแก่น 26','54096': 'บิ๊กซี พัทยา 26','51201': 'CK Plaza','54024': 'Bc Nakonpatom','52008': 'เซ็นทรัล แอร์พอร์ต','51410': 'เซนทรัลบางนา','54097': 'โรบินสัน ราชบุรี',
+};
+
+/* ==================== CHANNEL DATA ==================== */
+const BANK_CHANNELS = [
+  { id:'scb',      name:'ธ.ไทยพาณิชย์ (Saving)',   detail:'เลขบัญชี: 347-301-3949', ab:'SCB', bg:'#5B2A86', fg:'#FFFFFF' },
+  { id:'bbl',      name:'ธ.กรุงเทพ (Current)',       detail:'เลขบัญชี: 106-315-6325', ab:'BBL', bg:'#1E4DA1', fg:'#FFFFFF' },
+  { id:'krungsri', name:'ธ.กรุงศรีอยุธยา (Saving)', detail:'เลขบัญชี: 333-171-6277', ab:'KMA', bg:'#E3A800', fg:'#2A1A1D' },
+];
+const COUNTER_CHANNELS = [
+  { id:'seven_eleven', name:'7-Eleven', detail:'ฝากผ่านเคาน์เตอร์เซเว่น', ab:'7-11' },
+  { id:'lotus',        name:'Lotus',    detail:'ฝากผ่านเคาน์เตอร์โลตัส', ab:'LOT' },
+  { id:'bigc',         name:'Big C',    detail:'ฝากผ่านเคาน์เตอร์บิ๊กซี', ab:'BIGC' },
+];
+const SUB_BANKS = [
+  { id:'bbl',      name:'ธ.กรุงเทพ',       acc:'106-315-6325' },
+  { id:'scb',      name:'ธ.ไทยพาณิชย์',    acc:'347-276-4466' },
+  { id:'krungsri', name:'ธ.กรุงศรีอยุธยา', acc:'333-171-6277' },
+];
+const COUNTER_IDS = COUNTER_CHANNELS.map(c => c.id);
+
+/* ==================== HELPERS ==================== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function showScreen(name){
+  ['bootScreen','loginScreen','formScreen','statusScreen'].forEach(id => { $(id).hidden = (id !== name); });
+  window.scrollTo(0, 0);
+}
+let currentStore = null; // { code, zone, name }
+
+/* ==================== LOGIN ==================== */
+let pwFull = false;
+function failKey(code){ return 'bata-store-fail-' + code; }
+function getFail(code){ try{ return JSON.parse(localStorage.getItem(failKey(code))) || { n:0, until:0 }; }catch(e){ return { n:0, until:0 }; } }
+function setFail(code, v){ try{ localStorage.setItem(failKey(code), JSON.stringify(v)); }catch(e){} }
+function clearFail(code){ try{ localStorage.removeItem(failKey(code)); }catch(e){} }
+
+function renderFound(){
+  const v = $('codeIn').value, row = $('foundRow');
+  if(v.length < 5){ row.innerHTML = '<span class="idle">พิมพ์ให้ครบ 5 หลัก ชื่อสาขาและเขตจะขึ้นตรงนี้</span>'; return; }
+  const name = STORE_NAMES[v];
+  const zone = zoneOf(v);
+  row.innerHTML = name
+    ? `<span class="chip-ok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B4F38" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>${esc(name)}${zone ? ' · เขต ' + esc(zone) : ''}</span>`
+    : `<span class="no">ไม่พบรหัสสาขานี้ ตรวจเลข 5 หลักอีกครั้ง</span>`;
+}
+function zoneOf(code){
+  for(const z in ZONE_BRANCHES){ if(ZONE_BRANCHES[z].includes(code)) return z; }
+  return '';
+}
+function loginMsg(html, ok){ $('loginMsg').innerHTML = html ? `<div class="alert${ok ? ' ok' : ''}">${html}</div>` : ''; }
+function lockedText(){ return `ใส่รหัสผิดหลายครั้ง ระบบพักการเข้าสู่ระบบ ${LOCK_MINUTES} นาที หากยังเข้าไม่ได้ ทักทีมงาน DM`; }
+
+$('codeIn').addEventListener('input', () => {
+  const el = $('codeIn'); el.value = el.value.replace(/\D/g, '').slice(0, 5);
+  renderFound(); loginMsg('');
+  if(el.value.length === 5) $('pwIn').focus();
+});
+$('pwIn').addEventListener('input', () => {
+  const el = $('pwIn'); if(!pwFull) el.value = el.value.replace(/\D/g, '').slice(0, 4);
+  loginMsg('');
+});
+$('showBtn').addEventListener('click', () => {
+  const pw = $('pwIn'); const show = pw.type === 'password';
+  pw.type = show ? 'text' : 'password';
+  $('showBtn').textContent = show ? 'ซ่อน' : 'แสดง';
+  $('showBtn').setAttribute('aria-pressed', show);
+});
+
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const code = $('codeIn').value;
+  const raw = $('pwIn').value;
+  if(code.length !== 5){ loginMsg('กรอกรหัสสาขาให้ครบ 5 หลัก'); $('codeIn').focus(); return; }
+  const f = getFail(code);
+  if(f.until && Date.now() < f.until){ loginMsg(lockedText()); return; }
+  if(!raw){ loginMsg('กรอกรหัสผ่านก่อนเข้าสู่ระบบ'); $('pwIn').focus(); return; }
+
+  try{ localStorage.setItem(REM_KEY, $('rememberIn').checked ? '1' : '0'); }catch(err){}
+  const password = pwFull ? raw : PW_PREFIX + raw;
+  const btn = $('loginBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>กำลังตรวจสอบ...';
+  try{
+    const { data, error } = await sb.auth.signInWithPassword({ email: code + EMAIL_DOMAIN, password });
+    if(error) throw error;
+    const store = storeFromUser(data.user);
+    if(!store){
+      await sb.auth.signOut();
+      loginMsg('บัญชีนี้ไม่ใช่บัญชีสาขา ใช้ส่ง Payslip ไม่ได้ ทักทีมงาน DM');
+      return;
+    }
+    clearFail(code);
+    $('pwIn').value = '';
+    enterForm(store);
+  }catch(err){
+    console.error(err);
+    const msg = String(err && (err.message || err.error_description) || '');
+    if(/invalid login credentials/i.test(msg) || (err && err.status === 400)){
+      const n = (f.until && Date.now() >= f.until ? 0 : f.n) + 1;
+      if(n >= MAX_FAIL){ setFail(code, { n, until: Date.now() + LOCK_MINUTES * 60000 }); loginMsg(lockedText()); }
+      else { setFail(code, { n, until: 0 }); loginMsg(`รหัสผ่านไม่ถูกต้อง เหลืออีก ${MAX_FAIL - n} ครั้ง`); }
+      $('pwIn').value = ''; $('pwIn').focus();
+    } else if(err && err.status === 429){
+      loginMsg('ลองเข้าสู่ระบบบ่อยเกินไป รอสักครู่แล้วลองใหม่');
+    } else {
+      loginMsg('เชื่อมต่อระบบไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง');
+    }
+  }finally{
+    btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ';
+  }
+});
+
+/* อ่านสาขาจาก app_metadata ที่ผู้ดูแลตั้ง (ผู้ใช้แก้เองไม่ได้) */
+function storeFromUser(user){
+  const m = (user && user.app_metadata) || {};
+  if(m.role !== 'store' || !m.store_code || !m.zone_code) return null;
+  const code = String(m.store_code), zone = String(m.zone_code);
+  return { code, zone, name: STORE_NAMES[code] || '' };
+}
+
+async function logout(){
+  try{ await sb.auth.signOut(); }catch(e){}
+  currentStore = null;
+  resetForm();
+  loginMsg('');
+  renderFound();
+  showScreen('loginScreen');
+}
+$('logoutBtn').addEventListener('click', logout);
+$('logoutBtn2').addEventListener('click', logout);
+
+function enterForm(store){
+  currentStore = store;
+  const label = store.code + (store.name ? ' · ' + store.name : '');
+  $('hdrStore').textContent = label; $('hdrZone').textContent = 'เขต ' + store.zone;
+  $('stStore').textContent = label;  $('stZone').textContent = 'เขต ' + store.zone;
+  $('codeIn').value = store.code;
+  resetForm();
+  showScreen('formScreen');
+}
+
+/* ==================== FORM STATE ==================== */
+let selectedChannel = null;
+let selectedSubBank = null;
+let selectedFile = null;
+
+/* ==================== DATE LIMIT ==================== */
+const MAX_BACKDATE_DAYS = 60;
+function setupDateLimits(){
+  const todayStr = new Date().toLocaleDateString('sv-SE');
+  const minDate = new Date(); minDate.setDate(minDate.getDate() - MAX_BACKDATE_DAYS);
+  const minStr = minDate.toLocaleDateString('sv-SE');
+  ['depositDate','salesDate'].forEach(id => { const el = $(id); el.min = minStr; el.max = todayStr; el.value = todayStr; });
+}
+function isWithinBackdateWindow(dateStr){
+  if(!dateStr) return false;
+  const d = new Date(dateStr + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const minDate = new Date(today); minDate.setDate(minDate.getDate() - MAX_BACKDATE_DAYS);
+  return d >= minDate && d <= today;
+}
+
+/* ==================== CHANNELS ==================== */
+const CHECK_SVG = '<svg class="ck" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function optHtml(c, bg, fg, withSubs){
+  const subs = withSubs ? `<div class="subs" id="sub-${c.id}" hidden><span class="sl">เลือกฝากเข้าธนาคาร</span>${SUB_BANKS.map(b => `<button class="sb" type="button" data-sub="${b.id}" aria-pressed="false">${b.name}<small>${b.acc}</small></button>`).join('')}<span class="err" id="err-subbank-${c.id}" hidden>กรุณาเลือกธนาคารปลายทาง</span></div>` : '';
+  return `<button class="opt" type="button" data-ch="${c.id}" aria-pressed="false"><span class="logo-c" style="background:${bg};color:${fg}">${c.ab}</span><span class="tx"><b>${c.name}</b><small>${c.detail}</small></span>${CHECK_SVG}</button>${subs}`;
+}
+function renderChannels(){
+  $('channelList').innerHTML =
+    '<span class="grp">ธนาคาร</span>' + BANK_CHANNELS.map(c => optHtml(c, c.bg, c.fg, false)).join('') +
+    '<span class="grp">เคาน์เตอร์เซอร์วิส (เลือกธนาคารปลายทางต่อ)</span>' + COUNTER_CHANNELS.map(c => optHtml(c, '#E8F0E3', '#1F5A2E', true)).join('') +
+    '<span class="grp">อื่นๆ</span>' + optHtml({ id:'other', name:'อื่นๆ', detail:'ระบุรายละเอียดเพิ่มเติม', ab:'...' }, '#EFE6E7', '#5E4F52', false);
+  $('channelList').querySelectorAll('.opt').forEach(o => o.addEventListener('click', () => selectChannel(o.dataset.ch)));
+  $('channelList').querySelectorAll('.sb').forEach(b => b.addEventListener('click', () => {
+    selectedSubBank = b.dataset.sub;
+    b.parentElement.querySelectorAll('.sb').forEach(x => { const on = x === b; x.classList.toggle('sel', on); x.setAttribute('aria-pressed', on); });
+    document.querySelectorAll('[id^="err-subbank-"]').forEach(e => e.hidden = true);
+    clearError('channel');
+  }));
+}
+function selectChannel(id){
+  selectedChannel = id; selectedSubBank = null;
+  $('channelList').querySelectorAll('.opt').forEach(o => { const on = o.dataset.ch === id; o.classList.toggle('sel', on); o.setAttribute('aria-pressed', on); });
+  $('channelList').querySelectorAll('.subs').forEach(s => {
+    const on = s.id === 'sub-' + id; s.hidden = !on;
+    s.querySelectorAll('.sb').forEach(x => { x.classList.remove('sel'); x.setAttribute('aria-pressed', 'false'); });
+  });
+  document.querySelectorAll('[id^="err-subbank-"]').forEach(e => e.hidden = true);
+  $('channelDetail').hidden = id !== 'other';
+  clearError('channel');
+}
+
+/* ==================== NO-DEPOSIT ==================== */
+$('noDepositCheck').addEventListener('change', () => {
+  const on = $('noDepositCheck').checked;
+  $('noDepositCard').classList.toggle('on', on);
+  ['depositSection','channelSection','slipSection'].forEach(id => $(id).hidden = on);
+  clearError('amount'); clearError('channel'); clearError('file');
+});
+
+/* ==================== IMAGE ==================== */
+const MAX_WIDTH = 1280;
+const JPEG_QUALITY = 0.75;
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (e) => { img.src = e.target.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      let { width, height } = img;
+      if(width > MAX_WIDTH){ height = Math.round(height * (MAX_WIDTH / width)); width = MAX_WIDTH; }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      canvas.toBlob((blob) => {
+        if(!blob){ reject(new Error('Compress failed')); return; }
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type:'image/jpeg' }));
+      }, 'image/jpeg', JPEG_QUALITY);
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+$('uploadBox').addEventListener('click', () => $('fileInput').click());
+$('fileInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  $('uploadText').textContent = 'กำลังประมวลผลรูป...';
+  try{
+    const compressed = await compressImage(file);
+    selectedFile = compressed;
+    $('fileName').textContent = `${compressed.name} (${Math.round(compressed.size/1024)} KB)`;
+    const r = new FileReader();
+    r.onload = (ev) => { $('previewImg').src = ev.target.result; };
+    r.readAsDataURL(compressed);
+    $('previewWrap').hidden = false; $('uploadBox').hidden = true;
+    clearError('file');
+  }catch(err){
+    selectedFile = null; $('fileInput').value = '';
+    $('previewWrap').hidden = true; $('uploadBox').hidden = false;
+    $('err-file').textContent = 'รูปแบบไฟล์ไม่รองรับ กรุณาถ่ายรูปใหม่ หรือเลือกรูปที่เป็น JPG/PNG';
+    $('err-file').hidden = false;
+  }finally{
+    $('uploadText').textContent = 'แตะเพื่อถ่าย / เลือกรูป';
+  }
+});
+$('removeFile').addEventListener('click', () => {
+  selectedFile = null; $('fileInput').value = '';
+  $('previewWrap').hidden = true; $('uploadBox').hidden = false;
+});
+
+/* ==================== VALIDATION ==================== */
+function showError(field, text){ const el = $(field), e = $('err-' + field); if(el && el.classList.contains('inp')) el.classList.add('invalid'); if(e){ if(text) e.textContent = text; e.hidden = false; } }
+function clearError(field){ const el = $(field), e = $('err-' + field); if(el) el.classList.remove('invalid'); if(e) e.hidden = true; }
+['depositDate','salesDate'].forEach(id => $(id).addEventListener('change', () => clearError(id)));
+$('amount').addEventListener('input', () => clearError('amount'));
+
+function validate(){
+  ['depositDate','salesDate','amount','channel','file'].forEach(clearError);
+  let ok = true;
+  const isNoDeposit = $('noDepositCheck').checked;
+  if(!isWithinBackdateWindow($('depositDate').value)){ showError('depositDate', `เลือกวันที่นำฝาก (ย้อนหลังได้ไม่เกิน ${MAX_BACKDATE_DAYS} วัน)`); ok = false; }
+  if(!isWithinBackdateWindow($('salesDate').value)){ showError('salesDate', `เลือกยอดขายวันที่ (ย้อนหลังได้ไม่เกิน ${MAX_BACKDATE_DAYS} วัน)`); ok = false; }
+  if(!isNoDeposit){
+    const v = $('amount').value.replace(/,/g, '').trim();
+    if(!v || isNaN(v) || Number(v) <= 0){ showError('amount'); ok = false; }
+    if(!selectedChannel){ showError('channel', 'กรุณาเลือกช่องทางที่ฝากเงิน'); ok = false; }
+    else if(COUNTER_IDS.includes(selectedChannel) && !selectedSubBank){ const e = $('err-subbank-' + selectedChannel); if(e) e.hidden = false; ok = false; }
+    else if(selectedChannel === 'other' && !$('channelDetail').value.trim()){ showError('channel', 'กรุณาระบุรายละเอียดช่องทางอื่นๆ'); ok = false; }
+    if(!selectedFile){ showError('file', 'กรุณาแนบรูปสลิป'); ok = false; }
+  }
+  if(!ok){
+    const first = document.querySelector('#formScreen .err:not([hidden])');
+    if(first) first.scrollIntoView({ block:'center', behavior:'smooth' });
+  }
+  return ok;
+}
+
+/* ==================== SUBMIT ==================== */
+$('submitBtn').addEventListener('click', async () => {
+  if(!currentStore){ logout(); return; }
+  if(!validate()) return;
+  const btn = $('submitBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>กำลังส่ง...';
+
+  // ตรวจว่า session ยังอยู่ (ถ้าหมดอายุ ให้เข้าสู่ระบบใหม่ ข้อมูลที่กรอกจะไม่ถูกส่ง)
+  const { data: sess } = await sb.auth.getSession();
+  const store = sess && sess.session ? storeFromUser(sess.session.user) : null;
+  if(!store){
+    btn.disabled = false; btn.textContent = 'ส่งข้อมูล';
+    await logout();
+    loginMsg('หมดเวลาการเข้าสู่ระบบ กรุณาเข้าสู่ระบบใหม่แล้วส่งอีกครั้ง');
+    return;
+  }
+
+  const isNoDeposit = $('noDepositCheck').checked;
+  const storeCode = store.code;      // จากบัญชี ไม่ได้ให้สาขาเลือก
+  const zoneCode  = store.zone;
+  const depositDate = $('depositDate').value;
+  const salesDate   = $('salesDate').value;
+  const amount  = isNoDeposit ? 0 : Number($('amount').value.replace(/,/g, ''));
+  const channel = isNoDeposit ? 'none' : selectedChannel;
+  let channelDetail = null;
+  if(!isNoDeposit){
+    if(channel === 'other') channelDetail = $('channelDetail').value.trim();
+    else if(COUNTER_IDS.includes(channel) && selectedSubBank) channelDetail = selectedSubBank;
+  }
+
+  try{
+    let slipPath = 'no_deposit';
+    let slipUrl = null;
+    if(!isNoDeposit){
+      slipPath = `${storeCode}/${depositDate}_${Date.now()}.jpg`;
+      const { error: uploadError } = await sb.storage.from('payin-slips')
+        .upload(slipPath, selectedFile, { contentType:'image/jpeg', upsert:false });
+      if(uploadError) throw uploadError;
+      // ยังเก็บ slip_url ไว้ก่อน เพราะ Dashboard ปัจจุบันยังใช้ (เลิกเก็บตอนเปลี่ยน bucket เป็น private)
+      slipUrl = sb.storage.from('payin-slips').getPublicUrl(slipPath).data.publicUrl;
+    }
+    const { error: insertError } = await sb.from('payin_records').insert({
+      zone_code: zoneCode, store_code: storeCode,
+      deposit_date: depositDate, sales_date: salesDate,
+      amount, channel, channel_detail: channelDetail,
+      slip_path: slipPath, slip_url: slipUrl
+    });
+    if(insertError) throw insertError;
+    showStatus('ok', '✓', 'ส่งข้อมูลสำเร็จ',
+      isNoDeposit ? `สาขา ${storeCode} รายงาน "ไม่มีเงินนำส่ง" เรียบร้อยแล้ว` : `สาขา ${storeCode} ส่งข้อมูลและรูปสลิปเรียบร้อยแล้ว`);
+  }catch(err){
+    console.error(err);
+    if(err && err.code === '23505'){
+      showStatus('warn', '!', 'บันทึกเป็นรายการที่ส่งเพิ่ม',
+        `ระบบตรวจพบว่าสาขา ${storeCode} มีการส่งยอดของวันที่นี้มาก่อนแล้ว บันทึกรายการนี้เป็นรายการเพิ่มเติมเรียบร้อย ฝ่ายบัญชีจะเป็นผู้ตรวจสอบและยืนยันรายการที่ถูกต้องครับ`);
+    } else {
+      showStatus('err', '✕', 'ส่งข้อมูลไม่สำเร็จ', 'เกิดข้อผิดพลาดระหว่างส่งข้อมูล กรุณาลองใหม่อีกครั้ง หรือแจ้งฝ่าย IT หากยังไม่สำเร็จ');
+    }
+  }finally{
+    btn.disabled = false; btn.textContent = 'ส่งข้อมูล';
+  }
+});
+
+function showStatus(type, icon, title, msg){
+  const ic = $('statusIcon'); ic.className = 'ok-ic ' + type; ic.textContent = icon;
+  $('statusTitle').textContent = title; $('statusMsg').textContent = msg;
+  showScreen('statusScreen');
+}
+$('sendAnotherBtn').addEventListener('click', () => { resetForm(); showScreen('formScreen'); });
+
+function resetForm(){
+  setupDateLimits();
+  $('noDepositCheck').checked = false; $('noDepositCard').classList.remove('on');
+  ['depositSection','channelSection','slipSection'].forEach(id => $(id).hidden = false);
+  $('amount').value = ''; $('channelDetail').value = '';
+  selectedChannel = null; selectedSubBank = null; selectedFile = null;
+  $('fileInput').value = ''; $('previewWrap').hidden = true; $('uploadBox').hidden = false;
+  renderChannels(); $('channelDetail').hidden = true;
+  ['depositDate','salesDate','amount','channel','file'].forEach(clearError);
+}
+
+/* ==================== START ==================== */
+(async function start(){
+  renderFound();
+  try{
+    const { data } = await sb.auth.getSession();
+    const store = data && data.session ? storeFromUser(data.session.user) : null;
+    if(store){ enterForm(store); return; }
+    if(data && data.session) await sb.auth.signOut();
+  }catch(e){ console.error(e); }
+  showScreen('loginScreen');
+})();
+sb.auth.onAuthStateChange((event) => {
+  if(event === 'SIGNED_OUT' && currentStore){ currentStore = null; showScreen('loginScreen'); }
+});
+</script>
+</body>
+</html>
